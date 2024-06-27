@@ -1,0 +1,38 @@
+image: node:14
+
+stages:
+  - build
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+
+before_script:
+  - npm install
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - build
+
+deploy:
+  stage: deploy
+  environment:
+    name: production
+    url: https://dora.pamoteam.com # Replace with your CloudFront distribution URL
+  only:
+    - master
+  script:
+    - apt-get update -y
+    - apt-get install -y python3 python3-pip
+    - pip3 install awscli
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set default.region $AWS_DEFAULT_REGION
+    - aws s3 sync build/ s3://dev-dora-frontend-pamo --delete --region $AWS_DEFAULT_REGION # Replace with your S3 bucket name
+    - aws cloudfront create-invalidation --distribution-id <your-cloudfront-distribution-id> --paths "/*" # Replace with your CloudFront distribution ID
+
