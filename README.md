@@ -1,93 +1,116 @@
-# dora-frontend
+**Documentation for React Dashlite application**
 
+**React Quick Start:**
 
+1.  Make sure Node and npm package manager is installed, please check
+    the version by the command **_node -v_**
 
-## Getting started
+2.  Install Dependencies
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+    a. **_npm install or yarn install_**
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+3.  Start the application / Run the dev-server:
 
-## Add your files
+    a. **_npm start or yarn start_**
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+    b. \*Open your browser at **localhost://3000\***
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/pamo3/dora/dora-frontend.git
-git branch -M main
-git push -uf origin main
-```
+**Detailed Installation Process:**
 
-## Integrate with your tools
+Installing Node:
 
-- [ ] [Set up project integrations](https://gitlab.com/pamo3/dora/dora-frontend/-/settings/integrations)
+1.  Download latest version of node.js
+    from [**nodejs.org.**](https://nodejs.org/)
 
-## Collaborate with your team
+2.  Install and Setup Node.js using downloaded file in the development
+    environment
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+3.  To check your node version, run **node -v **in a terminal/console
+    window.
 
-## Test and Deploy
+Installing Npm Package Manager:
 
-Use the built-in continuous integration in GitLab.
+1.  React CLI, and React apps depend on features and functionality
+    provided by libraries that are available as npm packages. To
+    download and install npm packages, you must have
+    an [**npm **](https://www.npmjs.com/)package manager.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+2.  This Quick Start uses the npm client command line interface, which
+    is installed with Node.js by default. To check that you have the npm
+    client installed, run **npm -v ** in a terminal/console window.
 
-***
+3.  For better understanding React we suggest you to once go through
+    official documentation of React
+    from [**ReactJS.org**](https://reactjs.org/docs/getting-started.html)
 
-# Editing this README
+Installing the React CLI:
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+1.  It is recommended to install the React CLI globally
 
-## Suggestions for a good README
+2.  To Install just run the command **_npm install create-react-app_**
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Running React-Dashlite:
 
-## Name
-Choose a self-explaining name for your project.
+1.  Download and extract Dashlite themes from themeforest.net
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+2.  Extract it and then go in to the extracted folder.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+3.  Once in the folder, open the command prompt/git bash/Terminal
+    application (Mac) and type in **_cd theme_**
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+4.  Import all dependency by installing npm command. Type in **_npm
+    install_**
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+5.  After all the packages and dependencies have been installed
+    successfully, run the application by typing in **_npm start_**
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+6.  Once you serve your application by default it will take their
+    default port so you can open port
+    using [**localhost://3000**](<javascript:void(0)>)
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+**Build Application**
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+1.  Build you application for host on server just by typing _npm run
+    build_ in the terminal
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+2.  It will create a build file in the root directory. The application
+    is ready to go into the server of your choice, simply the upload the
+    zipped build file to the server. However, if the server is an apache
+    server create a .htaccess file in the build folder of the
+    application and paste the following code in it.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+> _Options -MultiViews_
+>
+> _RewriteEngine On_
+>
+> _RewriteCond %{REQUEST_FILENAME} !-f_
+>
+> _RewriteRule \^ index.html \[QSA,L\]_
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Copy the contents of the build file into the apache server, make sure
+the .htaccess file is included in the server.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+**Create New Directory / Page:**
 
-## License
-For open source projects, say how it is licensed.
+1.  To add a new directory or display contents on the side-panel. Add
+    details in the object in the file **_src/layout/menu/MenuData.js_**.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+    - Single Page: Add a JavaScript object with the properties of
+      icon, text and link
+
+    - Directory: Add a JavaScript object with properties of icon,
+      text, link and submenu array where add all the sub-directory
+      properties as an object.
+
+2.  Once you have added a new nav as a directory or a page. Create the
+    required page components in the pages folder. Make sure to export
+    it, to make it available to all other places of the project.
+
+3.  Include it in the route file in the directory **_routes/index.js_**.
+    Make sure to import the created component in Step 2, through
+    react-lazy process. And place the component in a route inside the
+    Switch component such as **_\<Route exact path="/your_link"
+    component={Your_Component}/\>._** Make sure the link provided here
+    is the same as in step one.
+
+4.  Restart the application and visit the created route.
