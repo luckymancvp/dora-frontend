@@ -1,7 +1,7 @@
 image: node:14
 
 stages:
-  - build
+  # - build
   - deploy
 
 cache:
@@ -24,7 +24,7 @@ build:
 deploy:
   stage: deploy
   rules:
-    - if: '$CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "master"'
+    # - if: '$CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "master"'
     - if: '$CI_COMMIT_BRANCH == "dev"'
       variables:
         S3_BUCKET: dev-dora-frontend-pamo
