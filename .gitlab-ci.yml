@@ -24,9 +24,6 @@ deploy:
   environment:
     name: production
     url: https://dora.pamoteam.com
-  only:
-    - master
-    - dev
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
       variables:
