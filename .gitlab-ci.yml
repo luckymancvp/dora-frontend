@@ -13,6 +13,10 @@ before_script:
 
 build:
   stage: build
+  only:
+    refs:
+      - master
+      - dev
   script:
     - npm run build
   artifacts:
@@ -21,9 +25,10 @@ build:
 
 deploy:
   stage: deploy
-  environment:
-    name: production
-    url: https://dora.pamoteam.com
+  only:
+    refs:
+      - master
+      - dev
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
       variables:
