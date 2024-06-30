@@ -14,7 +14,7 @@ before_script:
 build:
   stage: build
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
   script:
     - npm run build
   artifacts:
