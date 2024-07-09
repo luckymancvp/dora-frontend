@@ -6,26 +6,48 @@ import ChatBody from "./ChatBody";
 import User from "../../../images/avatar/b-sm.jpg";
 import { Button, Icon, UserAvatar } from "../../../components/Component";
 import { DropdownMenu, DropdownToggle, UncontrolledDropdown, DropdownItem } from "reactstrap";
+import { isBlank } from "../../../utils/Utils";
 import { chatData } from "./ChatData";
 import { ChatContext } from "./ChatContext";
 import { Link } from "react-router-dom";
 import { ChannelAsideBody, ChatAsideBody } from "./ChatAsideBody";
 
-const Chat = () => {
+const Chat = ({
+  fetchDataShops,
+  shops,
+  fetchConversations,
+  conversationFetching,
+  conversations,
+  fetchMessages,
+  messageFetching,
+  conversation,
+  messages,
+}) => {
   const [mainTab, setMainTab] = useState("Chats");
-  const [selectedId, setSelectedId] = useState(1);
+  const [selectedId, setSelectedId] = useState();
   const [filterTab, setFilterTab] = useState("messages");
   const [filteredChatList, setFilteredChatList] = useState([]);
   const [filterText, setFilterText] = useState("");
-  const [favState, setFavState] = useState(false);
-  const [favFilter, setFavFilter] = useState([]);
-  const [favFilterText, setFavFilterText] = useState("");
+  const [shopState, setShopState] = useState(false);
+  const [shopFilter, setShopFilter] = useState([]);
+  const [shopFilterText, setShopFilterText] = useState("");
   const [mobileView, setMobileView] = useState(false);
 
   const { chatState, fav } = useContext(ChatContext);
 
   const [chat, setChat] = chatState;
   const [favData] = fav;
+
+  useEffect(() => {
+    fetchDataShops();
+    fetchConversations();
+  }, []);
+
+  useEffect(() => {
+    if (selectedId) {
+      fetchMessages(selectedId);  // TODO "1277371435"
+    }
+  }, [selectedId]);
 
   // Filtering users by search
   useEffect(() => {
@@ -41,22 +63,22 @@ const Chat = () => {
 
   // Filtering favourite users by search
   useEffect(() => {
-    if (favFilterText !== "") {
-      const filteredObject = favData.filter((item) => {
-        return item.name.toLowerCase().includes(favFilterText.toLowerCase()) && item.fav === false;
+    if (shopFilterText !== "") {
+      const filteredObject = shops.filter((item) => {
+        return item.shopName.toLowerCase().includes(shopFilterText.toLowerCase());
       });
-      setFavFilter([...filteredObject]);
+      setShopFilter([...filteredObject]);
     } else {
-      setFavFilter([]);
+      setShopFilter([]);
     }
-  }, [favFilterText, favData]);
+  }, [shopFilterText, shops]);
 
   const onInputChange = (e) => {
     setFilterText(e.target.value);
   };
 
-  const favInputSearchChange = (e) => {
-    setFavFilterText(e.target.value);
+  const shopInputSearchChange = (e) => {
+    setShopFilterText(e.target.value);
   };
 
   const onFilterClick = (prop) => {
@@ -71,6 +93,13 @@ const Chat = () => {
       data[index].unread = false;
       setChat([...data]);
     }
+    setSelectedId(id);
+    if (window.innerWidth < 860) {
+      setMobileView(true);
+    }
+  };
+
+  const chatRoomItemClick = (id) => {
     setSelectedId(id);
     if (window.innerWidth < 860) {
       setMobileView(true);
@@ -157,8 +186,8 @@ const Chat = () => {
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterClick("archive")}
-                              className={filterTab === "archive" ? "active" : ""}
+                              onClick={() => onFilterClick("help_requests")}
+                              className={filterTab === "help_requests" ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -167,12 +196,12 @@ const Chat = () => {
                                   ev.preventDefault();
                                 }}
                               >
-                                <span>Archives Chats</span>
+                                <span>Help request</span>
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterClick("unread")}
-                              className={filterTab === "unread" ? "active" : ""}
+                              onClick={() => onFilterClick("not_replied")}
+                              className={filterTab === "not_replied" ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -181,12 +210,12 @@ const Chat = () => {
                                   ev.preventDefault();
                                 }}
                               >
-                                <span>Unread Chats</span>
+                                <span>Not Replied</span>
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterClick("group")}
-                              className={filterTab === "group" ? "active" : ""}
+                              onClick={() => onFilterClick("has_order")}
+                              className={filterTab === "has_order" ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -195,7 +224,7 @@ const Chat = () => {
                                   ev.preventDefault();
                                 }}
                               >
-                                <span>Group Chats</span>
+                                <span>Has Order</span>
                               </DropdownItem>
                             </li>
                           </ul>
@@ -221,16 +250,19 @@ const Chat = () => {
               <ChatAsideBody
                 onInputChange={onInputChange}
                 filteredChatList={filteredChatList}
-                favState={favState}
-                favFilter={favFilter}
-                setFavFilter={setFavFilter}
-                setFavState={setFavState}
+                shopState={shopState}
+                shopFilter={shopFilter}
+                setShopFilter={setShopFilter}
+                setShopState={setShopState}
                 selectedId={selectedId}
                 setSelectedId={setSelectedId}
-                favInputSearchChange={favInputSearchChange}
-                favFilterText={favFilterText}
+                shopInputSearchChange={shopInputSearchChange}
+                shopFilterText={shopFilterText}
                 chatItemClick={chatItemClick}
                 filterTab={filterTab}
+                shops={shops}
+                conversations={conversations}
+                chatRoomItemClick={chatRoomItemClick}
               />
             ) : mainTab === "Channel" ? (
               <ChannelAsideBody
@@ -246,12 +278,14 @@ const Chat = () => {
               <AppContact setTab={setMainTab} setSelectedId={setSelectedId} />
             )}
           </div>
-          {selectedId !== null ? (
+          {selectedId !== null && !isBlank(conversation) ? (
             <ChatBody
               id={selectedId}
               setSelectedId={setSelectedId}
               setMobileView={setMobileView}
               mobileView={mobileView}
+              conversation={conversation}
+              messages={messages}
             />
           ) : (
             <div className="nk-chat-body">

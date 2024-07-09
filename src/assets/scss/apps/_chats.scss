@@ -81,13 +81,17 @@ $chat-meta-sap: $ni-dot !default;
     }
     &-from{
         display: flex;
-        align-items: center;
+        align-items: baseline;
         justify-content: space-between;
+        gap: 5px;
         .name{
-            font-size: 0.9375rem;
+            font-size: 0.8375rem;
             margin-bottom: 0;
             font-weight: $fw-medium;
             color: $base-text;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
             .is-unread &{
                 font-weight: $fw-bold;
                 color: $base-color;
@@ -96,6 +100,7 @@ $chat-meta-sap: $ni-dot !default;
         .time{
             font-size: $fx-sz-12;
             color: $base-light;
+            text-wrap: nowrap;
         }
     }
     &-context{
@@ -103,15 +108,21 @@ $chat-meta-sap: $ni-dot !default;
         align-items: center;
         justify-content: space-between;
         .text{
-            width: calc(100% - 2.5rem);
+            width: calc(100% - 2.8rem);
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
             font-size: $fx-sz-13;
             color: $base-light;
+            margin-right: 3px;
             .is-unread &{
                 font-weight: $fw-medium;
                 color: $base-text;
+            }
+
+            p {
+                text-overflow: ellipsis;
+                overflow: hidden;
             }
         }
         .status{

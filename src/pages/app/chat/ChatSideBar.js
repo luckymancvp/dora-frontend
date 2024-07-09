@@ -8,7 +8,7 @@ import SimpleBar from "simplebar-react";
 import { findUpper } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
 
-const ChatSideBar = ({ sidebar, chat }) => {
+const ChatSideBar = ({ sidebar, chat, otherUser }) => {
   const { changeNickname, changeTheme, userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
 
   const [memberState, setMemberState] = useState(false);
@@ -16,33 +16,20 @@ const ChatSideBar = ({ sidebar, chat }) => {
   const [settingState, setSettingState] = useState(false);
   const [photoState, setPhotoState] = useState(false);
 
+  const otherUserName = otherUser.shopName || otherUser.displayName;
+  
   return (
     <SimpleBar className={`nk-chat-profile ${sidebar ? "visible" : ""}`}>
       <div className="user-card user-card-s2 my-4">
-        {chat.group ? (
-          <div className="user-avatar-group">
-            {chat.user.slice(0, 3).map((user,index) => {
-              return (
-                <UserAvatar
-                  theme={user.theme}
-                  text={findUpper(user.name)}
-                  image={user.image}
-                  size="md"
-                  className="chat-media"
-                  key={index}
-                ></UserAvatar>
-              );
-            })}
-            {chat.user.length > 3 && (
-              <UserAvatar theme="bg-light" text={chat.user.length - 3} size="md" className="chat-media"></UserAvatar>
-            )}
-          </div>
-        ) : (
-          <UserAvatar theme={chat.theme} image={chat.image} size="md" text={findUpper(chat.name)}></UserAvatar>
-        )}
+        <UserAvatar
+          theme="blue"
+          text={findUpper(otherUserName)}
+          image={otherUser.avatarUrl} 
+          size="md"
+          className="chat-media"
+        />
         <div className="user-info">
-          <h5>{chat.nickname ? chat.nickname : chat.name}</h5>
-          <span className="sub-text">Active {chat.active === true ? "now" : `${chat.active}`} ago</span>
+          <h5>{otherUserName}</h5>
         </div>
         <UncontrolledDropdown className="user-card-menu">
           <DropdownToggle tag="a" className="btn btn-icon btn-sm btn-trigger dropdown-toggle">

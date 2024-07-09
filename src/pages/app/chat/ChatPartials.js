@@ -5,85 +5,37 @@ import { Icon, UserAvatar } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
 
-export const MeChat = ({ item, chat, onRemoveMessage }) => {
+export const MeChat = ({ item }) => {
   return (
     <div className="chat is-me">
       <div className="chat-content">
         <div className="chat-bubbles">
-          {item.chat.map((msg, idx) => {
-            return (
-              <div className="chat-bubble" key={idx}>
-                {msg === "deleted" ? (
-                  <div className="chat-msg border bg-white text-muted">Message has been deleted</div>
-                ) : (
-                  <React.Fragment>
-                    <div className={`chat-msg bg-${chat.chatTheme}`}>{msg}</div>
-                    <ul className="chat-msg-more">
-                      <li className="d-none d-sm-block">
-                        <a
-                          href="#delete"
-                          onClick={(ev) => {
-                            ev.preventDefault();
-                            onRemoveMessage(idx, item.id);
-                          }}
-                          className="btn btn-icon btn-sm btn-trigger"
-                        >
-                          <Icon name="trash-fill"></Icon>
-                        </a>
-                      </li>
-                    </ul>
-                  </React.Fragment>
-                )}
-              </div>
-            );
-          })}
+          <div className="chat-bubble">
+            <div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>
+          </div>
         </div>
         <ul className="chat-meta">
-          <li>Abu Bin Ishtiyak</li>
-          <li>{item.date}</li>
+          <li>{item.etsy.messageDateHmShort}</li>
         </ul>
       </div>
     </div>
   );
 };
 
-export const YouChat = ({ item, chat }) => {
+export const YouChat = ({ item, sender }) => {
   return (
     <div className="chat is-you">
       <div className="chat-avatar">
-        {chat.group ? (
-          <UserAvatar image={item.user.image} theme={item.user.theme} text={findUpper(item.user.name)}>
-            {" "}
-            {chat.active === true ? (
-              <span className="status dot dot-lg dot-success"></span>
-            ) : (
-              <span className="status dot dot-lg dot-gray"></span>
-            )}
-          </UserAvatar>
-        ) : (
-          <UserAvatar image={chat.image} theme={chat.theme} text={findUpper(chat.name)}>
-            {" "}
-            {chat.active === true ? (
-              <span className="status dot dot-lg dot-success"></span>
-            ) : (
-              <span className="status dot dot-lg dot-gray"></span>
-            )}
-          </UserAvatar>
-        )}
+        <UserAvatar image={sender.avatarUrl} theme="blue" text={findUpper(sender.displayName)} />
       </div>
       <div className="chat-content">
         <div className="chat-bubbles">
-          {item.chat.map((msg, idx) => {
-            return (
-              <div className="chat-bubble" key={idx}>
-                <div className="chat-msg">{msg}</div>
-              </div>
-            );
-          })}
+          <div className="chat-bubble">
+            <div className="chat-msg" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>
+          </div>
         </div>
         <ul className="chat-meta">
-          <li>{chat.name}</li>
-          <li>{item.date}</li>
+          <li title={item.etsy?.messageDateFriendly}>{item.etsy.messageDateHmShort}</li>
         </ul>
       </div>
     </div>
@@ -237,5 +189,59 @@ export const ContactItem = ({ item, setTab, setSelectedId }) => {
         );
       })}
     </ul>
+  );
+};
+
+export const ChatRoomItem = ({ item, chatRoomItemClick }) => {
+  const totalOrders = item.etsy?.buyerInfo?.pastOrderHistory?.totalOrders || 0;
+  const otherUser = item.etsy.otherUser || item.etsy?.detail?.otherUser;
+  const userData = item.userData || item.etsy.userData;
+
+  return (
+    <li className={`chat-item ${item.etsy.isUnread ? "is-unread" : ""}`}>
+      <a
+        className="chat-link"
+        href="#chat-link"
+        onClick={(ev) => {
+          ev.preventDefault();
+          chatRoomItemClick(item.etsy.conversationId);
+        }}
+      >
+        <div className="chat-media user-avatar user-avatar-multiple">
+          <UserAvatar 
+            theme="blue"
+            text={findUpper(userData?.shopName)}
+            image={userData?.avatarUrl} 
+            className="chat-media"
+          />
+          <UserAvatar
+            theme="purple"
+            text={findUpper(otherUser?.displayName)}
+            image={otherUser?.avatarUrl}
+            size="md"
+            className="chat-media"
+          />
+        </div>
+        <div className="chat-info">
+          <div className="chat-from">
+            <div className="name">{`${otherUser?.displayName} - ${userData?.shopName}`}</div>
+            <span className="time">{item.etsy?.timestamp}</span>
+          </div>
+          <div className="chat-context">
+            <div className="text">
+              <p>{item.etsy?.excerpt}</p>
+            </div>
+            <div className="status delivered">
+              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" :  "check-circle"}`} />
+              <Icon 
+                name={`${item.etsy?.isOrderHelpRequest === true ? "help-request ni-alert-circle" : "" }`} 
+                style={{ color: "#f20" }}
+              ></Icon>
+              <Icon name={`${totalOrders > 0 ? "cart-fill" :  ""}`} />
+            </div>
+          </div>
+        </div>
+      </a>
+    </li>
   );
 };

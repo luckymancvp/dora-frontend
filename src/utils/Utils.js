@@ -1,3 +1,5 @@
+import { words, toString, upperFirst, lowerFirst, isNumber, isEmpty } from 'lodash';
+
 //url for production
 export var url = "";
 if (process.env.NODE_ENV === "development") {
@@ -23,6 +25,9 @@ export const checkForm = (formData) => {
 //Function that returns the first or first two letters from a name
 export const findUpper = (string) => {
   let extractedString = [];
+  if (string == undefined || null) {
+    string = "";
+  }
 
   for (var i = 0; i < string.length; i++) {
     if (string.charAt(i) === string.charAt(i).toUpperCase() && string.charAt(i) !== " ") {
@@ -149,3 +154,42 @@ export const monthNames = [
   "November",
   "December",
 ];
+
+export const camelCase = (string, options = {}) => {
+  const re = words(toString(string).replace(/['\u2019]/g, ''), /[^_\s]+/g).reduce((result, word, index) => result + (index ? upperFirst(word) : lowerFirst(word)), '');
+  return options.upperFirst ? upperFirst(re) : re;
+};
+
+export const camelCaseObject = (object, ignoreList = []) => {
+  let obj = { ...object };
+  if (typeof object === 'object' && object !== null) {
+    if (Array.isArray(object)) {
+      obj = object.map(item => camelCaseObject(item, ignoreList));
+    } else {
+      Object.keys(obj).forEach(key => {
+        let tmp = obj[key];
+        if (!ignoreList.includes(key)) {
+          if (typeof tmp === 'object' && tmp !== null) {
+            if (Array.isArray(tmp)) {
+              tmp = tmp.map(item => camelCaseObject(item, ignoreList));
+            } else {
+              tmp = camelCaseObject(tmp, ignoreList);
+              obj[key] = tmp;
+            }
+          }
+        }
+
+        delete obj[key];
+        if (tmp === null) { tmp = undefined; }
+        obj[camelCase(key)] = tmp;
+      });
+    }
+    return obj;
+  }
+  return object === null ? undefined : object;
+};
+
+export const isBlank = value => {
+  if (value === true || isNumber(value) || value instanceof File || value instanceof Date) { return false; }
+  return isEmpty(value);
+};
