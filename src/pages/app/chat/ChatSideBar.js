@@ -8,28 +8,28 @@ import SimpleBar from "simplebar-react";
 import { findUpper } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
 
-const ChatSideBar = ({ sidebar, chat, otherUser }) => {
+const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
   const { changeNickname, changeTheme, userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
 
-  const [memberState, setMemberState] = useState(false);
-  const [optionState, setOptionState] = useState(false);
-  const [settingState, setSettingState] = useState(false);
-  const [photoState, setPhotoState] = useState(false);
+  const [memberState, setMemberState] = useState(true);
+  const [optionState, setOptionState] = useState(true);
+  const [settingState, setSettingState] = useState(true);
+  const [photoState, setPhotoState] = useState(true);
+  const [receiptHistoryState, setReceiptHistoryState] = useState(false);
+  const receiptHistory = conversation.etsy?.buyerInfo?.receiptHistory || [];
 
-  const otherUserName = otherUser.shopName || otherUser.displayName;
-  
   return (
     <SimpleBar className={`nk-chat-profile ${sidebar ? "visible" : ""}`}>
       <div className="user-card user-card-s2 my-4">
         <UserAvatar
           theme="blue"
-          text={findUpper(otherUserName)}
+          text={findUpper(otherUser.displayName)}
           image={otherUser.avatarUrl} 
           size="md"
           className="chat-media"
         />
         <div className="user-info">
-          <h5>{otherUserName}</h5>
+          <h5>{otherUser.displayName}</h5>
         </div>
         <UncontrolledDropdown className="user-card-menu">
           <DropdownToggle tag="a" className="btn btn-icon btn-sm btn-trigger dropdown-toggle">
@@ -48,6 +48,42 @@ const ChatSideBar = ({ sidebar, chat, otherUser }) => {
         </UncontrolledDropdown>
       </div>
       <div className="chat-profile">
+      <div className="chat-profile-group">
+          <a
+            href="#options"
+            onClick={(ev) => {
+              ev.preventDefault();
+              setReceiptHistoryState(!receiptHistoryState);
+            }}
+            className={`chat-profile-head`}
+            id="chat-options"
+          >
+            <h6 className="title overline-title">Order history</h6>
+            <span className="indicator-icon">
+              <Icon name={`chevron-${receiptHistoryState ? "up" : "down"}`}></Icon>
+            </span>
+          </a>
+          <div className={`chat-profile-body collapse ${receiptHistoryState ? "" : "show"}`} id="receipt-history">
+            <div className="chat-profile-body-inner">
+              {receiptHistory.map((item, idx) => (
+                <div className="d-flex flex-column mb-2">
+                  <div>Order #{item.receiptId}</div>
+                  <div>{item.isShipped ? "Shipped" : ""}</div>
+                  {item.transactions.map((transaction, idx) => (
+                    <div className="d-flex pt-2">
+                      <img src={transaction.image} alt={item.receiptId} width={100} height={100}/>
+                      <div className="d-flex flex-column pt-0 p-2 overflow-hidden">
+                        <span className="text-truncate">{transaction.title}</span>
+                        <span>{transaction.value}</span>
+                        <span>Quantity: {transaction.quantity}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>)
+              )}
+            </div>
+          </div>
+        </div>
         <div className="chat-profile-group">
           <a
             href="#options"
