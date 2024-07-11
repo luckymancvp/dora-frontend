@@ -1,21 +1,31 @@
-import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
+import React, { useEffect, useCallback, useState, useContext, useRef } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import classNames from "classnames";
 import ChatSideBar from "./ChatSideBar";
 import SimpleBar from "simplebar-react";
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from "reactstrap";
 import { UserAvatar, Icon, Button } from "../../../components/Component";
+import { TextareaForm } from "../../../components/forms/TextareaForm";
 import { currentTime, findUpper, truncate } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
 
 import { MeChat, YouChat, MetaChat } from "./ChatPartials";
 
-const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, messages }) => {
+const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, messages, handleSendMessage }) => {
   const { deleteConvo, propAction, chatState } = useContext(ChatContext);
   const [chat, setChat] = chatState;
   const [Uchat, setUchat] = useState({});
   const [sidebar, setsidebar] = useState(false);
   const [inputText, setInputText] = useState("");
   const [chatOptions, setChatOptions] = useState(false);
+
+  const methods = useForm({
+    defaultValues: { message: "", attachments: null },
+  });
+
+  const {
+    handleSubmit, reset, formState: { isSubmitting },
+  } = methods;
 
   // Conversation selected
   const userData = conversation?.userData || conversation.etsy?.userData;
@@ -71,47 +81,19 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
     setsidebar(!sidebar);
   };
 
-  const onTextSubmit = (e) => {
-    e.preventDefault();
-    let allChat = chat;
-    let index = allChat.find((item) => item.id === id);
-    let defaultChat = Uchat;
-    let text = truncate(inputText, 74);
-    let newChatItem;
-    if (inputText !== "") {
-      if (defaultChat.convo.length === 0) {
-        newChatItem = {
-          id: `chat_${defaultChat.convo.length + 2}`,
-          me: true,
-          chat: [text],
-          date: `${currentTime()}`,
-        };
-        defaultChat.convo = [...defaultChat.convo, newChatItem];
-      } else {
-        if (defaultChat.convo[defaultChat.convo.length - 1].me === true) {
-          newChatItem = {
-            id: `chat_${defaultChat.convo.length + 2}`,
-            me: true,
-            chat: [...defaultChat.convo[defaultChat.convo.length - 1].chat, text],
-            date: `${currentTime()}`,
-          };
-          defaultChat.convo[defaultChat.convo.length - 1] = newChatItem;
-        } else {
-          let newChatItem = {
-            id: `chat_${defaultChat.convo.length + 2}`,
-            me: true,
-            chat: [text],
-            date: `${currentTime()}`,
-          };
-          defaultChat.convo = [...defaultChat.convo, newChatItem];
-        }
-      }
+  const saveMessage = useCallback(formValues => {
+    if (formValues.message !== "" || formValues.attachments?.length > 0) {
+      handleSendMessage(formValues, conversation.etsy?.conversationId);
+      reset();
     }
-    allChat[index] = defaultChat;
-    setChat([...allChat]);
-    setUchat({ ...defaultChat });
-    setInputText("");
-  };
+  }, [conversation, handleSendMessage, reset]);
+
+  const onTextSubmit = useCallback(e => {
+    e.preventDefault();
+    handleSubmit(saveMessage)();
+    reset();
+  }, [handleSubmit, saveMessage]);
+
 
   const onRemoveMessage = (idx, id) => {
     let allChat = chat;
@@ -170,7 +152,7 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
             </li>
           </ul>
           <ul className="nk-chat-head-tools">
-            <li>
+            {/* <li>
               <a
                 href="#call"
                 onClick={(ev) => {
@@ -191,7 +173,7 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
               >
                 <Icon name="video-fill"></Icon>
               </a>
-            </li>
+            </li> */}
             <li className="d-none d-sm-block">
               <UncontrolledDropdown>
                 <DropdownToggle tag="a" className="dropdown-toggle btn btn-icon btn-trigger text-primary">
@@ -256,88 +238,59 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
             }
           })}
         </SimpleBar>
-        <div className="nk-chat-editor">
-          <div className="nk-chat-editor-upload  ms-n1">
-            <Button
-              size="sm"
-              className={`btn-icon btn-trigger text-primary toggle-opt ${chatOptions ? "active" : ""}`}
-              onClick={() => onChatOptions()}
-            >
-              <Icon name="plus-circle-fill"></Icon>
-            </Button>
-            <div className={`chat-upload-option ${chatOptions ? "expanded" : ""}`}>
-              <ul className="">
-                <li>
-                  <a
-                    href="#img"
-                    onClick={(ev) => {
-                      ev.preventDefault();
-                    }}
-                  >
-                    <Icon name="img-fill"></Icon>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#camera"
-                    onClick={(ev) => {
-                      ev.preventDefault();
-                    }}
-                  >
-                    <Icon name="camera-fill"></Icon>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#mic"
-                    onClick={(ev) => {
-                      ev.preventDefault();
-                    }}
-                  >
-                    <Icon name="mic"></Icon>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#grid"
-                    onClick={(ev) => {
-                      ev.preventDefault();
-                    }}
-                  >
-                    <Icon name="grid-sq"></Icon>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="nk-chat-editor-form">
-            <div className="form-control-wrap">
-              <textarea
-                className="form-control form-control-simple no-resize"
-                rows="1"
-                id="default-textarea"
-                onChange={(e) => onInputChange(e)}
-                value={inputText}
-                placeholder="Type your message..."
-                onKeyDown={(e) => {
-                  e.code === "Enter" && onTextSubmit(e);
-                }}
-              ></textarea>
-            </div>
-          </div>
-          <ul className="nk-chat-editor-tools g-2">
-            <li>
-              <Button size="sm" className="btn-icon btn-trigger text-primary">
-                <Icon name="happyf-fill"></Icon>
+        <FormProvider {...methods}>
+          <div className="nk-chat-editor">
+            <div className="nk-chat-editor-upload  ms-n1">
+              <Button
+                size="sm"
+                className={`btn-icon btn-trigger text-primary toggle-opt ${chatOptions ? "active" : ""}`}
+                onClick={() => onChatOptions()}
+              >
+                <Icon name="plus-circle-fill"></Icon>
               </Button>
-            </li>
-            <li>
-              <Button color="primary" onClick={(e) => onTextSubmit(e)} className="btn-round btn-icon">
-                <Icon name="send-alt"></Icon>
-              </Button>
-            </li>
-          </ul>
-        </div>
+              <div className={`chat-upload-option ${chatOptions ? "expanded" : ""}`}>
+                <ul className="">
+                  <li>
+                    <a
+                      href="#img"
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                      }}
+                    >
+                      <Icon name="img-fill"></Icon>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="nk-chat-editor-form">
+              <div className="form-control-wrap">
+                <TextareaForm
+                  name="message"
+                  rows="1"
+                  id="default-textarea"
+                  className="form-control form-control-simple no-resize"
+                  placeholder="Type your message..."
+                  onKeyPress={(e) => {
+                    e.code === "Enter" && onTextSubmit(e);
+                  }}
+                />
+              </div>
+            </div>
+            <ul className="nk-chat-editor-tools g-2">
+              {/* <li>
+                <Button size="sm" className="btn-icon btn-trigger text-primary">
+                  <Icon name="happyf-fill"></Icon>
+                </Button>
+              </li> */}
+              <li>
+                <Button color="primary" onClick={handleSubmit(saveMessage)} className="btn-round btn-icon">
+                  <Icon name="send-alt"></Icon>
+                </Button>
+              </li>
+            </ul>
+          </div>
+        </FormProvider>
 
         <ChatSideBar sidebar={sidebar} chat={Uchat} conversation={conversation} otherUser={otherUser} />
 

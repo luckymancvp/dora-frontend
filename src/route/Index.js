@@ -116,6 +116,7 @@ import Error504Modern from "../pages/error/504-modern";
 import Error504Classic from "../pages/error/504-classic";
 
 import Login from "../pages/auth/Login";
+import LoginGoogle from "../pages/auth/LoginGoogle";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import Success from "../pages/auth/Success";
@@ -179,7 +180,7 @@ const Router = () => {
           </Route>
 
           <Route path="app-messages" element={<AppMessages />}></Route>
-          <Route path="app-chat" element={<Chat />}></Route>
+          <Route path="messages" element={<Chat />}></Route>
           <Route path="app-calender" element={<Calender />}></Route>
           <Route path="app-inbox" element={<Inbox />}></Route>
           <Route path="app-kanban" element={<Kanban />}></Route>
@@ -271,6 +272,7 @@ const Router = () => {
             <Route path="auth-reset" element={<ForgotPassword />}></Route>
             <Route path="auth-register" element={<Register />}></Route>
             <Route path="auth-login" element={<Login />}></Route>
+            <Route path="login" element={<LoginGoogle />}></Route>
 
             <Route path="errors">
               <Route path="404-modern" element={<Error404Modern />}></Route>

@@ -9,6 +9,14 @@ export const fetchMessages = createAsyncThunk(
   },
 );
 
+export const createMessage = createAsyncThunk(
+  "messages/CREATE_MESSAGE",
+  async ({ formData, conversationId }) => {
+    const result = await MessagesService.createMessage(conversationId, formData);
+    return result?.data;
+  },
+);
+
 const initialState = {
   conversation: {},
   messages: [],

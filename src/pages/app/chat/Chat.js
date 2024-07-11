@@ -22,10 +22,12 @@ const Chat = ({
   messageFetching,
   conversation,
   messages,
+  handleSendMessage,
 }) => {
   const [mainTab, setMainTab] = useState("Chats");
   const [selectedId, setSelectedId] = useState();
   const [filterTab, setFilterTab] = useState("messages");
+  const [filterTabs, setFilterTabs] = useState(["messages"]);
   const [filteredChatList, setFilteredChatList] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [shopState, setShopState] = useState(false);
@@ -81,8 +83,12 @@ const Chat = ({
     setShopFilterText(e.target.value);
   };
 
-  const onFilterClick = (prop) => {
-    setFilterTab(prop);
+  const onFilterTabClick = (prop) => {
+    if (filterTabs.includes(prop)) {
+      setFilterTabs(filterTabs.filter(tab => tab !== prop));
+    } else {
+      setFilterTabs([...filterTabs, prop]);
+    }
   };
 
   const chatItemClick = (id) => {
@@ -172,8 +178,8 @@ const Chat = ({
                             </li>
                             <li className="divider"></li>
                             <li
-                              onClick={() => onFilterClick("messages")}
-                              className={filterTab === "messages" ? "active" : ""}
+                              onClick={() => onFilterTabClick("messages")}
+                              className={filterTabs.includes("messages") ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -186,8 +192,8 @@ const Chat = ({
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterClick("help_requests")}
-                              className={filterTab === "help_requests" ? "active" : ""}
+                              onClick={() => onFilterTabClick("help_requests")}
+                              className={filterTabs.includes("help_requests") ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -200,8 +206,8 @@ const Chat = ({
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterClick("not_replied")}
-                              className={filterTab === "not_replied" ? "active" : ""}
+                              onClick={() => onFilterTabClick("not_replied")}
+                              className={filterTabs.includes("not_replied") ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -214,8 +220,8 @@ const Chat = ({
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterClick("has_order")}
-                              className={filterTab === "has_order" ? "active" : ""}
+                              onClick={() => onFilterTabClick("has_order")}
+                              className={filterTabs.includes("has_order") ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -231,11 +237,11 @@ const Chat = ({
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     </li>
-                    <li>
+                    {/* <li>
                       <Button color="light" className="btn-round btn-icon">
                         <Icon name="edit-alt-fill"></Icon>
                       </Button>
-                    </li>
+                    </li> */}
                   </>
                 ) : (
                   <li>
@@ -259,7 +265,7 @@ const Chat = ({
                 shopInputSearchChange={shopInputSearchChange}
                 shopFilterText={shopFilterText}
                 chatItemClick={chatItemClick}
-                filterTab={filterTab}
+                filterTabs={filterTabs}
                 shops={shops}
                 conversations={conversations}
                 chatRoomItemClick={chatRoomItemClick}
@@ -286,6 +292,7 @@ const Chat = ({
               mobileView={mobileView}
               conversation={conversation}
               messages={messages}
+              handleSendMessage={handleSendMessage}
             />
           ) : (
             <div className="nk-chat-body">
@@ -294,7 +301,7 @@ const Chat = ({
                   <Icon name="chat" className="icon-circle icon-circle-xxl bg-white"></Icon>
                 </div>
                 <div className="nk-chat-blank-btn">
-                  <Link to={`${process.env.PUBLIC_URL}/app-chat`}>
+                  <Link to={`${process.env.PUBLIC_URL}/messages`}>
                     <Button color="primary" disabled={mainTab === "Contact"} onClick={() => setMainTab("Contact")}>
                       Start Chat
                     </Button>

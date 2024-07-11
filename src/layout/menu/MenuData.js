@@ -97,7 +97,7 @@ const menu = [
   {
     icon: "chat-circle",
     text: "Messenger",
-    link: "/app-chat",
+    link: "/messages",
     // subMenu: [
     // {
     //   text: "Messages",

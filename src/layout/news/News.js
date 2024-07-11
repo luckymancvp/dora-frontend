@@ -10,7 +10,7 @@ const News = () => {
         </div>
         <div className="nk-news-text">
           <p>
-            Do you know the latest update of 2022? <span> A overview of our is now available on YouTube</span>
+            Do you know the latest update of 2024? <span> A overview of our is now available on YouTube</span>
           </p>
           <Icon name="external" />
         </div>

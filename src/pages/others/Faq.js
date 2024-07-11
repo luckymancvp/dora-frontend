@@ -15,6 +15,8 @@ import {
 } from "../../components/Component";
 
 const Faq = ({ ...props }) => {
+  const emailLink = 'mailto:cuonglm@pamoteam.com';
+
   return (
     <>
       <Head title="FAQ" />
@@ -145,9 +147,11 @@ const Faq = ({ ...props }) => {
                   </div>
                 </BlockContent>
                 <BlockContent className="flex-shrink-0">
-                  <Button color="white" outline className="btn-outline-primary btn-dim">
-                    Get Support Now
-                  </Button>
+                  <a href={emailLink} target="_blank" rel="noopener noreferrer">
+                    <Button color="white" outline className="btn-outline-primary btn-dim">
+                      Get Support Now
+                    </Button>
+                  </a>
                 </BlockContent>
               </div>
             </PreviewCard>

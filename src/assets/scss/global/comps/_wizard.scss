@@ -135,3 +135,67 @@
         }
     }
 }
+
+.gsi-material-button {
+    width: auto;
+    max-width: 400px;
+    min-width: min-content;
+    margin-top: 20px;
+    background-color: white;
+    background-image: none;
+    border: 1px solid #747775;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #1f1f1f;
+    font-family: 'Roboto', arial, sans-serif;
+    font-size: 14px;
+    height: 40px;
+    letter-spacing: 0.25px;
+    outline: none;
+    overflow: hidden;
+    padding: 0 12px;
+    position: relative;
+    text-align: center;
+    transition: background-color .218s, border-color .218s, box-shadow .218s;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    .gsi-material-button-content-wrapper {
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        position: relative;
+        justify-items: center;
+
+        .gsi-material-button-contents {
+            -webkit-flex-grow: 1;
+            flex-grow: 1;
+            font-family: 'Roboto', arial, sans-serif;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: top;
+        }
+
+        .gsi-material-button-icon {
+            width: 20px;
+            height: 26px;
+            margin-right: 12px;
+            min-width: 20px;
+        }
+    }
+
+    &:hover {
+        box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+    }
+
+    &:hover .gsi-material-button-state {
+        background-color: #303030;
+        opacity: 8%;
+    }
+}
+

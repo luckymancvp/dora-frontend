@@ -375,7 +375,7 @@ const InboxAside = ({
                           <span>Send Email</span>
                         </DropdownItem>
                       </li>
-                      <LinkItem link={"/app-chat"}>Start Chat</LinkItem>
+                      <LinkItem link={"/message"}>Start Chat</LinkItem>
                     </LinkList>
                   </DropdownMenu>
                 </UncontrolledDropdown>

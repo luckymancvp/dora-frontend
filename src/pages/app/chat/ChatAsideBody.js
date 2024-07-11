@@ -1,4 +1,4 @@
-import React, { useState , useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Icon, UserAvatar } from "../../../components/Component";
 import SimpleBar from "simplebar-react";
 import { Input, Button } from "reactstrap";
@@ -16,7 +16,7 @@ export const ChatAsideBody = ({
   selectedId,
   shopInputSearchChange,
   shopFilterText,
-  filterTab,
+  filterTabs,
   chatItemClick,
   filteredChatList,
   shops,
@@ -29,23 +29,25 @@ export const ChatAsideBody = ({
   const filterConversations = useMemo(() => conversations.filter(item => {
     const totalOrders = item.etsy?.buyerInfo?.pastOrderHistory?.totalOrders || 0;
 
-    if (filterTab === "messages"
-      || (filterTab === "help_requests" && item.etsy.isOrderHelpRequest)
-      || (filterTab === "not_replied" && !item.etsy.hasReplied)
-      || (filterTab === "has_order" && totalOrders > 0)
+    if (shopData.length > 0) {
+      const userData = item.userData || item.etsy.userData;
+      const findItem = shopData.some(shop => shop.userId == userData?.userId);
+
+      if (!findItem) {
+        return false;
+      }
+    }
+
+    if (filterTabs.includes("messages")
+      || (filterTabs.includes("help_requests") && item.etsy.isOrderHelpRequest)
+      || (filterTabs.includes("not_replied") && !item.etsy.hasReplied)
+      || (filterTabs.includes("has_order") && totalOrders > 0)
     ) {
       return true;
     }
 
     return false;
-  }), [conversations, filterTab]);
-
-  const mappingName = {
-    messages: "Messages",
-    help_requests: "Help requests",
-    not_replied: "Not replied",
-    has_order: "Has order",
-  }
+  }), [conversations, filterTabs, shopData]);
 
   const addShop = (newShop) => {
     const isDuplicate = shopData.some(shop => shop.userId === newShop.userId);
@@ -53,6 +55,12 @@ export const ChatAsideBody = ({
       setShopData([...shopData, newShop]);
     }
   };
+
+  const removeShop = (userId) => {
+    setShopData(shopData.filter(shop => shop.userId !== userId));
+  };
+
+  const filteredShopList = shops.filter(shop => !shopData.some(s => s.userId === shop.userId));
 
   return (
     <SimpleBar className="nk-chat-aside-body">
@@ -73,7 +81,7 @@ export const ChatAsideBody = ({
         </div>
       </div>
       <div className="nk-chat-aside-panel nk-chat-fav">
-        <h6 className="title overline-title-alt">Favorites</h6>
+        <h6 className="title overline-title-alt">SHOPS</h6>
         <ul className="fav-list">
           <li>
             <Button
@@ -88,10 +96,11 @@ export const ChatAsideBody = ({
           </li>
           {shopData.map((shop, idx) => {
             return (
-              <li key={idx} onClick={() => setSelectedId(shop.userId)}>
-                <a href="#" onClick={(ev) => ev.preventDefault()}>
-                  <UserAvatar image={shop.avatarUrl} theme="blue" text={findUpper(shop.shopName)}/>
-                </a>
+              <li key={idx}>
+                <span onClick={(ev) => ev.preventDefault()}>
+                  <UserAvatar image={shop.avatarUrl} theme="blue" text={findUpper(shop.shopName)} />
+                </span>
+                <span className="btn-rm" onClick={() => removeShop(shop.userId)}><Icon name="cross-sm"></Icon></span>
               </li>
             );
           })}
@@ -117,11 +126,11 @@ export const ChatAsideBody = ({
           </div>
           <div className="nk-chat-aside-panel nk-chat-contact">
             <ul className="contacts-list">
-              {shopFilter.length === 0 ? (
+              {filteredShopList.length === 0 ? (
                 shopFilterText ? (
                   <div className="ms-3">No shop found</div>
                 ) : (
-                  shops.slice(0, 3).map((shop, idx) => {
+                  shops.map((shop, idx) => {
                     return (
                       <li key={idx} onClick={() => addShop(shop)}>
                         <div className="user-card">
@@ -135,7 +144,7 @@ export const ChatAsideBody = ({
                           </a>
                           <div className="user-actions">
                             <a href="#add-fav" onClick={(ev) => ev.preventDefault()}>
-                              Add to favourite
+                              Add to shop
                             </a>
                           </div>
                         </div>
@@ -144,7 +153,7 @@ export const ChatAsideBody = ({
                   })
                 )
               ) : (
-                shopFilter.map((shop, idx) => {
+                filteredShopList.map((shop, idx) => {
                   return (
                     <li key={idx} onClick={() => addShop(shop)}>
                       <div className="user-card">
@@ -158,7 +167,7 @@ export const ChatAsideBody = ({
                         </a>
                         <div className="user-actions">
                           <a href="#start-chat" onClick={(ev) => ev.preventDefault()}>
-                            Start Chat
+                            Add to shop
                           </a>
                         </div>
                       </div>
@@ -171,7 +180,7 @@ export const ChatAsideBody = ({
         </SimpleBar>
       )}
       <div className="nk-chat-list">
-        <h6 className="title overline-title-alt">{mappingName[filterTab]}</h6>
+        <h6 className="title overline-title-alt">Messages</h6>
         <ul className="chat-list">
           {filterConversations.length !== 0 ? (
             filterConversations.map((item, idx) => {

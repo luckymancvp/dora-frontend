@@ -24,7 +24,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
         <UserAvatar
           theme="blue"
           text={findUpper(otherUser.displayName)}
-          image={otherUser.avatarUrl} 
+          image={otherUser.avatarUrl}
           size="md"
           className="chat-media"
         />
@@ -48,7 +48,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
         </UncontrolledDropdown>
       </div>
       <div className="chat-profile">
-      <div className="chat-profile-group">
+        <div className="chat-profile-group">
           <a
             href="#options"
             onClick={(ev) => {
@@ -71,7 +71,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
                   <div>{item.isShipped ? "Shipped" : ""}</div>
                   {item.transactions.map((transaction, idx) => (
                     <div className="d-flex pt-2">
-                      <img src={transaction.image} alt={item.receiptId} width={100} height={100}/>
+                      <img src={transaction.image} alt={item.receiptId} width={100} height={100} />
                       <div className="d-flex flex-column pt-0 p-2 overflow-hidden">
                         <span className="text-truncate">{transaction.title}</span>
                         <span>{transaction.value}</span>
@@ -84,7 +84,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
             </div>
           </div>
         </div>
-        <div className="chat-profile-group">
+        {/* <div className="chat-profile-group">
           <a
             href="#options"
             onClick={(ev) => {
@@ -259,7 +259,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
               </ul>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* .chat-profile-group */}
         {chat.group && (
           <div className="chat-profile-group">
@@ -380,7 +380,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
             </div>
           </div>
         )}
-        <div className="chat-profile-group">
+        {/* <div className="chat-profile-group">
           <a
             href="#settings"
             onClick={(ev) => {
@@ -438,9 +438,9 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
               </ul>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* .chat-profile-group */}
-        <div className="chat-profile-group">
+        {/* <div className="chat-profile-group">
           <a
             href="#shared"
             onClick={(ev) => {
@@ -490,7 +490,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
               </ul>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* .chat-profile-group */}
       </div>
     </SimpleBar>

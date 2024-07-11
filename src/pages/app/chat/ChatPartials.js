@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Icon, UserAvatar } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
+import { formatTimestamp } from '../../../utils/DateTimeFormat';
 
 export const MeChat = ({ item }) => {
   return (
@@ -103,9 +104,8 @@ export const ChatItem = ({ item, chatItemClick, setSelectedId, selectedId }) => 
             </div>
             <div className="status delivered">
               <Icon
-                name={`${
-                  item.delivered === true ? "check-circle-fill" : item.delivered === "sent" ? "check-circle" : ""
-                }`}
+                name={`${item.delivered === true ? "check-circle-fill" : item.delivered === "sent" ? "check-circle" : ""
+                  }`}
               ></Icon>
             </div>
           </div>
@@ -182,7 +182,7 @@ export const ContactItem = ({ item, setTab, setSelectedId }) => {
                 <div className="user-name">{contact.name}</div>
               </a>
               <div className="user-actions">
-                <Link to={`${process.env.PUBLIC_URL}/app-chat`}>Start Chat</Link>
+                <Link to={`${process.env.PUBLIC_URL}/messages`}>Start Chat</Link>
               </div>
             </div>
           </li>
@@ -196,6 +196,19 @@ export const ChatRoomItem = ({ item, chatRoomItemClick }) => {
   const totalOrders = item.etsy?.buyerInfo?.pastOrderHistory?.totalOrders || 0;
   const otherUser = item.etsy.otherUser || item.etsy?.detail?.otherUser;
   const userData = item.userData || item.etsy.userData;
+  const messages = item.etsy?.detail?.messages;
+  const sanitizeHTML = (html) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
+  let message = "";
+  let createDate = null;
+
+  if (messages && messages.length > 0) {
+    const lastMessage = messages[messages.length - 1];
+    message = lastMessage?.message ? sanitizeHTML(lastMessage.message) : "Send attachment";
+    createDate = formatTimestamp(lastMessage.createDate);
+  }
 
   return (
     <li className={`chat-item ${item.etsy.isUnread ? "is-unread" : ""}`}>
@@ -208,10 +221,10 @@ export const ChatRoomItem = ({ item, chatRoomItemClick }) => {
         }}
       >
         <div className="chat-media user-avatar user-avatar-multiple">
-          <UserAvatar 
+          <UserAvatar
             theme="blue"
             text={findUpper(userData?.shopName)}
-            image={userData?.avatarUrl} 
+            image={userData?.avatarUrl}
             className="chat-media"
           />
           <UserAvatar
@@ -225,19 +238,19 @@ export const ChatRoomItem = ({ item, chatRoomItemClick }) => {
         <div className="chat-info">
           <div className="chat-from">
             <div className="name">{`${otherUser?.displayName} - ${userData?.shopName}`}</div>
-            <span className="time">{item.etsy?.timestamp}</span>
+            <span className="time">{createDate}</span>
           </div>
           <div className="chat-context">
             <div className="text">
-              <p>{item.etsy?.excerpt}</p>
+              <p dangerouslySetInnerHTML={{ __html: message }}></p>
             </div>
             <div className="status delivered">
-              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" :  "check-circle"}`} />
-              <Icon 
-                name={`${item.etsy?.isOrderHelpRequest === true ? "help-request ni-alert-circle" : "" }`} 
+              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : "check-circle"}`} />
+              <Icon
+                name={`${item.etsy?.isOrderHelpRequest === true ? "help-request ni-alert-circle" : ""}`}
                 style={{ color: "#f20" }}
               ></Icon>
-              <Icon name={`${totalOrders > 0 ? "cart-fill" :  ""}`} />
+              <Icon name={`${totalOrders > 0 ? "cart-fill" : ""}`} />
             </div>
           </div>
         </div>
