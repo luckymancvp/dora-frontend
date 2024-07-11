@@ -6,7 +6,8 @@ import { findUpper } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
 import { formatTimestamp } from '../../../utils/DateTimeFormat';
 
-export const MeChat = ({ item }) => {
+export const MeChat = ({ item, sender }) => {
+  console.log(sender);
   return (
     <div className="chat is-me">
       <div className="chat-content">
@@ -18,6 +19,9 @@ export const MeChat = ({ item }) => {
         <ul className="chat-meta">
           <li>{item.etsy.messageDateHmShort}</li>
         </ul>
+      </div>
+      <div className="chat-avatar">
+        <UserAvatar image={sender.avatarUrl} theme="blue" text={findUpper(sender.displayName)} />
       </div>
     </div>
   );

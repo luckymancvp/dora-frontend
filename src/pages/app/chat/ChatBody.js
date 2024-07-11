@@ -232,7 +232,7 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
         <SimpleBar className="nk-chat-panel" scrollableNodeProps={{ ref: messagesEndRef }}>
           {messages.map((item, idx) => {
             if (item.etsy.senderId === userData.userId) {
-              return <MeChat key={idx} item={item}></MeChat>;
+              return <MeChat key={idx} item={item} sender={userData} ></MeChat>;
             } else {
               return <YouChat key={idx} item={item} sender={otherUser}></YouChat>;
             }

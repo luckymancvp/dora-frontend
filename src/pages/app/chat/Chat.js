@@ -11,6 +11,7 @@ import { chatData } from "./ChatData";
 import { ChatContext } from "./ChatContext";
 import { Link } from "react-router-dom";
 import { ChannelAsideBody, ChatAsideBody } from "./ChatAsideBody";
+import { debounce } from 'lodash';
 
 const Chat = ({
   fetchDataShops,
@@ -63,7 +64,7 @@ const Chat = ({
     }
   }, [filterText, setFilteredChatList]);
 
-  // Filtering favourite users by search
+  // Filtering shop users by search
   useEffect(() => {
     if (shopFilterText !== "") {
       const filteredObject = shops.filter((item) => {
@@ -79,9 +80,9 @@ const Chat = ({
     setFilterText(e.target.value);
   };
 
-  const shopInputSearchChange = (e) => {
+  const shopInputSearchChange = debounce((e) => {
     setShopFilterText(e.target.value);
-  };
+  }, 300);
 
   const onFilterTabClick = (prop) => {
     if (filterTabs.includes(prop)) {

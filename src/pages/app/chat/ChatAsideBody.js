@@ -80,6 +80,7 @@ export const ChatAsideBody = ({
           </div>
         </div>
       </div>
+      {/* handle add and remove shop */}
       <div className="nk-chat-aside-panel nk-chat-fav">
         <h6 className="title overline-title-alt">SHOPS</h6>
         <ul className="fav-list">
@@ -106,6 +107,7 @@ export const ChatAsideBody = ({
           })}
         </ul>
       </div>
+      {/* handle search shop by name */}
       {shopState && (
         <SimpleBar className="nk-chat-aside-body">
           <div className="nk-chat-aside-search">
