@@ -7,6 +7,7 @@ import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from
 import SimpleBar from "simplebar-react";
 import { findUpper } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
+import ImageContainer from "./GalleryImage";
 
 const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
   const { changeNickname, changeTheme, userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
@@ -66,12 +67,12 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
           <div className={`chat-profile-body collapse ${receiptHistoryState ? "" : "show"}`} id="receipt-history">
             <div className="chat-profile-body-inner">
               {receiptHistory.map((item, idx) => (
-                <div className="d-flex flex-column mb-2">
+                <div className="d-flex flex-column mb-2" key={`history-${idx}`}>
                   <div>Order #{item.receiptId}</div>
                   <div>{item.isShipped ? "Shipped" : ""}</div>
-                  {item.transactions.map((transaction, idx) => (
-                    <div className="d-flex pt-2">
-                      <img src={transaction.image} alt={item.receiptId} width={100} height={100} />
+                  {item.transactions.map((transaction, idy) => (
+                    <div className="d-flex pt-2" key={`history-${idy}`}>
+                      <ImageContainer img={transaction.image} key={`image-chat-${idx}`} className="transaction-image" width={100} height={100}/>
                       <div className="d-flex flex-column pt-0 p-2 overflow-hidden">
                         <span className="text-truncate">{transaction.title}</span>
                         <span>{transaction.value}</span>

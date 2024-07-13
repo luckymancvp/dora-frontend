@@ -317,6 +317,7 @@ $chat-meta-sap: $ni-dot !default;
         background-color: $white;
         border-radius: $border-radius-xl;
         padding: .5rem 1rem;
+        word-break: break-word;
         &-more {
             display: flex;
             align-items: center;
@@ -390,6 +391,10 @@ $chat-meta-sap: $ni-dot !default;
 
     &.is-you{
         .chat-bubble{
+            flex-direction: column-reverse;
+            justify-content: flex-start;
+            align-items: start;
+            gap: 5px;
             &s{
                 .attach-files {
                     border-color: $white;
@@ -415,6 +420,12 @@ $chat-meta-sap: $ni-dot !default;
                 }
             }
         }
+        .chat-img {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
     }
     &.is-me{
         justify-content: flex-end;
@@ -426,7 +437,10 @@ $chat-meta-sap: $ni-dot !default;
             justify-content: flex-end;
         }
         .chat-bubble{
-            flex-direction: row-reverse;
+            flex-direction: column-reverse;
+            justify-content: flex-end;
+            align-items: end;
+            gap: 5px;
             &s{
                 .attach-files {
                     border-color: $accent-300;
@@ -451,6 +465,12 @@ $chat-meta-sap: $ni-dot !default;
                     border-bottom-right-radius: $border-radius;
                 }
             }
+        }
+        .chat-img {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 6px;
         }
     }
     
@@ -1040,5 +1060,17 @@ $chat-meta-sap: $ni-dot !default;
         &-profile{
             width: $chat-profile-width-sm;
         }
+    }
+}
+
+@media (max-width:1199px){
+    .chat-content .image-chat {
+        .item-image {
+            width: 100px;
+        }
+    }
+
+    .nk-content-body {
+        margin-top: 20px; // TODO
     }
 }

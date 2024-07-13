@@ -28,22 +28,22 @@ const Chat = ({
   const [mainTab, setMainTab] = useState("Chats");
   const [selectedId, setSelectedId] = useState();
   const [filterTab, setFilterTab] = useState("messages");
-  const [filterTabs, setFilterTabs] = useState(["messages"]);
+  const [filterTabs, setFilterTabs] = useState(() => {
+    const savedTabs = localStorage.getItem("filtertabs");
+    return savedTabs ? JSON.parse(savedTabs) : { "messages": true };
+  });
   const [filteredChatList, setFilteredChatList] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [shopState, setShopState] = useState(false);
   const [shopFilter, setShopFilter] = useState([]);
   const [shopFilterText, setShopFilterText] = useState("");
   const [mobileView, setMobileView] = useState(false);
-
   const { chatState, fav } = useContext(ChatContext);
-
   const [chat, setChat] = chatState;
   const [favData] = fav;
 
   useEffect(() => {
     fetchDataShops();
-    fetchConversations();
   }, []);
 
   useEffect(() => {
@@ -85,12 +85,20 @@ const Chat = ({
   }, 300);
 
   const onFilterTabClick = (prop) => {
-    if (filterTabs.includes(prop)) {
-      setFilterTabs(filterTabs.filter(tab => tab !== prop));
+    if (prop === "messages" && filterTabs.messages === false) {
+      setFilterTabs({ messages: true });
     } else {
-      setFilterTabs([...filterTabs, prop]);
+      setFilterTabs(prevState => ({
+        ...prevState,
+        messages: false,
+        [prop]: prevState[prop] ? !prevState[prop] : true
+      }));
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("filter_tabs", JSON.stringify(filterTabs));
+  }, [filterTabs]);
 
   const chatItemClick = (id) => {
     let data = chat;
@@ -180,7 +188,7 @@ const Chat = ({
                             <li className="divider"></li>
                             <li
                               onClick={() => onFilterTabClick("messages")}
-                              className={filterTabs.includes("messages") ? "active" : ""}
+                              className={filterTabs.messages ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -193,8 +201,8 @@ const Chat = ({
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterTabClick("help_requests")}
-                              className={filterTabs.includes("help_requests") ? "active" : ""}
+                              onClick={() => onFilterTabClick("only_is_order_help_request")}
+                              className={filterTabs.only_is_order_help_request ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -207,8 +215,8 @@ const Chat = ({
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterTabClick("not_replied")}
-                              className={filterTabs.includes("not_replied") ? "active" : ""}
+                              onClick={() => onFilterTabClick("only_not_replied")}
+                              className={filterTabs.only_not_replied ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -221,8 +229,8 @@ const Chat = ({
                               </DropdownItem>
                             </li>
                             <li
-                              onClick={() => onFilterTabClick("has_order")}
-                              className={filterTabs.includes("has_order") ? "active" : ""}
+                              onClick={() => onFilterTabClick("only_has_order")}
+                              className={filterTabs.only_has_order ? "active" : ""}
                             >
                               <DropdownItem
                                 tag="a"
@@ -270,6 +278,8 @@ const Chat = ({
                 shops={shops}
                 conversations={conversations}
                 chatRoomItemClick={chatRoomItemClick}
+                fetchConversations={fetchConversations}
+                conversationFetching={conversationFetching}
               />
             ) : mainTab === "Channel" ? (
               <ChannelAsideBody

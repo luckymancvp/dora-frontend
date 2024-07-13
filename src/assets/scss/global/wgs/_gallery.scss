@@ -1,7 +1,24 @@
 //gallery
-.gallery{
-    &-image{
+.gallery {
+    &-image {
         position: relative;
         z-index: 1;
+        &.is-me,
+        &.is-you {
+            overflow: hidden;
+            line-height: 0;
+            border-radius: $border-radius-lg;
+            padding: 5px;
+        }
+        &.is-me:last-child {
+            border-bottom-right-radius: 0;
+        }
+        &.is-you:first-child {
+            border-bottom-left-radius: 0;
+        }
+        .item-image {
+            object-fit: cover;
+            border-radius: $border-radius-lg;
+        }
     }
 }

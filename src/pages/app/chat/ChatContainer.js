@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Chat from "./Chat";
 import { ChatContextProvider } from "./ChatContext";
 import { fetchShops } from "../../../redux/slices/Shops";
-import { fetchConversations } from "../../../redux/slices/Conversations";
+import { fetchConversations, setCurrentPage } from "../../../redux/slices/Conversations";
 import { fetchMessages, createMessage } from "../../../redux/slices/Messages";
 
 const ChatContainer = () => {
@@ -19,7 +19,14 @@ const ChatContainer = () => {
   }, [dispatch]);
 
   const fetchDataConversations = useCallback((args = {}) => {
-    dispatch(fetchConversations()).unwrap();
+    dispatch(setCurrentPage(args.page || 1));
+    dispatch(fetchConversations({
+      params: {
+        page: 1,
+        items_per_page: 10,
+        ...args,
+      },
+    })).unwrap();
   }, [dispatch]);
 
   const fetchDataMessage = useCallback((conversationId) => {

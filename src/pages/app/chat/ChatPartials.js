@@ -5,15 +5,22 @@ import { Icon, UserAvatar } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
 import { formatTimestamp } from '../../../utils/DateTimeFormat';
+import ImageContainer from "./GalleryImage";
 
 export const MeChat = ({ item, sender }) => {
-  console.log(sender);
   return (
     <div className="chat is-me">
       <div className="chat-content">
         <div className="chat-bubbles">
           <div className="chat-bubble">
-            <div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>
+            {item.etsy.message && (<div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>)}
+            {item.etsy?.images.length > 0 && (
+              <div className="chat-img">
+                {item.etsy?.images?.map((image, idx) => (
+                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`chat-img-${idx}`} role={"isMe"}/>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <ul className="chat-meta">
@@ -36,7 +43,14 @@ export const YouChat = ({ item, sender }) => {
       <div className="chat-content">
         <div className="chat-bubbles">
           <div className="chat-bubble">
-            <div className="chat-msg" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>
+          {item.etsy.message && (<div className="chat-msg" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>)}
+            {item.etsy?.images.length > 0 && (
+              <div className="chat-img">
+                {item.etsy?.images?.map((image, idx) => (
+                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`chat-img-${idx}`} role={"isYou"}/>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <ul className="chat-meta">

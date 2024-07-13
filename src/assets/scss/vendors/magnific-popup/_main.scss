@@ -244,9 +244,9 @@ button {
 
 // Close icon
 .mfp-close {
-  width: 44px;
-  height: 44px;
-  line-height: 44px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
 
   position: absolute;
   right: 0;
@@ -254,7 +254,7 @@ button {
   text-decoration: none;
   text-align: center;
   // opacity: $mfp-controls-opacity;
-  transform: translate(50%,-50%);
+  transform: translate(20%,-50%);
   color: $mfp-controls-color;
 
   font-style: normal;

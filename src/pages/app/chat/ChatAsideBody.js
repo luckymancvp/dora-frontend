@@ -1,7 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Icon, UserAvatar } from "../../../components/Component";
 import SimpleBar from "simplebar-react";
-import { Input, Button } from "reactstrap";
+import { useSelector } from 'react-redux';
+import { debounce } from 'lodash';
+import { Input, Button, Spinner } from "reactstrap";
 import { ChatItem, ChatRoomItem, ContactItem } from "./ChatPartials";
 import { findUpper } from "../../../utils/Utils";
 import { chatData } from "./ChatData";
@@ -22,32 +24,42 @@ export const ChatAsideBody = ({
   shops,
   conversations,
   chatRoomItemClick,
+  fetchConversations,
+  conversationFetching,
 }) => {
-  const [shopData, setShopData] = useState([]);
+  const conversationRef = useRef(null);
+  const { conversations: { currentPage }} = useSelector(state => state);
+  const [shopData, setShopData] = useState(() => {
+    const savedShopData = localStorage.getItem("shops");
+    return savedShopData ? JSON.parse(savedShopData) : [];
+  });
   const defaultChat = filteredChatList.filter((item) => item.group !== true);
 
-  const filterConversations = useMemo(() => conversations.filter(item => {
-    const totalOrders = item.etsy?.buyerInfo?.pastOrderHistory?.totalOrders || 0;
+  const handleLoadMoreConversations = useCallback(debounce((args = {}) => {
+    fetchConversations({ ...filterTabs, ...args });
+  }, 400), [currentPage, filterTabs]);
 
-    if (shopData.length > 0) {
-      const userData = item.userData || item.etsy.userData;
-      const findItem = shopData.some(shop => shop.userId == userData?.userId);
+  useEffect(() => {
+    if (!conversationFetching) {
+      handleLoadMoreConversations({ page: 1, ...filterTabs });
+    }
+  }, [filterTabs]);
 
-      if (!findItem) {
-        return false;
+  useEffect(() => {
+    const handleScrollConversations = () => {
+      const { scrollTop, clientHeight, scrollHeight } = conversationRef.current;
+
+      if (scrollTop + clientHeight > (scrollHeight - 150)) {
+        if (currentPage > 0 && !conversationFetching) {
+          handleLoadMoreConversations({ page: currentPage + 1});
+        }
       }
-    }
-
-    if (filterTabs.includes("messages")
-      || (filterTabs.includes("help_requests") && item.etsy.isOrderHelpRequest)
-      || (filterTabs.includes("not_replied") && !item.etsy.hasReplied)
-      || (filterTabs.includes("has_order") && totalOrders > 0)
-    ) {
-      return true;
-    }
-
-    return false;
-  }), [conversations, filterTabs, shopData]);
+    };
+    conversationRef.current?.addEventListener('scroll', handleScrollConversations);
+    return () => {
+      conversationRef.current?.removeEventListener('scroll', handleScrollConversations);
+    };
+  }, [fetchConversations, conversationFetching, handleLoadMoreConversations, currentPage]);
 
   const addShop = (newShop) => {
     const isDuplicate = shopData.some(shop => shop.userId === newShop.userId);
@@ -60,10 +72,14 @@ export const ChatAsideBody = ({
     setShopData(shopData.filter(shop => shop.userId !== userId));
   };
 
+  useEffect(() => {
+    localStorage.setItem("shops", JSON.stringify(shopData));
+  }, [shopData]);
+
   const filteredShopList = shops.filter(shop => !shopData.some(s => s.userId === shop.userId));
 
   return (
-    <SimpleBar className="nk-chat-aside-body">
+    <SimpleBar className="nk-chat-aside-body" scrollableNodeProps={{ ref: conversationRef }}>
       <div className="nk-chat-aside-search">
         <div className="form-group">
           <div className="form-control-wrap">
@@ -184,9 +200,7 @@ export const ChatAsideBody = ({
       <div className="nk-chat-list">
         <h6 className="title overline-title-alt">Messages</h6>
         <ul className="chat-list">
-          {filterConversations.length !== 0 ? (
-            filterConversations.map((item, idx) => {
-              return (
+          {conversations.length !== 0 && conversations.map((item, idx) => (
                 <ChatRoomItem
                   key={idx}
                   item={item}
@@ -194,11 +208,10 @@ export const ChatAsideBody = ({
                   setSelectedId={setSelectedId}
                   chatRoomItemClick={chatRoomItemClick}
                 ></ChatRoomItem>
-              );
-            })
-          ) : (
-            <p className="m-3">No conversation</p>
-          )}
+            ))
+          }
+          {!conversationFetching && conversations.length == 0 && (<p className="m-3">No conversation</p>)}
+          {conversationFetching && (<div className="text-center py-5"><Spinner size="sm" color="primary" /></div>)}
         </ul>
       </div>
     </SimpleBar>

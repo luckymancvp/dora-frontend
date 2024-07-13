@@ -11,18 +11,34 @@ export const fetchConversations = createAsyncThunk(
 
 const initialState = {
   conversations: [],
-  fetching: false
+  fetching: false,
+  currentPage: 1,
 };
 
 const ConversationSlice = createSlice({
   name: "conversations",
   initialState,
+  reducers: {
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+  },
   extraReducers: {
     [fetchConversations.pending]: state => {
       state.fetching = true;
     },
     [fetchConversations.fulfilled]: (state, _action) => {
-      state.conversations = _action.payload || [];
+      const data = _action.payload;
+
+      if (state.currentPage == 1) {
+        state.conversations = [];
+      }
+
+      if (data && data.length > 0) {
+        state.conversations = state.conversations.concat(data);
+      } else {
+        state.currentPage = -1;
+      }
       state.fetching = false;
     },
     [fetchConversations.rejected]: state => {
@@ -34,3 +50,4 @@ const ConversationSlice = createSlice({
 
 const { reducer } = ConversationSlice;
 export default reducer;
+export const { setCurrentPage } = ConversationSlice.actions;
