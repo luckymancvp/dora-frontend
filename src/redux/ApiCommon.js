@@ -10,16 +10,16 @@ const client = axios.create({
 
 client.interceptors.request.use(
   async config => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("token");
     let headers = {
+      "Content-Type": "application/json",
       ...config.headers,
-      "Content-type": "application/json",
     };
     if (token) {
       headers = {
         ...headers,
         // Authorization: token,
-        "PAMO-ACCESS-TOKEN": token,
+        // "PAMO-ACCESS-TOKEN": token,
       };
     }
     config.headers = headers;
@@ -42,7 +42,7 @@ client.interceptors.response.use(
       return Promise.reject(error);
     }
     if (!message) {
-      message = error.response.message;
+      message = error.response.data;
     }
 
     if (!message && errors) {
@@ -63,9 +63,9 @@ client.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    toast.error(message || "Error happened");
+    toast.error("Error happened");
     if (error.response.status === 401) {
-      localStorage.removeItem("access_token");
+      localStorage.removeItem("token");
       window.location.href = LOGIN_PATH;
     }
     return Promise.reject(error);

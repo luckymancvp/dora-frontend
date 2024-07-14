@@ -6,10 +6,17 @@ const fetchMessages = (conversationId) => api
   .then(response => camelCaseObject(response));
 
 const createMessage = (conversationId, data) => api
-  .post(`/messages/${conversationId}`, data)
+  .post(`/messages/${conversationId}`, data, {
+    headers: { "Content-type": "multipart/form-data" }
+  })
+  .then(response => camelCaseObject(response));
+
+const fetchStatusMessages = (id) => api
+  .get(`/messages/status/${id}`)
   .then(response => camelCaseObject(response));
 
 export default {
   fetchMessages,
   createMessage,
+  fetchStatusMessages,
 };

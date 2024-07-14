@@ -19,11 +19,12 @@ const Chat = ({
   fetchConversations,
   conversationFetching,
   conversations,
-  fetchMessages,
   messageFetching,
   conversation,
   messages,
-  handleSendMessage,
+  handleSetEmptyConversationMessage,
+  fetchDataMessage,
+  conversationId
 }) => {
   const [mainTab, setMainTab] = useState("Chats");
   const [selectedId, setSelectedId] = useState();
@@ -47,10 +48,15 @@ const Chat = ({
   }, []);
 
   useEffect(() => {
-    if (selectedId) {
-      fetchMessages(selectedId);  // TODO "1277371435"
+    if (conversationId !== undefined && conversationId !== null) {
+      fetchDataMessage(conversationId, true);
+      if (window.innerWidth < 860) {
+        setMobileView(true);
+      }
+    } else {
+      handleSetEmptyConversationMessage([]);
     }
-  }, [selectedId]);
+  }, [conversationId, fetchDataMessage, handleSetEmptyConversationMessage]);
 
   // Filtering users by search
   useEffect(() => {
@@ -108,13 +114,6 @@ const Chat = ({
       data[index].unread = false;
       setChat([...data]);
     }
-    setSelectedId(id);
-    if (window.innerWidth < 860) {
-      setMobileView(true);
-    }
-  };
-
-  const chatRoomItemClick = (id) => {
     setSelectedId(id);
     if (window.innerWidth < 860) {
       setMobileView(true);
@@ -273,11 +272,9 @@ const Chat = ({
                 setSelectedId={setSelectedId}
                 shopInputSearchChange={shopInputSearchChange}
                 shopFilterText={shopFilterText}
-                chatItemClick={chatItemClick}
                 filterTabs={filterTabs}
                 shops={shops}
                 conversations={conversations}
-                chatRoomItemClick={chatRoomItemClick}
                 fetchConversations={fetchConversations}
                 conversationFetching={conversationFetching}
               />
@@ -295,15 +292,16 @@ const Chat = ({
               <AppContact setTab={setMainTab} setSelectedId={setSelectedId} />
             )}
           </div>
-          {selectedId !== null && !isBlank(conversation) ? (
+          {conversationId && !isBlank(conversation) ? (
             <ChatBody
               id={selectedId}
               setSelectedId={setSelectedId}
-              setMobileView={setMobileView}
               mobileView={mobileView}
+              conversationId={conversationId}
               conversation={conversation}
+              fetchDataMessage={fetchDataMessage}
               messages={messages}
-              handleSendMessage={handleSendMessage}
+              messageFetching={messageFetching}
             />
           ) : (
             <div className="nk-chat-body">

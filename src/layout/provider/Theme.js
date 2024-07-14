@@ -17,7 +17,7 @@ const ThemeProvider = ({...props}) => {
   const defaultTheme = {
     main: "default", //other value can be passed "clean,shady,softy"
     sidebar: "dark", //other value can be passed "light,white,theme"
-    sidebarCompact: false,
+    sidebarCompact: true,
     sidebarVisibility: false,
     sidebarMobile: false,
     header: "white", //other value can be passed "light,dark,theme"

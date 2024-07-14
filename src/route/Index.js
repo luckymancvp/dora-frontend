@@ -2,6 +2,7 @@ import React, { useLayoutEffect } from "react";
 import { Routes,Route, useLocation } from "react-router-dom";
 import { ProductContextProvider } from "../pages/pre-built/products/ProductContext";
 import { UserContextProvider } from "../pages/pre-built/user-manage/UserContext";
+import PrivateRoute from './PrivateRoute';
 
 import Homepage from "../pages/Homepage";
 import Crypto from "../pages/Crypto";
@@ -132,7 +133,7 @@ const Router = () => {
 
   return (
       <Routes>
-        <Route path={`${process.env.PUBLIC_URL}`} element={<Layout />}>
+        {/* <Route path={`${process.env.PUBLIC_URL}`} element={<Layout />}>
           <Route index element={<Homepage />}></Route>
           <Route path="crypto" element={<Crypto />}></Route>
           <Route path="analytics" element={<Analytics />}></Route>
@@ -266,13 +267,14 @@ const Router = () => {
           <Route path="nioicon" element={<NioIconPage />}></Route>
           <Route path="svg-icons" element={<SVGIconPage />}></Route>
 
-        </Route>
+        </Route> */}
         <Route path={`${process.env.PUBLIC_URL}`} element={<LayoutNoSidebar />}>
           <Route path="auth-success" element={<Success />}></Route>
-            <Route path="auth-reset" element={<ForgotPassword />}></Route>
+            {/* <Route path="auth-reset" element={<ForgotPassword />}></Route>
             <Route path="auth-register" element={<Register />}></Route>
-            <Route path="auth-login" element={<Login />}></Route>
+            <Route path="auth-login" element={<Login />}></Route> */}
             <Route path="login" element={<LoginGoogle />}></Route>
+            <Route path="user" element={<LoginGoogle />}></Route>
 
             <Route path="errors">
               <Route path="404-modern" element={<Error404Modern />}></Route>
@@ -282,7 +284,14 @@ const Router = () => {
             </Route>
             <Route path="*" element={<Error404Modern />}></Route>
             
-            <Route path="invoice-print/:invoiceId" element={<InvoicePrint />}></Route>
+            {/* <Route path="invoice-print/:invoiceId" element={<InvoicePrint />}></Route> */}
+        </Route>
+
+        {/* Has access token */}
+        <Route path={`${process.env.PUBLIC_URL}`} element={<PrivateRoute Component={Layout} />}>
+          <Route index element={<PrivateRoute Component={Homepage}/>}></Route>
+          <Route path="messages" element={<PrivateRoute Component={Chat}/>}></Route>
+          <Route path="messages/:conversationId" element={<PrivateRoute Component={Chat}/>}></Route>
         </Route>
       </Routes>
   );

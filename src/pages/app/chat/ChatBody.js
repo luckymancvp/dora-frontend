@@ -1,36 +1,55 @@
 import React, { useEffect, useCallback, useState, useContext, useRef } from "react";
 import { useForm, FormProvider } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 import ChatSideBar from "./ChatSideBar";
+import ChatFiles from "./ChatFiles";
 import SimpleBar from "simplebar-react";
-import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from "reactstrap";
+import { createMessage, fetchStatusMessage } from "../../../redux/slices/Messages";
+import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown, Spinner } from "reactstrap";
 import { UserAvatar, Icon, Button } from "../../../components/Component";
 import { TextareaForm } from "../../../components/forms/TextareaForm";
 import { currentTime, findUpper, truncate } from "../../../utils/Utils";
 import { ChatContext } from "./ChatContext";
 
-import { MeChat, YouChat, MetaChat } from "./ChatPartials";
+import { MeChat, YouChat, MetaChat, SendingChat } from "./ChatPartials";
 
-const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, messages, handleSendMessage }) => {
+const ChatBody = ({
+  id, mobileView, setSelectedId, conversationId,
+  conversation, fetchDataMessage,
+  messages, messageFetching
+}) => {
+  const dispatch = useDispatch();
   const { deleteConvo, propAction, chatState } = useContext(ChatContext);
   const [chat, setChat] = chatState;
   const [Uchat, setUchat] = useState({});
   const [sidebar, setsidebar] = useState(false);
   const [inputText, setInputText] = useState("");
   const [chatOptions, setChatOptions] = useState(false);
-
-  const methods = useForm({
-    defaultValues: { message: "", attachments: null },
-  });
-
-  const {
-    handleSubmit, reset, formState: { isSubmitting },
-  } = methods;
+  const [files, setFiles] = useState([]);
 
   // Conversation selected
   const userData = conversation?.userData || conversation.etsy?.userData;
   const otherUser = conversation.etsy?.otherUser || conversation.etsy?.detail?.otherUser;
   const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
+  const uploadImgRef = useRef(null);
+
+  const methods = useForm({
+    defaultValues: { message: "", attachments: [] },
+  });
+
+  const {
+    handleSubmit, setValue, watch, clearErrors, reset, formState: { isSubmitting },
+  } = methods;
+
+  const attachments = watch("attachments");
+
+  useEffect(() => {
+    reset();
+    setFiles([]);
+  }, [conversationId]);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -43,6 +62,8 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
 
   useEffect(() => {
     scrollToBottom();
+    focusTextarea();
+    setChatOptions(false);
   }, [Uchat, messages]);
 
   const resizeFunc = () => {
@@ -81,18 +102,39 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
     setsidebar(!sidebar);
   };
 
-  const saveMessage = useCallback(formValues => {
-    if (formValues.message !== "" || formValues.attachments?.length > 0) {
+  const handleSendMessage = useCallback((formValues, conversationId) => {
+    const formData = new FormData();
+    formData.append("message", formValues.message);
+    if (formValues.attachments && formValues.attachments.length > 0) {
+      formValues.attachments.forEach(file => {
+        formData.append("attachments", file);
+      });
+    }
+
+    dispatch(createMessage({ conversationId, formData })).then(response => {
+      const data = response.payload?.message;
+      if (data.conversationId) {
+        dispatch(fetchStatusMessage({ id: data.id })).then(({ payload }) => {
+          console.log(payload); // TODO
+        });
+      }
+      // fetchDataMessage(conversationId);
+    });
+  }, [dispatch]);
+
+  const saveMessage = useCallback((formValues) => {
+    if (formValues.message.trim() || attachments.length > 0) {
       handleSendMessage(formValues, conversation.etsy?.conversationId);
       reset();
+      setFiles([]);
     }
-  }, [conversation, handleSendMessage, reset]);
+  }, [conversation, handleSendMessage, reset, attachments]);
 
-  const onTextSubmit = useCallback(e => {
-    e.preventDefault();
-    handleSubmit(saveMessage)();
-    reset();
-  }, [handleSubmit, saveMessage]);
+  // const onTextSubmit = useCallback(e => {
+  //   e.preventDefault();
+  //   handleSubmit(saveMessage)();
+  //   reset();
+  // }, [handleSubmit, saveMessage]);
 
 
   const onRemoveMessage = (idx, id) => {
@@ -112,29 +154,83 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
     "profile-shown": sidebar && window.innerWidth > 1550,
   });
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      reset();
+      resizeTextarea();
+      resetTextareaSize();
+    } else if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(saveMessage)();
+      reset();
+      resizeTextarea();
+      resetTextareaSize();
+    } else if (e.key === 'Enter' && e.shiftKey) {
+      resizeTextarea();
+    }
+  };
+
+  const handleTextareaChange = (e) => {
+    resizeTextarea();
+  };
+
+  const resizeTextarea = () => {
+    const el = textareaRef.current;
+
+    if (!el) return;
+
+    const padding = parseFloat(window.getComputedStyle(el).paddingTop) + parseFloat(window.getComputedStyle(el).paddingBottom);
+
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight - padding * 2 + 'px';
+  }
+
+  const resetTextareaSize = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
+  }
+
+  const focusTextarea = () => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+
+  const handleClickImage = (ev) => {
+    ev.preventDefault();
+    if (uploadImgRef.current) {
+      uploadImgRef.current.click();
+    }
+  };
+
+  const onFileChangeForm = useCallback(selectedFiles => {
+    focusTextarea();
+    setChatOptions(false);
+    clearErrors('attachments');
+    setValue('attachments', selectedFiles);
+  }, [clearErrors, setValue]);
+
   return (
     <React.Fragment>
-      <div className={chatBodyClass}>
+      <div className={chatBodyClass} key={conversationId}>
         <div className="nk-chat-head">
           <ul className="nk-chat-head-info">
-            <li className="nk-chat-body-close" onClick={() => setMobileView(false)}>
-              <a
-                href="#hide-chat"
-                onClick={(ev) => {
-                  ev.preventDefault();
-                }}
+            <li className="nk-chat-body-close">
+              <Link
+                to="/messages"
                 className="btn btn-icon btn-trigger nk-chat-hide ms-n1"
               >
                 <Icon name="arrow-left"></Icon>
-              </a>
+              </Link>
             </li>
             <li className="nk-chat-head-user">
               <div className="user-card">
                 <div className="chat-media user-avatar user-avatar-multiple">
-                  <UserAvatar 
+                  <UserAvatar
                     theme="blue"
                     text={findUpper(userData.shopName)}
-                    image={userData.avatarUrl} 
+                    image={userData.avatarUrl}
                     className="chat-media"
                   />
                   <UserAvatar
@@ -231,16 +327,27 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
         </div>
         <SimpleBar className="nk-chat-panel" scrollableNodeProps={{ ref: messagesEndRef }}>
           {messages.map((item, idx) => {
-            if (item.etsy.senderId === userData.userId) {
+            if (item?.etsy?.senderId === userData?.userId) {
               return <MeChat key={idx} item={item} sender={userData} ></MeChat>;
-            } else {
+            } else if (item?.etsy?.senderId === otherUser?.userId) {
               return <YouChat key={idx} item={item} sender={otherUser}></YouChat>;
+            } else {
+              return <SendingChat key={idx} item={item} sender={userData} />
             }
           })}
+          {messageFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)}
         </SimpleBar>
         <FormProvider {...methods}>
+          <ChatFiles
+            name="attachments"
+            files={files}
+            setFiles={setFiles}
+            attachments={attachments}
+            uploadImgRef={uploadImgRef}
+            onFileChangeForm={onFileChangeForm}
+          />
           <div className="nk-chat-editor">
-            <div className="nk-chat-editor-upload  ms-n1">
+            <div className="nk-chat-editor-upload ms-n1">
               <Button
                 size="sm"
                 className={`btn-icon btn-trigger text-primary toggle-opt ${chatOptions ? "active" : ""}`}
@@ -253,9 +360,7 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
                   <li>
                     <a
                       href="#img"
-                      onClick={(ev) => {
-                        ev.preventDefault();
-                      }}
+                      onClick={handleClickImage}
                     >
                       <Icon name="img-fill"></Icon>
                     </a>
@@ -269,11 +374,11 @@ const ChatBody = ({ id, mobileView, setMobileView, setSelectedId, conversation, 
                   name="message"
                   rows="1"
                   id="default-textarea"
+                  ref={textareaRef}
                   className="form-control form-control-simple no-resize"
                   placeholder="Type your message..."
-                  onKeyPress={(e) => {
-                    e.code === "Enter" && onTextSubmit(e);
-                  }}
+                  onKeyDown={handleKeyDown}
+                  onChange={handleTextareaChange}
                 />
               </div>
             </div>

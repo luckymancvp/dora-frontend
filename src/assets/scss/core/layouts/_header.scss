@@ -20,6 +20,9 @@
     }
     &-img{
         max-height: $logo-height;
+        &-xl{
+            max-height: $logo-height-xl;
+        }
         &-lg{
             max-height: $logo-height-lg;
         }
@@ -100,8 +103,8 @@
         }
         &-brand{
             flex-shrink: 0;
-            padding-top: $header-main-gap-y;
-            padding-bottom: $header-main-gap-y;
+            padding-top: 1px;
+            padding-bottom: 1px;
         }
         .dropdown-menu{
             .lead-text{

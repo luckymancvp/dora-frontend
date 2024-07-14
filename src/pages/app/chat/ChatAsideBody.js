@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Icon, UserAvatar } from "../../../components/Component";
 import SimpleBar from "simplebar-react";
 import { useSelector } from 'react-redux';
@@ -12,23 +12,20 @@ import { ChatContext } from "./ChatContext";
 export const ChatAsideBody = ({
   onInputChange,
   shopState,
-  shopFilter,
   setShopState,
   setSelectedId,
   selectedId,
-  shopInputSearchChange,
-  shopFilterText,
   filterTabs,
-  chatItemClick,
   filteredChatList,
   shops,
   conversations,
-  chatRoomItemClick,
   fetchConversations,
   conversationFetching,
 }) => {
   const conversationRef = useRef(null);
   const { conversations: { currentPage }} = useSelector(state => state);
+  const [shopFilter, setShopFilter] = useState([]);
+  const [shopFilterText, setShopFilterText] = useState("");
   const [shopData, setShopData] = useState(() => {
     const savedShopData = localStorage.getItem("shops");
     return savedShopData ? JSON.parse(savedShopData) : [];
@@ -49,7 +46,7 @@ export const ChatAsideBody = ({
     const handleScrollConversations = () => {
       const { scrollTop, clientHeight, scrollHeight } = conversationRef.current;
 
-      if (scrollTop + clientHeight > (scrollHeight - 150)) {
+      if (scrollTop + clientHeight > (scrollHeight - 250)) {
         if (currentPage > 0 && !conversationFetching) {
           handleLoadMoreConversations({ page: currentPage + 1});
         }
@@ -77,6 +74,22 @@ export const ChatAsideBody = ({
   }, [shopData]);
 
   const filteredShopList = shops.filter(shop => !shopData.some(s => s.userId === shop.userId));
+
+  const shopInputSearchChange = debounce((e) => {
+    setShopFilterText(e.target.value);
+  }, 300);
+
+  useEffect(() => {
+    if (shopFilterText !== "") {
+      const filteredShopList = shops.filter(shop => !shopData.some(s => s.userId === shop.userId));
+      const filteredObject = filteredShopList.filter((item) => {
+        return item.shopName.toLowerCase().includes(shopFilterText.toLowerCase());
+      });
+      setShopFilter([...filteredObject]);
+    } else {
+      setShopFilter([]);
+    }
+  }, [shopFilterText, shops, shopData]);
 
   return (
     <SimpleBar className="nk-chat-aside-body" scrollableNodeProps={{ ref: conversationRef }}>
@@ -144,11 +157,11 @@ export const ChatAsideBody = ({
           </div>
           <div className="nk-chat-aside-panel nk-chat-contact">
             <ul className="contacts-list">
-              {filteredShopList.length === 0 ? (
+              {shopFilter.length === 0 ? (
                 shopFilterText ? (
                   <div className="ms-3">No shop found</div>
                 ) : (
-                  shops.map((shop, idx) => {
+                  filteredShopList.map((shop, idx) => {
                     return (
                       <li key={idx} onClick={() => addShop(shop)}>
                         <div className="user-card">
@@ -171,7 +184,7 @@ export const ChatAsideBody = ({
                   })
                 )
               ) : (
-                filteredShopList.map((shop, idx) => {
+                shopFilter.map((shop, idx) => {
                   return (
                     <li key={idx} onClick={() => addShop(shop)}>
                       <div className="user-card">
@@ -201,17 +214,10 @@ export const ChatAsideBody = ({
         <h6 className="title overline-title-alt">Messages</h6>
         <ul className="chat-list">
           {conversations.length !== 0 && conversations.map((item, idx) => (
-                <ChatRoomItem
-                  key={idx}
-                  item={item}
-                  selectedId={selectedId}
-                  setSelectedId={setSelectedId}
-                  chatRoomItemClick={chatRoomItemClick}
-                ></ChatRoomItem>
-            ))
-          }
+            <ChatRoomItem key={idx} item={item} />
+          ))}
           {!conversationFetching && conversations.length == 0 && (<p className="m-3">No conversation</p>)}
-          {conversationFetching && (<div className="text-center py-5"><Spinner size="sm" color="primary" /></div>)}
+          {conversationFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)}
         </ul>
       </div>
     </SimpleBar>

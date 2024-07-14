@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Navigate } from "react-router-dom";
 import Head from "../layout/head/Head";
 import Content from "../layout/content/Content";
 import SaleRevenue from "../components/partials/default/sale-revenue/SaleRevenue";
@@ -28,6 +29,8 @@ import {
 
 const Homepage = () => {
   const [sm, updateSm] = useState(false);
+  return <Navigate to='/messages' replace />;
+
   return (
     <>
       <Head title="Homepage"></Head>

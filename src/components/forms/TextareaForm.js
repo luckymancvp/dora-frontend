@@ -1,12 +1,17 @@
-import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import React, { forwardRef  } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 
-export const TextareaForm = ({
-  name, defaultValue,
-  inputClassName, rules={},
-  errorClassName = "",
+export const TextareaForm = forwardRef(({
+  id,
+  name,
+  defaultValue,
+  inputClassName,
+  rules = {},
+  errorClassName = '',
+  textMessages,
+  onChange,
   ...rest
-}) => {
+}, ref) => {
   const { control } = useFormContext();
 
   return (
@@ -18,16 +23,25 @@ export const TextareaForm = ({
       render={({ field, fieldState: { error } }) => (
         <>
           <textarea
-            className={inputClassName || "form-control form-control-simple no-resize"}
+            id={id}
+            placeholder={textMessages}
+            className={`${inputClassName} || 'form-control form-control-simple no-resize'}`}
+            style={{
+              minHeight: '36px',
+            }}
             {...field}
             {...rest}
-            placeholder="Type your message..."
-          ></textarea>
-          {error?.message && (<div className={errorClassName}>{error.message}</div>)}
+            onChange={(e) => {
+              field.onChange(e);
+              if (onChange) onChange(e);
+            }}
+            ref={ref}
+          />
+          {error?.message && <div className={errorClassName}>{error.message}</div>}
         </>
       )}
     />
   );
-};
+});
 
 export default TextareaForm;

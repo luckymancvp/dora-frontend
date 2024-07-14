@@ -61,6 +61,52 @@ export const YouChat = ({ item, sender }) => {
   );
 };
 
+export const SendingChat = ({ item, sender }) => {
+  let status = "";
+
+  switch (item.status) {
+    case "NEW":
+      status = "..." // TODO
+      break;
+    case "SENDING":
+      status = "Sending"
+      break;
+    case "DONE":
+      status = item?.createdAt; // TODO
+      break;
+    case "FAILED":
+      status = "Error"
+      break;
+    default:
+      break;
+  }
+
+  return (
+    <div className="chat is-me">
+      <div className="chat-content">
+        <div className="chat-bubbles">
+          <div className="chat-bubble">
+            {item.message && (<div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.message }}></div>)}
+            {item.attachments?.length > 0 && (
+              <div className="chat-img">
+                {item.attachments.map((image, idx) => (
+                  <ImageContainer img={image} key={`chat-img-${idx}`} role={"isMe"}/>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <ul className="chat-meta">
+          <li>{status}</li>
+        </ul>
+      </div>
+      <div className="chat-avatar">
+        <UserAvatar image={sender.avatarUrl} theme="blue" text={findUpper(sender.displayName)} />
+      </div>
+    </div>
+  );
+};
+
 export const MetaChat = ({ item }) => {
   return (
     <div className="chat-sap">
@@ -210,7 +256,7 @@ export const ContactItem = ({ item, setTab, setSelectedId }) => {
   );
 };
 
-export const ChatRoomItem = ({ item, chatRoomItemClick }) => {
+export const ChatRoomItem = ({ item }) => {
   const totalOrders = item.etsy?.buyerInfo?.pastOrderHistory?.totalOrders || 0;
   const otherUser = item.etsy.otherUser || item.etsy?.detail?.otherUser;
   const userData = item.userData || item.etsy.userData;
@@ -230,14 +276,7 @@ export const ChatRoomItem = ({ item, chatRoomItemClick }) => {
 
   return (
     <li className={`chat-item ${item.etsy.isUnread ? "is-unread" : ""}`}>
-      <a
-        className="chat-link"
-        href="#chat-link"
-        onClick={(ev) => {
-          ev.preventDefault();
-          chatRoomItemClick(item.etsy.conversationId);
-        }}
-      >
+      <Link to={`/messages/${item.etsy.conversationId}`} className="chat-link">
         <div className="chat-media user-avatar user-avatar-multiple">
           <UserAvatar
             theme="blue"
@@ -272,7 +311,7 @@ export const ChatRoomItem = ({ item, chatRoomItemClick }) => {
             </div>
           </div>
         </div>
-      </a>
+      </Link>
     </li>
   );
 };

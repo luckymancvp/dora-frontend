@@ -1,13 +1,15 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from 'react-router-dom';
 import Chat from "./Chat";
 import { ChatContextProvider } from "./ChatContext";
 import { fetchShops } from "../../../redux/slices/Shops";
 import { fetchConversations, setCurrentPage } from "../../../redux/slices/Conversations";
-import { fetchMessages, createMessage } from "../../../redux/slices/Messages";
+import { fetchMessages, setEmptyMessages, setEmptyConversationMessage } from "../../../redux/slices/Messages";
 
 const ChatContainer = () => {
   const dispatch = useDispatch();
+  const { conversationId } = useParams();
   const {
     shops: { shops, fetching: shopFetching }, 
     conversations: { conversations, fetching: conversationFetching },
@@ -15,7 +17,7 @@ const ChatContainer = () => {
   } = useSelector(state => state);
 
   const fetchDataShops = useCallback((args = {}) => {
-    dispatch(fetchShops()).unwrap();
+    dispatch(fetchShops());
   }, [dispatch]);
 
   const fetchDataConversations = useCallback((args = {}) => {
@@ -23,29 +25,21 @@ const ChatContainer = () => {
     dispatch(fetchConversations({
       params: {
         page: 1,
-        items_per_page: 10,
+        items_per_page: 20,
         ...args,
       },
-    })).unwrap();
+    }));
   }, [dispatch]);
 
-  const fetchDataMessage = useCallback((conversationId) => {
-    dispatch(fetchMessages({ conversationId })).unwrap();
-  }, [dispatch]);
-
-  const handleSendMessage = useCallback((formValues, conversationId) => {
-    const formData = new FormData();
-
-    formData.append("message", formValues.message);
-    if (formValues.files) {
-      [...formValues.files].forEach(file => {
-        formData.append("attachments[]", file);
-      });
+  const fetchDataMessage = useCallback((conversationId, clearMessage = false) => {
+    if (clearMessage) {
+      dispatch(setEmptyMessages());
     }
+    dispatch(fetchMessages({ conversationId }));
+  }, [dispatch]);
 
-    dispatch(createMessage({ conversationId, formData })).unwrap().then(() => {
-      fetchDataMessage(conversationId);
-    });
+  const handleSetEmptyConversationMessage = useCallback(data => {
+    dispatch(setEmptyConversationMessage(data));
   }, [dispatch]);
 
   return (
@@ -57,11 +51,12 @@ const ChatContainer = () => {
         fetchConversations={fetchDataConversations}
         conversationFetching={conversationFetching}
         conversations={conversations}
-        fetchMessages={fetchDataMessage}
+        fetchDataMessage={fetchDataMessage}
         conversation={conversation}
         messageFetching={messageFetching}
         messages={messages}
-        handleSendMessage={handleSendMessage}
+        handleSetEmptyConversationMessage={handleSetEmptyConversationMessage}
+        conversationId={conversationId}
       />
     </ChatContextProvider>
   );

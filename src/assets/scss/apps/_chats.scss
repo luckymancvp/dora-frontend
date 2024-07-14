@@ -771,6 +771,75 @@ $chat-meta-sap: $ni-dot !default;
             opacity: 1;
             pointer-events: auto;
         }
+        .chat-files {
+            &-container {
+                display: flex;
+                align-items: center;
+                padding: 10px 8px 0;
+                background: $white;
+            }
+            &-box {
+                display: flex;
+                overflow: auto;
+                width: calc(100% - 33px);
+            }
+            &-icon-close {
+                font-size: 24px;
+                color: $black;
+                .remove-img-icon {
+                    color: #ff3d3d;
+                    border-radius: 50%;
+                    background: #f1f1f1;
+                    margin-left: 5px;
+                    cursor: pointer;
+                }
+            }
+        }
+        .chat-file {
+            &-container {
+                display: flex;
+                position: relative;
+                margin: 0 4px
+            }
+            &-icon-remove {
+                position: absolute;
+                top: 6px;
+                right: 6px;
+                z-index: 10;
+                width: 20px;
+                height: 20px;
+                max-height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 16px;
+                cursor: pointer;
+                color: $black;
+                border-radius: 50%;
+                border-color: 1px solid $black;
+                &::before {
+                    content: " ";
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: $white;
+                    border-radius: 50%;
+                    z-index: -1;
+                    border-color: 1px solid $black;
+                }
+            }
+            &-image {
+                position: relative;
+                background-color: #ddd;
+                background-size: cover;
+                background-position: center center;
+                background-repeat: no-repeat !important;
+                height: 100px;
+                width: 100px;
+                border: 1px solid $border-light;
+                border-radius: 4px;
+            }
+        }
     }
     &-head{
         position: relative;
@@ -841,7 +910,9 @@ $chat-meta-sap: $ni-dot !default;
             padding: 0 .5rem;
             flex-grow: 1;
             .form-control{
-                min-height: 36px;
+                max-height: 300px;
+                overflow-y: auto;
+                line-height: 20px;
                 padding-top: 0.5rem;
             }
         }
@@ -1068,9 +1139,5 @@ $chat-meta-sap: $ni-dot !default;
         .item-image {
             width: 100px;
         }
-    }
-
-    .nk-content-body {
-        margin-top: 20px; // TODO
     }
 }
