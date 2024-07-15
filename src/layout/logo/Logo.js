@@ -10,13 +10,13 @@ const Logo = () => {
         className="logo-light logo-img-lg"
         src={LogoLight2x}
         alt="logo"
-        style={{ maxHeight: "40px", width: "auto" }}
+        style={{ maxHeight: "30px", width: "auto" }}
       />
       <img
         className="logo-dark logo-img-lg"
         src={LogoLight2x}
         alt="logo"
-        style={{ maxHeight: "40px", width: "auto" }}
+        style={{ maxHeight: "30px", width: "auto" }}
       />
     </Link>
   );
