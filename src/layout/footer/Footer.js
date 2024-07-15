@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="nk-footer-wrap">
           <div className="nk-footer-copyright">
             {" "}
-            &copy; 2024 Pamo.
+            &copy; 2024 Dora.
           </div>
           <div className="nk-footer-links">
             <ul className="nav nav-sm">

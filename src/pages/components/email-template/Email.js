@@ -38,7 +38,7 @@ const EmailTemplate = () => {
             </BlockTitle>
             <BlockDes>
               <p className="lead">
-                In DashLite, We included 10 clean and minimalist notification email templates that is ready to use for
+                In Dora, We included 10 clean and minimalist notification email templates that is ready to use for
                 your application to send emails.{" "}
                 <strong className="text-primary">Stand-Alone html files found in packages</strong>.
               </p>
@@ -88,7 +88,7 @@ const EmailTemplate = () => {
               </EmailBody>
               <EmailFooter>
                 <p className="email-copyright-text">
-                  Copyright © 2020 DashLite. All rights reserved. <br /> Template Made By{" "}
+                  Copyright © 2020 Dora. All rights reserved. <br /> Template Made By{" "}
                   <a href="https://themeforest.net/user/softnio/portfolio">Softnio</a>.
                 </p>
                 <ul className="email-social">
@@ -185,7 +185,7 @@ const EmailTemplate = () => {
               </EmailBody>
               <EmailFooter>
                 <p className="email-copyright-text">
-                  Copyright © 2020 DashLite. All rights reserved. <br /> Template Made By{" "}
+                  Copyright © 2020 Dora. All rights reserved. <br /> Template Made By{" "}
                   <a href="https://themeforest.net/user/softnio/portfolio">Softnio</a>.
                 </p>
                 <ul className="email-social">
@@ -272,7 +272,7 @@ const EmailTemplate = () => {
                   <p>
                     Welcome! <br /> You are receiving this email because you have registered on our site.
                   </p>
-                  <p>Click the link below to active your DashLite account.</p>
+                  <p>Click the link below to active your Dora account.</p>
                   <p className="mb-4">This link will expire in 15 minutes and can only be used once.</p>
                   <a
                     href="#verify"
@@ -307,7 +307,7 @@ const EmailTemplate = () => {
               </EmailBody>
               <EmailFooter>
                 <p className="email-copyright-text">
-                  Copyright © 2020 DashLite. All rights reserved. <br /> Template Made By{" "}
+                  Copyright © 2020 Dora. All rights reserved. <br /> Template Made By{" "}
                   <a href="https://themeforest.net/user/softnio/portfolio">Softnio</a>.
                 </p>
                 <ul className="email-social">
