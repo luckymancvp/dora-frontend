@@ -12,7 +12,7 @@ const ChatContainer = () => {
   const dispatch = useDispatch();
   const { conversationId } = useParams();
   const {
-    shops: { shops, fetching: shopFetching }, 
+    shops: { shops, fetching: shopFetching },
     conversations: { conversations, fetching: conversationFetching, defaultItemsPerPage },
     messages: { messages, sendingMessages, conversation, fetching: messageFetching, scrollBottom }
   } = useSelector(state => state);
@@ -51,16 +51,20 @@ const ChatContainer = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchDataMessage({ conversationId, clearMessage: true, toScrollBottom: true });
-  }, [conversationId]);
+    if (conversationId) {
+      fetchDataMessage({ conversationId, clearMessage: true, toScrollBottom: true });
+    }
+  }, [conversationId, fetchDataMessage]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchDataMessage({ conversationId });
-    }, 5000);
+    if (conversationId) {
+      const intervalId = setInterval(() => {
+        fetchDataMessage({ conversationId, toScrollBottom: true });
+      }, 5000);
 
-    // Cleanup interval on unmount
-    return () => clearInterval(intervalId);
+      // Cleanup interval on unmount
+      return () => clearInterval(intervalId);
+    }
   }, [conversationId, fetchDataMessage]);
 
   return (

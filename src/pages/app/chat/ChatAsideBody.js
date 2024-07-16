@@ -23,7 +23,7 @@ export const ChatAsideBody = ({
   conversationFetching,
 }) => {
   const conversationRef = useRef(null);
-  const { conversations: { currentPage }} = useSelector(state => state);
+  const { conversations: { currentPage } } = useSelector(state => state);
   const [shopFilter, setShopFilter] = useState([]);
   const [shopFilterText, setShopFilterText] = useState("");
   const [conversationFilterText, setConversationFilterText] = useState("");
@@ -42,12 +42,12 @@ export const ChatAsideBody = ({
   }), [conversations, shopData]);
 
   const handleLoadMoreConversations = useCallback(debounce((args = {}) => {
-    fetchConversations({ ...filterTabs, search: conversationFilterText,...args });
+    fetchConversations({ ...filterTabs, search: conversationFilterText, ...args });
   }, 400), [currentPage, filterTabs, conversationFilterText]);
 
   const onSearchConversations = useCallback(debounce((text) => {
     if (!conversationFetching) {
-      handleLoadMoreConversations({ page: 1, search: text});
+      handleLoadMoreConversations({ page: 1, search: text });
     }
   }, 300), [filterTabs, conversationFetching]);
 
@@ -63,7 +63,7 @@ export const ChatAsideBody = ({
 
       if (scrollTop + clientHeight > (scrollHeight - 250)) {
         if (currentPage > 0 && !conversationFetching) {
-          handleLoadMoreConversations({ page: currentPage + 1});
+          handleLoadMoreConversations({ page: currentPage + 1 });
         }
       }
     };
@@ -123,8 +123,8 @@ export const ChatAsideBody = ({
               onChange={(e) => {
                 const value = e.target.value;
                 setConversationFilterText(value);
-                onSearchConversations(value)}
-              }
+                onSearchConversations(value)
+              }}
             />
           </div>
         </div>

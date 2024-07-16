@@ -699,7 +699,7 @@ $chat-meta-sap: $ni-dot !default;
         &-head{
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             padding: 1.125rem $chat-aside-gap-x 0.875rem;
         }
         &-user{

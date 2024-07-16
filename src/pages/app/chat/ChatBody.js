@@ -111,7 +111,7 @@ const ChatBody = ({
 
     dispatch(createMessage({ conversationId, formData })).then(response => {
       const data = response.payload?.message;
-      if (data.conversationId) {
+      if (data?.conversationId) {
         scrollToBottom(); // TODO
         const checkStatus = () => {
           dispatch(fetchStatusMessage({ id: data.id })).then(({ payload }) => {

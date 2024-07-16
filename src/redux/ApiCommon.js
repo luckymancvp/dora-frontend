@@ -31,18 +31,24 @@ client.interceptors.request.use(
 client.interceptors.response.use(
   response => response,
   error => {
-    let {
-      data: { message },
-    } = error.response;
-    const {
-      config: { headers: { ignoreApiAlertMsg } },
-      data: { errors },
-    } = error.response;
+    const { response } = error;
+    if (!response) {
+      toast.error("No response from server");
+      return Promise.reject(error);
+    }
+
+    let { message } = response.data;
+    const { 
+      config: { headers: { ignoreApiAlertMsg } }, 
+      data: { errors } 
+    } = response;
+
     if (ignoreApiAlertMsg) {
       return Promise.reject(error);
     }
+
     if (!message) {
-      message = error.response.data;
+      message = response.data;
     }
 
     if (!message && errors) {
@@ -63,11 +69,15 @@ client.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    toast.error("Error happened");
-    if (error.response.status === 401) {
+    if (response.status === 413) {
+      toast.error("Request entity too large");
+    } else if (response.status === 401) {
       localStorage.removeItem("token");
       window.location.href = LOGIN_PATH;
+    } else {
+      toast.error("Error happened");
     }
+
     return Promise.reject(error);
   },
 );
