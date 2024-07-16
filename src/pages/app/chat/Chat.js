@@ -47,7 +47,7 @@ const Chat = ({
 
   useEffect(() => {
     fetchDataShops();
-  }, [fetchDataShops]);
+  }, []);
 
   useEffect(() => {
     if (conversationId !== undefined && conversationId !== null) {
@@ -132,8 +132,8 @@ const Chat = ({
               <div className="nk-chat-aside-user">
                 <UncontrolledDropdown>
                   {/* <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator"> */}
-                    <UserAvatar image={User}></UserAvatar>
-                    <div className="title">{mainTab}</div>
+                  <UserAvatar image={User}></UserAvatar>
+                  <div className="title">{mainTab}</div>
                   {/* </DropdownToggle> */}
                 </UncontrolledDropdown>
               </div>

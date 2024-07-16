@@ -46,7 +46,7 @@ const ChatBody = ({
 
   useEffect(() => {
     reset();
-    setFiles([]);
+    clearFileInput();
   }, [conversationId, reset]);
 
   const scrollToBottom = () => {
@@ -141,13 +141,20 @@ const ChatBody = ({
     });
   }, [dispatch]);
 
+  const clearFileInput = useCallback(() => {
+    if(uploadImgRef.current) {
+      uploadImgRef.current.value = null;
+    }
+  }, [uploadImgRef])
+
   const saveMessage = useCallback((formValues) => {
     if (formValues.message.trim() || attachments.length > 0) {
       handleSendMessage(formValues, conversation.etsy?.conversationId);
       reset();
+      clearFileInput()
       setFiles([]);
     }
-  }, [conversation, handleSendMessage, reset, attachments]);
+  }, [conversation, handleSendMessage, reset, attachments, clearFileInput]);
 
   // const onRemoveMessage = (idx, id) => {
   //   let allChat = chat;
