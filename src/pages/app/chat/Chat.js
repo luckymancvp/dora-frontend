@@ -129,14 +129,14 @@ const Chat = ({
         <div className="nk-chat">
           <div className={`nk-chat-aside ${mobileView ? "has-aside" : ""}`}>
             <div className="nk-chat-aside-head">
-              {/* <div className="nk-chat-aside-user">
+              <div className="nk-chat-aside-user">
                 <UncontrolledDropdown>
                   <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator">
                     <UserAvatar image={User}></UserAvatar>
                     <div className="title">{mainTab}</div>
                   </DropdownToggle>
                   <DropdownMenu>
-                    <ul className="link-list-opt no-bdr">
+                    {/* <ul className="link-list-opt no-bdr">
                       <li>
                         <DropdownItem
                           tag="a"
@@ -161,10 +161,10 @@ const Chat = ({
                           <span>{mainTab === "Chats" ? "Channel" : mainTab === "Channel" ? "Contact" : "Channel"}</span>
                         </DropdownItem>
                       </li>
-                    </ul>
+                    </ul> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
-              </div> */}
+              </div> 
               <ul className="nk-chat-aside-tools g-2">
                 {mainTab === "Chats" || mainTab === "Channel" ? (
                   <>
