@@ -131,12 +131,12 @@ const Chat = ({
             <div className="nk-chat-aside-head">
               <div className="nk-chat-aside-user">
                 <UncontrolledDropdown>
-                  <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator" style={{ marginRight: "30px"}}>
+                  <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator">
                     <UserAvatar image={User}></UserAvatar>
                     <div className="title">{mainTab}</div>
                   </DropdownToggle>
                   <DropdownMenu>
-                    {/* <ul className="link-list-opt no-bdr">
+                    <ul className="link-list-opt no-bdr">
                       <li>
                         <DropdownItem
                           tag="a"
@@ -161,7 +161,7 @@ const Chat = ({
                           <span>{mainTab === "Chats" ? "Channel" : mainTab === "Channel" ? "Contact" : "Channel"}</span>
                         </DropdownItem>
                       </li>
-                    </ul> */}
+                    </ul>
                   </DropdownMenu>
                 </UncontrolledDropdown>
               </div> 
