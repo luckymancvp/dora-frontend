@@ -128,140 +128,109 @@ const Chat = ({
       <ContentAlt>
         <div className="nk-chat">
           <div className={`nk-chat-aside ${mobileView ? "has-aside" : ""}`}>
-            <div className="nk-chat-aside-head">
-              <div className="nk-chat-aside-user">
-                <UncontrolledDropdown>
-                  <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator" style={{marginRight:'85px'}}>
-                    <UserAvatar image={User}></UserAvatar>
-                    <div className="title">{mainTab}</div>
-                  </DropdownToggle>
-                  {/* <DropdownMenu>
-                    <ul className="link-list-opt no-bdr">
-                      <li>
-                        <DropdownItem
-                          tag="a"
-                          href="#contact"
-                          onClick={(ev) => {
-                            ev.preventDefault();
-                            setMainTab(mainTab === "Chats" ? "Contact" : "Chats");
-                          }}
-                        >
-                          <span>{mainTab === "Chats" ? "Contact" : "Chats"}</span>
-                        </DropdownItem>
-                      </li>
-                      <li>
-                        <DropdownItem
-                          tag="a"
-                          href="#contact"
-                          onClick={(ev) => {
-                            ev.preventDefault();
-                            setMainTab(mainTab === "Chats" ? "Channel" : mainTab === "Channel" ? "Contact" : "Channel");
-                          }}
-                        >
-                          <span>{mainTab === "Chats" ? "Channel" : mainTab === "Channel" ? "Contact" : "Channel"}</span>
-                        </DropdownItem>
-                      </li>
-                    </ul>
-                  </DropdownMenu> */}
-                </UncontrolledDropdown>
-              </div> 
-              <ul className="nk-chat-aside-tools g-2">
-                {mainTab === "Chats" || mainTab === "Channel" ? (
-                  <>
-                    <li>
-                      <UncontrolledDropdown>
-                        <DropdownToggle tag="a" className="btn btn-round btn-icon btn-light dropdown-toggle">
-                          <Icon name="setting-alt-fill"></Icon>
-                        </DropdownToggle>
-                        <DropdownMenu end>
-                          <ul className="link-list-opt no-bdr">
-                            <li>
-                              <DropdownItem
-                                tag="a"
-                                href="#dropdown"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                              >
-                                <span>Settings</span>
-                              </DropdownItem>
-                            </li>
-                            <li className="divider"></li>
-                            <li
-                              onClick={() => onFilterTabClick("messages")}
-                              className={filterTabs.messages ? "active" : ""}
-                            >
-                              <DropdownItem
-                                tag="a"
-                                href="#dropdown"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                              >
-                                <span>Messages</span>
-                              </DropdownItem>
-                            </li>
-                            <li
-                              onClick={() => onFilterTabClick("only_is_order_help_request")}
-                              className={filterTabs.only_is_order_help_request ? "active" : ""}
-                            >
-                              <DropdownItem
-                                tag="a"
-                                href="#dropdown"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                              >
-                                <span>Help request</span>
-                              </DropdownItem>
-                            </li>
-                            <li
-                              onClick={() => onFilterTabClick("only_not_replied")}
-                              className={filterTabs.only_not_replied ? "active" : ""}
-                            >
-                              <DropdownItem
-                                tag="a"
-                                href="#dropdown"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                              >
-                                <span>Not Replied</span>
-                              </DropdownItem>
-                            </li>
-                            <li
-                              onClick={() => onFilterTabClick("only_has_order")}
-                              className={filterTabs.only_has_order ? "active" : ""}
-                            >
-                              <DropdownItem
-                                tag="a"
-                                href="#dropdown"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                              >
-                                <span>Has Order</span>
-                              </DropdownItem>
-                            </li>
-                          </ul>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </li>
-                    {/* <li>
-                      <Button color="light" className="btn-round btn-icon">
-                        <Icon name="edit-alt-fill"></Icon>
-                      </Button>
-                    </li> */}
-                  </>
-                ) : (
+          <div className="nk-chat-aside-head">
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+    <div className="nk-chat-aside-user">
+      <UncontrolledDropdown>
+        <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator">
+          <UserAvatar image={User}></UserAvatar>
+          <div className="title">{mainTab}</div>
+        </DropdownToggle>
+      </UncontrolledDropdown>
+    </div>
+    <ul className="nk-chat-aside-tools g-2">
+      {mainTab === "Chats" || mainTab === "Channel" ? (
+        <>
+          <li>
+            <UncontrolledDropdown>
+              <DropdownToggle tag="a" className="btn btn-round btn-icon btn-light dropdown-toggle">
+                <Icon name="setting-alt-fill"></Icon>
+              </DropdownToggle>
+              <DropdownMenu end>
+                <ul className="link-list-opt no-bdr">
                   <li>
-                    <Button color="light" className="btn-round btn-icon">
-                      <Icon name="user-add-fill"></Icon>
-                    </Button>
+                    <DropdownItem
+                      tag="a"
+                      href="#dropdown"
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                      }}
+                    >
+                      <span>Settings</span>
+                    </DropdownItem>
                   </li>
-                )}
-              </ul>
-            </div>
+                  <li className="divider"></li>
+                  <li
+                    onClick={() => onFilterTabClick("messages")}
+                    className={filterTabs.messages ? "active" : ""}
+                  >
+                    <DropdownItem
+                      tag="a"
+                      href="#dropdown"
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                      }}
+                    >
+                      <span>Messages</span>
+                    </DropdownItem>
+                  </li>
+                  <li
+                    onClick={() => onFilterTabClick("only_is_order_help_request")}
+                    className={filterTabs.only_is_order_help_request ? "active" : ""}
+                  >
+                    <DropdownItem
+                      tag="a"
+                      href="#dropdown"
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                      }}
+                    >
+                      <span>Help request</span>
+                    </DropdownItem>
+                  </li>
+                  <li
+                    onClick={() => onFilterTabClick("only_not_replied")}
+                    className={filterTabs.only_not_replied ? "active" : ""}
+                  >
+                    <DropdownItem
+                      tag="a"
+                      href="#dropdown"
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                      }}
+                    >
+                      <span>Not Replied</span>
+                    </DropdownItem>
+                  </li>
+                  <li
+                    onClick={() => onFilterTabClick("only_has_order")}
+                    className={filterTabs.only_has_order ? "active" : ""}
+                  >
+                    <DropdownItem
+                      tag="a"
+                      href="#dropdown"
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                      }}
+                    >
+                      <span>Has Order</span>
+                    </DropdownItem>
+                  </li>
+                </ul>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          </li>
+        </>
+      ) : (
+        <li>
+          <Button color="light" className="btn-round btn-icon">
+            <Icon name="user-add-fill"></Icon>
+          </Button>
+        </li>
+      )}
+    </ul>
+  </div>
+</div>
             {mainTab === "Chats" ? (
               <ChatAsideBody
                 onInputChange={onInputChange}
