@@ -131,7 +131,7 @@ const Chat = ({
             <div className="nk-chat-aside-head">
               <div className="nk-chat-aside-user">
                 <UncontrolledDropdown>
-                  <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator" style={{marginRight:'43px'}}>
+                  <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator" style={{marginRight:'85px'}}>
                     <UserAvatar image={User}></UserAvatar>
                     <div className="title">{mainTab}</div>
                   </DropdownToggle>
