@@ -1,81 +1,195 @@
-const zeroPad = (num, pad) => {
-    return String(num).padStart(pad, '0');
+import { words, toString, upperFirst, lowerFirst, isNumber, isEmpty } from 'lodash';
+
+//url for production
+export var url = "";
+if (process.env.NODE_ENV === "development") {
+  url = "";
+} else {
+  url = window.location.host.split("/")[1];
+  if (url) {
+    url = `/${window.location.host.split("/")[1]}`;
+  } else url = process.env.PUBLIC_URL; /// ADD YOUR CPANEL SUB-URL
 }
 
-const isSameDay = (d1, d2) => {
-    return (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate()
-    );
-}
+//Function to validate and return errors for a form
+export const checkForm = (formData) => {
+  let errorState = {};
+  Object.keys(formData).forEach((item) => {
+    if (formData[item] === null || formData[item] === "") {
+      errorState[item] = "This field is required";
+    }
+  });
+  return errorState;
+};
 
-const timeAgo = (date) => {
-    const now = new Date();
-    const secondsAgo = Math.floor((now - date) / 1000);
-    const minutesAgo = Math.floor(secondsAgo / 60);
-    const hoursAgo = Math.floor(minutesAgo / 60);
+//Function that returns the first or first two letters from a name
+export const findUpper = (string) => {
+  let extractedString = [];
+  if (string == undefined || null) {
+    string = "";
+  }
 
-    if (secondsAgo < 60) {
-        return `${secondsAgo} seconds ago`;
-    } else if (minutesAgo < 60) {
-        return `${minutesAgo} minutes ago`;
-    } else if (hoursAgo < 24) {
-        return `${hoursAgo} hours ago`;
+  for (var i = 0; i < string.length; i++) {
+    if (string.charAt(i) === string.charAt(i).toUpperCase() && string.charAt(i) !== " ") {
+      extractedString.push(string.charAt(i));
+    }
+  }
+  if (extractedString.length > 1) {
+    return extractedString[0] + extractedString[1];
+  } else {
+    return extractedString[0];
+  }
+};
+
+//Function that calculates the from current date
+export const setDeadline = (days) => {
+  let todayDate = new Date();
+  var newDate = new Date(todayDate);
+  newDate.setDate(newDate.getDate() + days);
+  return newDate;
+};
+
+// Function to structure date ex : Jun 4, 2011;
+export const getDateStructured = (date) => {
+  let d = date.getDate();
+  let m = date.getMonth();
+  let y = date.getFullYear();
+  let final = monthNames[m] + " " + d + ", " + y;
+  return final;
+};
+
+// Function to structure date ex: YYYY-MM-DD
+export const setDateForPicker = (rdate) => {
+  let d = rdate.getDate();
+  d < 10 && (d = "0" + d);
+  let m = rdate.getMonth() + 1;
+  m < 10 && (m = "0" + m);
+  let y = rdate.getFullYear();
+  rdate = y + "-" + m + "-" + d;
+
+  return rdate;
+};
+
+// Set deadlines for projects
+export const setDeadlineDays = (deadline) => {
+  var currentDate = new Date();
+  var difference = deadline.getTime() - currentDate.getTime();
+  var days = Math.ceil(difference / (1000 * 3600 * 24));
+  return days;
+};
+
+//Date formatter function Example : 10-02-2004
+export const dateFormatterAlt = (date, reverse) => {
+  let d = date.getDate();
+  let m = date.getMonth();
+  let y = date.getFullYear();
+  reverse ? (date = m + "-" + d + "-" + y) : (date = y + "-" + d + "-" + m);
+  return date;
+};
+
+//Date formatter function
+export const dateFormatter = (date, reverse, string) => {
+  var dateformat = date.split("-");
+  //var date = dateformat[1]+"-"+dateformat[2]+"-"+dateformat[0];
+  reverse
+    ? (date = dateformat[2] + "-" + dateformat[0] + "-" + dateformat[1])
+    : (date = dateformat[1] + "-" + dateformat[2] + "-" + dateformat[0]);
+
+  return date;
+};
+
+//todays Date
+export const todaysDate = new Date();
+
+//current Time
+export const currentTime = () => {
+  var hours = todaysDate.getHours();
+  var minutes = todaysDate.getMinutes();
+  var ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  var strTime = hours + ":" + minutes + " " + ampm;
+  return strTime;
+};
+
+//Percentage calculation
+export const calcPercentage = (str1, str2) => {
+  let result = Number(str2) / Number(str1);
+  result = result * 100;
+  return Math.floor(result);
+};
+
+export const truncate = (str, n) => {
+  return str.length > n ? str.substr(0, n - 1) + " " + truncate(str.substr(n - 1, str.length), n) : str;
+};
+
+// returns upload url
+export const getUploadParams = () => {
+  return { url: "https://httpbin.org/post" };
+};
+
+export const bulkActionOptions = [
+  { value: "suspend", label: "Suspend User" },
+  { value: "delete", label: "Delete User" },
+];
+
+// Converts KB to MB
+export const bytesToMegaBytes = (bytes) => {
+  let result = bytes / (1024 * 1024);
+  return result.toFixed(2);
+};
+
+export const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+export const camelCase = (string, options = {}) => {
+  const re = words(toString(string).replace(/['\u2019]/g, ''), /[^_\s]+/g).reduce((result, word, index) => result + (index ? upperFirst(word) : lowerFirst(word)), '');
+  return options.upperFirst ? upperFirst(re) : re;
+};
+
+export const camelCaseObject = (object, ignoreList = []) => {
+  let obj = { ...object };
+  if (typeof object === 'object' && object !== null) {
+    if (Array.isArray(object)) {
+      obj = object.map(item => camelCaseObject(item, ignoreList));
     } else {
-        return null;
+      Object.keys(obj).forEach(key => {
+        let tmp = obj[key];
+        if (!ignoreList.includes(key)) {
+          if (typeof tmp === 'object' && tmp !== null) {
+            if (Array.isArray(tmp)) {
+              tmp = tmp.map(item => camelCaseObject(item, ignoreList));
+            } else {
+              tmp = camelCaseObject(tmp, ignoreList);
+              obj[key] = tmp;
+            }
+          }
+        }
+
+        delete obj[key];
+        if (tmp === null) { tmp = undefined; }
+        obj[camelCase(key)] = tmp;
+      });
     }
-}
+    return obj;
+  }
+  return object === null ? undefined : object;
+};
 
-const parseTimestamp = (timestamp, format = '') => {
-    if (!timestamp) { return; }
-
-    const date = typeof timestamp === 'number'
-        ? new Date(timestamp * 1000)
-        : timestamp;
-
-    if (format === 'HH:mm') {
-        return `${zeroPad(date.getHours(), 2)}:${zeroPad(date.getMinutes(), 2)}`;
-    } else if (format === 'DD MMMM YYYY') {
-        const options = { month: 'long', year: 'numeric', day: 'numeric' };
-        return `${new Intl.DateTimeFormat('en-GB', options).format(date)}`;
-    } else if (format === 'DD/MM/YY') {
-        const options = { month: 'numeric', year: 'numeric', day: 'numeric' };
-        return `${new Intl.DateTimeFormat('en-GB', options).format(date)}`;
-    } else if (format === 'DD MMMM, HH:mm') {
-        const options = { month: 'long', day: 'numeric' };
-        return `${new Intl.DateTimeFormat('en-GB', options).format(date)}, ${zeroPad(date.getHours(), 2)}:${zeroPad(date.getMinutes(), 2)}`;
-    }
-
-    return date;
-}
-
-const formatTimestamp = (timestamp) => {
-    const date = typeof timestamp === 'number'
-        ? new Date(timestamp * 1000)
-        : timestamp;
-
-    const now = new Date();
-    if (isSameDay(date, now)) {
-        const timeAgoResult = timeAgo(date);
-        return timeAgoResult ? timeAgoResult : `${parseTimestamp(timestamp, 'HH:mm')}`;
-    } else {
-        return parseTimestamp(timestamp, 'DD/MM/YY');
-    }
-}
-
-const formatDateString = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-
-    const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
-    const optionsDate = { day: '2-digit', month: '2-digit', year: 'numeric' };
-
-    if (isSameDay(date, now)) {
-        return date.toLocaleString('en-GB', optionsTime); // Format time with AM/PM
-    } else {
-        return date.toLocaleString('en-GB', optionsDate); // Format date as DD/MM/YYYY
-    }
-}
-
-export { parseTimestamp, formatTimestamp, formatDateString };
+export const isBlank = value => {
+  if (value === true || isNumber(value) || value instanceof File || value instanceof Date) { return false; }
+  return isEmpty(value);
+};

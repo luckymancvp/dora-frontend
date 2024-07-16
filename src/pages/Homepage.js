@@ -42,7 +42,7 @@ const Homepage = () => {
                 Sales Overview
               </BlockTitle>
               <BlockDes className="text-soft">
-                <p>Welcome to DashLite Dashboard Template</p>
+                <p>Welcome to Dora Dashboard Template</p>
               </BlockDes>
             </BlockHeadContent>
             <BlockHeadContent>

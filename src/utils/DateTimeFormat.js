@@ -64,4 +64,18 @@ const formatTimestamp = (timestamp) => {
     }
 }
 
-export { parseTimestamp, formatTimestamp };
+const formatDateString = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+    const optionsDate = { day: '2-digit', month: '2-digit', year: 'numeric' };
+
+    if (isSameDay(date, now)) {
+        return date.toLocaleString('en-GB', optionsTime); // Format time with AM/PM
+    } else {
+        return date.toLocaleString('en-GB', optionsDate); // Format date as DD/MM/YYYY
+    }
+}
+
+export { parseTimestamp, formatTimestamp, formatDateString };
