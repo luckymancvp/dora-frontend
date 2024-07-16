@@ -13,6 +13,7 @@ const initialState = {
   conversations: [],
   fetching: false,
   currentPage: 1,
+  defaultItemsPerPage: 20
 };
 
 const ConversationSlice = createSlice({
@@ -30,14 +31,19 @@ const ConversationSlice = createSlice({
     [fetchConversations.fulfilled]: (state, _action) => {
       const data = _action.payload;
 
-      if (state.currentPage == 1) {
+      if (state.currentPage === 1) {
         state.conversations = [];
       }
 
-      if (data && data.length > 0) {
-        state.conversations = state.conversations.concat(data);
-      } else {
-        state.currentPage = -1;
+      if (data && data != null) {
+        const dataLength = data.length;
+        if (dataLength > 0) {
+          state.conversations = state.conversations.concat(data);
+        }
+
+        if (dataLength < state.defaultItemsPerPage) {
+          state.currentPage = -1;
+        }
       }
       state.fetching = false;
     },

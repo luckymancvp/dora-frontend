@@ -3,6 +3,7 @@ import { DropdownToggle, DropdownMenu, UncontrolledDropdown, DropdownItem } from
 import { Link } from "react-router-dom";
 import { Icon, UserAvatar } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
+import { formatDateString } from "../../../utils/DateTimeFormat";
 import { ChatContext } from "./ChatContext";
 import { formatTimestamp } from '../../../utils/DateTimeFormat';
 import ImageContainer from "./GalleryImage";
@@ -63,22 +64,35 @@ export const YouChat = ({ item, sender }) => {
 
 export const SendingChat = ({ item, sender }) => {
   let status = "";
+  const firstTime = item.firstTime;
+  let timeDifference = 0;
+
+  if (firstTime) {
+    const existingTimestamp = new Date(item.firstTime);
+    const currentTimestamp = new Date().toISOString();
+    const now = new Date(currentTimestamp);
+    timeDifference = (now - existingTimestamp);
+  }
 
   switch (item.status) {
     case "NEW":
-      status = "..." // TODO
+      status = "Sending"
       break;
     case "SENDING":
       status = "Sending"
       break;
     case "DONE":
-      status = item?.createdAt; // TODO
+      status = formatDateString(item?.createdAt); // TODO
       break;
     case "FAILED":
       status = "Error"
       break;
     default:
       break;
+  }
+
+  if (timeDifference > 5000) {
+    status = "Error";
   }
 
   return (

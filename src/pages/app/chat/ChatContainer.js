@@ -1,22 +1,23 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
+import { debounce } from 'lodash';
 import Chat from "./Chat";
 import { ChatContextProvider } from "./ChatContext";
 import { fetchShops } from "../../../redux/slices/Shops";
 import { fetchConversations, setCurrentPage } from "../../../redux/slices/Conversations";
-import { fetchMessages, setEmptyMessages, setEmptyConversationMessage } from "../../../redux/slices/Messages";
+import { fetchMessages, setEmptyMessages, setEmptyConversationMessage, setScrollBottom } from "../../../redux/slices/Messages";
 
 const ChatContainer = () => {
   const dispatch = useDispatch();
   const { conversationId } = useParams();
   const {
     shops: { shops, fetching: shopFetching }, 
-    conversations: { conversations, fetching: conversationFetching },
-    messages: { messages, conversation, fetching: messageFetching}
+    conversations: { conversations, fetching: conversationFetching, defaultItemsPerPage },
+    messages: { messages, sendingMessages, conversation, fetching: messageFetching, scrollBottom }
   } = useSelector(state => state);
 
-  const fetchDataShops = useCallback((args = {}) => {
+  const fetchDataShops = useCallback(() => {
     dispatch(fetchShops());
   }, [dispatch]);
 
@@ -25,26 +26,46 @@ const ChatContainer = () => {
     dispatch(fetchConversations({
       params: {
         page: 1,
-        items_per_page: 20,
+        items_per_page: defaultItemsPerPage,
         ...args,
       },
     }));
+  }, [dispatch, defaultItemsPerPage]);
+
+  const handleChangeScroll = useCallback(value => {
+    dispatch(setScrollBottom(value));
   }, [dispatch]);
 
-  const fetchDataMessage = useCallback((conversationId, clearMessage = false) => {
+  const fetchDataMessage = useCallback(debounce(({ conversationId, clearMessage = false, toScrollBottom = false }) => {
     if (clearMessage) {
       dispatch(setEmptyMessages());
     }
-    dispatch(fetchMessages({ conversationId }));
-  }, [dispatch]);
+
+    dispatch(fetchMessages({ conversationId })).then(() => {
+      handleChangeScroll(toScrollBottom);
+    });
+  }, 400), [dispatch]);
 
   const handleSetEmptyConversationMessage = useCallback(data => {
     dispatch(setEmptyConversationMessage(data));
   }, [dispatch]);
 
+  useEffect(() => {
+    fetchDataMessage({ conversationId, clearMessage: true, toScrollBottom: true });
+  }, [conversationId]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchDataMessage({ conversationId });
+    }, 5000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
+  }, [conversationId, fetchDataMessage]);
+
   return (
     <ChatContextProvider>
-      <Chat 
+      <Chat
         fetchDataShops={fetchDataShops}
         shopFetching={shopFetching}
         shops={shops}
@@ -57,8 +78,11 @@ const ChatContainer = () => {
         messages={messages}
         handleSetEmptyConversationMessage={handleSetEmptyConversationMessage}
         conversationId={conversationId}
+        scrollBottom={scrollBottom}
+        sendingMessages={sendingMessages}
       />
     </ChatContextProvider>
   );
 };
+
 export default ChatContainer;

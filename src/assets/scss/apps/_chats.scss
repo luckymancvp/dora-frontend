@@ -465,6 +465,10 @@ $chat-meta-sap: $ni-dot !default;
                     border-bottom-right-radius: $border-radius;
                 }
             }
+            .chat-msg.bg-blue a {
+                color: white;
+                text-decoration: underline;
+            }
         }
         .chat-img {
             display: flex;
@@ -695,7 +699,7 @@ $chat-meta-sap: $ni-dot !default;
         &-head{
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
             padding: 1.125rem $chat-aside-gap-x 0.875rem;
         }
         &-user{

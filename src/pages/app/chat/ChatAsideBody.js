@@ -26,15 +26,30 @@ export const ChatAsideBody = ({
   const { conversations: { currentPage }} = useSelector(state => state);
   const [shopFilter, setShopFilter] = useState([]);
   const [shopFilterText, setShopFilterText] = useState("");
+  const [conversationFilterText, setConversationFilterText] = useState("");
   const [shopData, setShopData] = useState(() => {
     const savedShopData = localStorage.getItem("shops");
     return savedShopData ? JSON.parse(savedShopData) : [];
   });
   const defaultChat = filteredChatList.filter((item) => item.group !== true);
 
+  const filterConversations = useMemo(() => conversations.filter(item => {
+    if (shopData.length > 0) {
+      const userData = item.userData || item.etsy.userData;
+      return shopData.some(shop => shop.userId === userData?.userId);
+    }
+    return true;
+  }), [conversations, shopData]);
+
   const handleLoadMoreConversations = useCallback(debounce((args = {}) => {
-    fetchConversations({ ...filterTabs, ...args });
-  }, 400), [currentPage, filterTabs]);
+    fetchConversations({ ...filterTabs, search: conversationFilterText,...args });
+  }, 400), [currentPage, filterTabs, conversationFilterText]);
+
+  const onSearchConversations = useCallback(debounce((text) => {
+    if (!conversationFetching) {
+      handleLoadMoreConversations({ page: 1, search: text});
+    }
+  }, 300), [filterTabs, conversationFetching]);
 
   useEffect(() => {
     if (!conversationFetching) {
@@ -89,7 +104,7 @@ export const ChatAsideBody = ({
     } else {
       setShopFilter([]);
     }
-  }, [shopFilterText, shops, shopData]);
+  }, [shopFilterText, shops, shopData, shopState]);
 
   return (
     <SimpleBar className="nk-chat-aside-body" scrollableNodeProps={{ ref: conversationRef }}>
@@ -103,8 +118,13 @@ export const ChatAsideBody = ({
               type="text"
               className="form-round"
               id="default-03"
-              placeholder="Search by name"
-              onChange={(e) => onInputChange(e)}
+              placeholder="Search conversation"
+              value={conversationFilterText}
+              onChange={(e) => {
+                const value = e.target.value;
+                setConversationFilterText(value);
+                onSearchConversations(value)}
+              }
             />
           </div>
         </div>
@@ -119,7 +139,10 @@ export const ChatAsideBody = ({
               outline
               size="lg"
               className="btn-icon btn-white btn-round"
-              onClick={() => setShopState(!shopState)}
+              onClick={() => {
+                setShopFilterText("");
+                setShopState(!shopState)
+              }}
             >
               <Icon name={shopState ? "cross" : "plus"}></Icon>
             </Button>
@@ -127,7 +150,7 @@ export const ChatAsideBody = ({
           {shopData.map((shop, idx) => {
             return (
               <li key={idx}>
-                <span onClick={(ev) => ev.preventDefault()}>
+                <span onClick={(ev) => ev.preventDefault()} title={shop.shopName}>
                   <UserAvatar image={shop.avatarUrl} theme="blue" text={findUpper(shop.shopName)} />
                 </span>
                 <span className="btn-rm" onClick={() => removeShop(shop.userId)}><Icon name="cross-sm"></Icon></span>
@@ -213,10 +236,10 @@ export const ChatAsideBody = ({
       <div className="nk-chat-list">
         <h6 className="title overline-title-alt">Messages</h6>
         <ul className="chat-list">
-          {conversations.length !== 0 && conversations.map((item, idx) => (
+          {filterConversations.length !== 0 && filterConversations.map((item, idx) => (
             <ChatRoomItem key={idx} item={item} />
           ))}
-          {!conversationFetching && conversations.length == 0 && (<p className="m-3">No conversation</p>)}
+          {!conversationFetching && filterConversations.length === 0 && (<p className="m-3">No conversation</p>)}
           {conversationFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)}
         </ul>
       </div>

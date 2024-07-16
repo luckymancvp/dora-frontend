@@ -1,4 +1,4 @@
-import React, { forwardRef  } from 'react';
+import React, { forwardRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 export const TextareaForm = forwardRef(({
@@ -10,6 +10,7 @@ export const TextareaForm = forwardRef(({
   errorClassName = '',
   textMessages,
   onChange,
+  onPaste,
   ...rest
 }, ref) => {
   const { control } = useFormContext();
@@ -34,6 +35,9 @@ export const TextareaForm = forwardRef(({
             onChange={(e) => {
               field.onChange(e);
               if (onChange) onChange(e);
+            }}
+            onPaste={(e) => {
+              if (onPaste) onPaste(e);
             }}
             ref={ref}
           />

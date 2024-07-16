@@ -31,6 +31,7 @@ const initialState = {
   messages: [],
   sendingMessages: [],
   fetching: false,
+  scrollBottom: true,
 };
 
 const messagesSlice = createSlice({
@@ -43,6 +44,9 @@ const messagesSlice = createSlice({
     },
     setEmptyMessages: (state, _action) => {
       state.messages = [];
+    },
+    setScrollBottom: (state, action) => {
+      state.scrollBottom = action.payload;
     },
   },
   extraReducers: {
@@ -65,7 +69,9 @@ const messagesSlice = createSlice({
       if (!isBlank(data) && data?.conversationId) {
         const findMessage = state.messages.find(msg => msg.id === data.id);
         if (!findMessage) {
-          state.messages = state.messages.concat(data);
+          const currentTimestamp = new Date().toISOString();
+          const newData = { ...data, firstTime: currentTimestamp };
+          state.sendingMessages = state.sendingMessages.concat(newData);
         }
       }
     },
@@ -75,7 +81,14 @@ const messagesSlice = createSlice({
       if (!isBlank(data) && data.conversationId) {
         const findMessage = state.messages.find(msg => msg.id === data.id);
         if (!findMessage) {
-          state.messages = state.messages.concat(data);
+          const index = state.sendingMessages.findIndex(message => message.id === data.id);
+          if (index !== -1) {
+            state.sendingMessages[index] = { ...state.sendingMessages[index], ...data };
+          } else {
+            const currentTimestamp = new Date().toISOString();
+            const newData = { ...data, firstTime: currentTimestamp };
+            state.sendingMessages = state.sendingMessages.concat(newData);
+          }
         }
       }
     },
@@ -84,4 +97,4 @@ const messagesSlice = createSlice({
 
 const { reducer } = messagesSlice;
 export default reducer;
-export const { setEmptyMessages, setEmptyConversationMessage } = messagesSlice.actions;
+export const { setEmptyMessages, setEmptyConversationMessage, setScrollBottom } = messagesSlice.actions;

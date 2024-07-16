@@ -24,6 +24,8 @@ const Chat = ({
   messages,
   handleSetEmptyConversationMessage,
   fetchDataMessage,
+  sendingMessages,
+  scrollBottom,
   conversationId
 }) => {
   const [mainTab, setMainTab] = useState("Chats");
@@ -49,7 +51,7 @@ const Chat = ({
 
   useEffect(() => {
     if (conversationId !== undefined && conversationId !== null) {
-      fetchDataMessage(conversationId, true);
+      fetchDataMessage({ conversationId, clearMessage: true });
       if (window.innerWidth < 860) {
         setMobileView(true);
       }
@@ -127,7 +129,7 @@ const Chat = ({
         <div className="nk-chat">
           <div className={`nk-chat-aside ${mobileView ? "has-aside" : ""}`}>
             <div className="nk-chat-aside-head">
-              <div className="nk-chat-aside-user">
+              {/* <div className="nk-chat-aside-user">
                 <UncontrolledDropdown>
                   <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator">
                     <UserAvatar image={User}></UserAvatar>
@@ -162,7 +164,7 @@ const Chat = ({
                     </ul>
                   </DropdownMenu>
                 </UncontrolledDropdown>
-              </div>
+              </div> */}
               <ul className="nk-chat-aside-tools g-2">
                 {mainTab === "Chats" || mainTab === "Channel" ? (
                   <>
@@ -301,7 +303,9 @@ const Chat = ({
               conversation={conversation}
               fetchDataMessage={fetchDataMessage}
               messages={messages}
+              sendingMessages={sendingMessages}
               messageFetching={messageFetching}
+              scrollBottom={scrollBottom}
             />
           ) : (
             <div className="nk-chat-body">
