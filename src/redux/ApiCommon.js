@@ -9,7 +9,7 @@ const client = axios.create({
 });
 
 client.interceptors.request.use(
-  async config => {
+  async (config) => {
     const token = localStorage.getItem("token");
     let headers = {
       "Content-Type": "application/json",
@@ -18,19 +18,18 @@ client.interceptors.request.use(
     if (token) {
       headers = {
         ...headers,
-        // Authorization: token,
-        // "PAMO-ACCESS-TOKEN": token,
+        Authorization: `Bearer ${token}`,
       };
     }
     config.headers = headers;
     return config;
   },
-  error => Promise.reject(error),
+  (error) => Promise.reject(error)
 );
 
 client.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     const { response } = error;
     if (!response) {
       toast.error("No response from server");
@@ -38,9 +37,11 @@ client.interceptors.response.use(
     }
 
     let { message } = response.data;
-    const { 
-      config: { headers: { ignoreApiAlertMsg } }, 
-      data: { errors } 
+    const {
+      config: {
+        headers: { ignoreApiAlertMsg },
+      },
+      data: { errors },
     } = response;
 
     if (ignoreApiAlertMsg) {
@@ -53,9 +54,9 @@ client.interceptors.response.use(
 
     if (!message && errors) {
       if (errors[0].message) {
-        message = errors.map(e => e.message);
+        message = errors.map((e) => e.message);
       } else if (errors[0].messages) {
-        message = flatten(errors.map(e => e.messages));
+        message = flatten(errors.map((e) => e.messages));
       } else {
         message = errors;
       }
@@ -75,11 +76,11 @@ client.interceptors.response.use(
       localStorage.removeItem("token");
       window.location.href = LOGIN_PATH;
     } else {
-      toast.error("Error happened");
+      toast.error(message || "Error happened");
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export default client;
