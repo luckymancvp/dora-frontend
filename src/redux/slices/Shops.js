@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import ShopsService from "../services/ShopsService";
+import fetchShopsRequest from "../services/ShopsService";
 
 export const fetchShops = createAsyncThunk(
   "shops/FETCH_SHOPS",
   async (data = {}) => {
-    const result = await ShopsService.fetchShops(data);
+    const result = await fetchShopsRequest(data);
     return result?.data;
   },
 );

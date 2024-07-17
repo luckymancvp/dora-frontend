@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { isBlank } from "../../utils/Utils";
-import AuthService from "../services/AuthService";
+import getProfileRequest from "../services/AuthService";
 
 export const getProfile = createAsyncThunk(
   'auth/PROFILE',
   async () => {
-    const result = await AuthService.getProfile();
+    const result = await getProfileRequest();
     return result.data;
   },
 );

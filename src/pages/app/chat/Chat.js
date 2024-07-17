@@ -3,7 +3,6 @@ import Head from "../../../layout/head/Head";
 import ContentAlt from "../../../layout/content/ContentAlt";
 import AppContact from "./contact/Contact";
 import ChatBody from "./ChatBody";
-import User from "../../../images/avatar/b-sm.jpg";
 import { Button, Icon, UserAvatar } from "../../../components/Component";
 import { DropdownMenu, DropdownToggle, UncontrolledDropdown, DropdownItem } from "reactstrap";
 import { isBlank } from "../../../utils/Utils";
@@ -42,6 +41,7 @@ const Chat = ({
 
   useEffect(() => {
     fetchDataShops();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

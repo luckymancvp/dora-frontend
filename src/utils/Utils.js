@@ -25,7 +25,7 @@ export const checkForm = (formData) => {
 //Function that returns the first or first two letters from a name
 export const findUpper = (string) => {
   let extractedString = [];
-  if (string == undefined || null) {
+  if (string === undefined || null) {
     string = "";
   }
 

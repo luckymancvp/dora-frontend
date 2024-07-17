@@ -1,15 +1,14 @@
-import React, { useState, useContext } from "react";
-import { UserAvatar, Icon, LinkList, LinkItem } from "../../../components/Component";
-import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from "reactstrap";
+import React, { useState } from "react";
+import { UserAvatar, Icon } from "../../../components/Component";
+// import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from "reactstrap";
 import SimpleBar from "simplebar-react";
 import { findUpper } from "../../../utils/Utils";
-import { ChatContext } from "./ChatContext";
+// import { ChatContext } from "./ChatContext";
 import ImageContainer from "./GalleryImage";
 
-const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
-  const { userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
-
-  const [memberState, setMemberState] = useState(true);
+const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
+  // const { userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
+  // const [memberState, setMemberState] = useState(true);
   // const [optionState, setOptionState] = useState(true);
   // const [settingState, setSettingState] = useState(true);
   // const [photoState, setPhotoState] = useState(true);
@@ -260,7 +259,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
           </div>
         </div> */}
         {/* .chat-profile-group */}
-        {chat.group && (
+        {/* {chat.group && (
           <div className="chat-profile-group">
             <a
               href="#member"
@@ -378,7 +377,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
               </div>
             </div>
           </div>
-        )}
+        )} */}
         {/* <div className="chat-profile-group">
           <a
             href="#settings"

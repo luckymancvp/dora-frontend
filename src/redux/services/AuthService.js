@@ -5,7 +5,4 @@ const getProfile = () => api
   .get('users/profile')
   .then(response => camelCaseObject(response));
 
-
-export default {
-  getProfile,
-};
+export default getProfile;

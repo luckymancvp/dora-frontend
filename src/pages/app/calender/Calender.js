@@ -93,6 +93,7 @@ const Calender = () => {
 
   useEffect(() => {
     reset(formData)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
   return (

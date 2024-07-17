@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import ConversationsService from "../services/ConversationsService";
+import fetchConversationsRequest from "../services/ConversationsService";
 
 export const fetchConversations = createAsyncThunk(
   "conversations/FETCH_CONVERSATIONS",
   async (data = {}) => {
-    const result = await ConversationsService.fetchConversations(data);
+    const result = await fetchConversationsRequest(data);
     return result?.data;
   },
 );

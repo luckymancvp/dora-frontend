@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, useContext, useRef, useMemo } from "react";
+import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -7,11 +7,10 @@ import ChatSideBar from "./ChatSideBar";
 import ChatFiles from "./ChatFiles";
 import SimpleBar from "simplebar-react";
 import { createMessage, fetchStatusMessage } from "../../../redux/slices/Messages";
-import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown, Spinner } from "reactstrap";
+import { Spinner } from "reactstrap";
 import { UserAvatar, Icon, Button } from "../../../components/Component";
 import { TextareaForm } from "../../../components/forms/TextareaForm";
-import { currentTime, findUpper, truncate } from "../../../utils/Utils";
-import { ChatContext } from "./ChatContext";
+import { findUpper } from "../../../utils/Utils";
 
 import { MeChat, YouChat, SendingChat } from "./ChatPartials";
 
@@ -21,9 +20,6 @@ const ChatBody = ({
 }) => {
   const dispatch = useDispatch();
   const { messages, sendingMessages, isSendingMessage, scrollBottom } = useSelector(state => state.messages);
-  const { deleteConvo, propAction, chatState } = useContext(ChatContext);
-  const [chat, setChat] = chatState;
-  const [Uchat, setUchat] = useState({});
   const [sidebar, setsidebar] = useState(false);
   const [chatOptions, setChatOptions] = useState(false);
   const [files, setFiles] = useState([]);
@@ -40,17 +36,18 @@ const ChatBody = ({
   });
 
   const {
-    handleSubmit, setValue, watch, clearErrors, reset, formState: { isSubmitting },
+    handleSubmit, setValue, watch, clearErrors, reset
   } = methods;
 
   const attachments = watch("attachments");
 
   useEffect(() => {
     clearFileInput();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 
   const clearFileInput = useCallback(() => {
-    if(uploadImgRef.current) {
+    if (uploadImgRef.current) {
       uploadImgRef.current.value = null;
     }
     reset();
@@ -77,7 +74,7 @@ const ChatBody = ({
         focusTextarea();
       }, 300);
     }
-  }, [Uchat, conversationId, scrollBottom, messages, sendingMessages]);
+  }, [conversationId, scrollBottom, messages, sendingMessages]);
 
   const resizeFunc = () => {
     if (window.innerWidth > 1550) {
@@ -86,14 +83,6 @@ const ChatBody = ({
       setsidebar(false);
     }
   };
-
-  useEffect(() => {
-    chat.forEach((item) => {
-      if (item.id === id) {
-        setUchat(item);
-      }
-    });
-  }, [id, chat]);
 
   useEffect(() => {
     window.addEventListener("resize", resizeFunc);
@@ -161,17 +150,6 @@ const ChatBody = ({
       handleSendMessage(formValues, conversation.etsy?.conversationId);
     }
   }, [conversation, handleSendMessage, attachments]);
-
-  // const onRemoveMessage = (idx, id) => {
-  //   let allChat = chat;
-  //   let cindex = allChat.find((item) => item.id === id);
-  //   let defaultChat = Uchat;
-  //   let newConvo = defaultChat.convo;
-  //   let index = newConvo.findIndex((item) => item.id === id);
-  //   newConvo[index].chat[idx] = "deleted";
-  //   allChat[cindex] = defaultChat;
-  //   setChat([...allChat]);
-  // };
 
   const chatBodyClass = classNames({
     "nk-chat-body": true,
@@ -326,7 +304,7 @@ const ChatBody = ({
                 <Icon name="video-fill"></Icon>
               </a>
             </li> */}
-            <li className="d-none d-sm-block">
+            {/* <li className="d-none d-sm-block">
               <UncontrolledDropdown>
                 <DropdownToggle tag="a" className="dropdown-toggle btn btn-icon btn-trigger text-primary">
                   <Icon name="setting-fill"></Icon>
@@ -366,7 +344,7 @@ const ChatBody = ({
                   </ul>
                 </DropdownMenu>
               </UncontrolledDropdown>
-            </li>
+            </li> */}
             <li className="me-n1 me-md-n2">
               <a
                 href="#alert"
@@ -448,7 +426,7 @@ const ChatBody = ({
           </div>
         </FormProvider>
 
-        <ChatSideBar sidebar={sidebar} chat={Uchat} conversation={conversation} otherUser={otherUser} />
+        <ChatSideBar sidebar={sidebar} conversation={conversation} otherUser={otherUser} />
 
         {window.innerWidth < 1550 && sidebar && (
           <div onClick={() => toggleMenu()} className="nk-chat-profile-overlay"></div>

@@ -59,6 +59,7 @@ const ThemeProvider = ({...props}) => {
   useEffect(() => {
     const body = document.querySelector('body');
     body.className = bodyClass;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -105,6 +106,7 @@ const ThemeProvider = ({...props}) => {
     return () => {
      window.removeEventListener('resize', handleMobileSidebar);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

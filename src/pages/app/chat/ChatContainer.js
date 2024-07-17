@@ -36,7 +36,8 @@ const ChatContainer = ({ currentUser }) => {
     dispatch(setScrollBottom(value));
   }, [dispatch]);
 
-  const fetchDataMessage = useCallback(debounce(({ conversationId, clearMessage = false, toScrollBottom = false }) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedFetchDataMessage = useCallback(debounce(({ conversationId, clearMessage = false, toScrollBottom = false }) => {
     if (clearMessage) {
       dispatch(setEmptyMessages());
     }
@@ -44,7 +45,11 @@ const ChatContainer = ({ currentUser }) => {
     dispatch(fetchMessages({ conversationId })).then(() => {
       handleChangeScroll(toScrollBottom);
     });
-  }, 400), [dispatch]);
+  }, 400), []);
+
+  const fetchDataMessage = useCallback((params) => {
+    debouncedFetchDataMessage(params);
+  }, [debouncedFetchDataMessage]);
 
   const handleSetEmptyConversationMessage = useCallback(data => {
     dispatch(setEmptyConversationMessage(data));

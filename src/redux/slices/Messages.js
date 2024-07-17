@@ -1,11 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import MessagesService from "../services/MessagesService";
+import { 
+  fetchMessagesRequest, 
+  createMessageRequest, 
+  fetchStatusMessagesRequest
+} from "../services/MessagesService";
 import { isBlank } from "../../utils/Utils";
 
 export const fetchMessages = createAsyncThunk(
   "messages/FETCH_MESSAGES",
   async ({ conversationId }) => {
-    const result = await MessagesService.fetchMessages(conversationId);
+    const result = await fetchMessagesRequest(conversationId);
     return result?.data;
   },
 );
@@ -13,7 +17,7 @@ export const fetchMessages = createAsyncThunk(
 export const createMessage = createAsyncThunk(
   "messages/CREATE_MESSAGE",
   async ({ formData, conversationId }) => {
-    const result = await MessagesService.createMessage(conversationId, formData);
+    const result = await createMessageRequest(conversationId, formData);
     return result?.data;
   },
 );
@@ -21,7 +25,7 @@ export const createMessage = createAsyncThunk(
 export const fetchStatusMessage = createAsyncThunk(
   "messages/FETCH_STATUS_MESSAGE",
   async ({ id }) => {
-    const result = await MessagesService.fetchStatusMessages(id);
+    const result = await fetchStatusMessagesRequest(id);
     return result?.data;
   },
 );

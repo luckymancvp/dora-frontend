@@ -1,10 +1,11 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback } from "react";
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import UserAvatar from "../../../../components/user/UserAvatar";
 import { DropdownToggle, DropdownMenu, Dropdown } from "reactstrap";
 import { Icon } from "../../../../components/Component";
-import { LinkList, LinkItem } from "../../../../components/links/Links";
+import { LinkList } from "../../../../components/links/Links";
 import { useTheme, useThemeUpdate } from "../../../provider/Theme";
 import { saveTokenData } from "../../../../redux/slices/Authentications";
 
@@ -32,7 +33,7 @@ const User = ({ currentUser }) => {
         }}
       >
         <div className="user-toggle">
-          <UserAvatar className="sm" image={currentUser.picture} imageAlt={currentUser.name}/>
+          <UserAvatar className="sm" image={currentUser.picture} imageAlt={currentUser.name} />
           <div className="user-info d-none d-md-block">
             <div className="user-status">{currentUser.name}</div>
             <div className="user-name dropdown-indicator">{currentUser.email}</div>
