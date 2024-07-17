@@ -30,6 +30,7 @@ const initialState = {
   conversation: {},
   messages: [],
   sendingMessages: [],
+  isSendingMessage: false,
   fetching: false,
   scrollBottom: true,
 };
@@ -63,7 +64,14 @@ const messagesSlice = createSlice({
       state.messages = [];
       state.fetching = false;
     },
+    [createMessage.rejected]: state => {
+      state.isSendingMessage = false;
+    },
+    [createMessage.pending]: state => {
+      state.isSendingMessage = true;
+    },
     [createMessage.fulfilled]: (state, action) => {
+      state.isSendingMessage = false;
       const data = action.payload?.message;
 
       if (!isBlank(data) && data?.conversationId) {

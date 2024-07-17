@@ -1,7 +1,4 @@
 import React, { useState, useContext } from "react";
-import SlideA from "../../../images/slides/slide-a.jpg";
-import SlideB from "../../../images/slides/slide-b.jpg";
-import SlideC from "../../../images/slides/slide-c.jpg";
 import { UserAvatar, Icon, LinkList, LinkItem } from "../../../components/Component";
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from "reactstrap";
 import SimpleBar from "simplebar-react";
@@ -10,12 +7,12 @@ import { ChatContext } from "./ChatContext";
 import ImageContainer from "./GalleryImage";
 
 const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
-  const { changeNickname, changeTheme, userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
+  const { userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
 
   const [memberState, setMemberState] = useState(true);
-  const [optionState, setOptionState] = useState(true);
-  const [settingState, setSettingState] = useState(true);
-  const [photoState, setPhotoState] = useState(true);
+  // const [optionState, setOptionState] = useState(true);
+  // const [settingState, setSettingState] = useState(true);
+  // const [photoState, setPhotoState] = useState(true);
   const [receiptHistoryState, setReceiptHistoryState] = useState(false);
   const receiptHistory = conversation.etsy?.buyerInfo?.receiptHistory || [];
 
@@ -32,7 +29,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
         <div className="user-info">
           <h5>{otherUser.displayName}</h5>
         </div>
-        <UncontrolledDropdown className="user-card-menu">
+        {/* <UncontrolledDropdown className="user-card-menu">
           <DropdownToggle tag="a" className="btn btn-icon btn-sm btn-trigger dropdown-toggle">
             <Icon name="more-h"></Icon>
           </DropdownToggle>
@@ -46,7 +43,7 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
               </LinkItem>
             </LinkList>
           </DropdownMenu>
-        </UncontrolledDropdown>
+        </UncontrolledDropdown> */}
       </div>
       <div className="chat-profile">
         <div className="chat-profile-group">
@@ -68,18 +65,19 @@ const ChatSideBar = ({ sidebar, chat, conversation, otherUser }) => {
             <div className="chat-profile-body-inner">
               {receiptHistory.map((item, idx) => (
                 <div className="d-flex flex-column mb-2" key={`history-${idx}`}>
-                  <div>Order #{item.receiptId}</div>
+                  <div>Order <b>#{item.receiptId}</b></div>
                   <div>{item.isShipped ? "Shipped" : ""}</div>
                   {item.transactions.map((transaction, idy) => (
                     <div className="d-flex pt-2" key={`history-${idy}`}>
                       <ImageContainer img={transaction.image} key={`image-chat-${idx}`} className="transaction-image" width={100} height={100}/>
                       <div className="d-flex flex-column pt-0 p-2 overflow-hidden">
-                        <span className="text-truncate">{transaction.title}</span>
+                        <span className="text-truncate" title={transaction.title}>{transaction.title}</span>
                         <span>{transaction.value}</span>
                         <span>Quantity: {transaction.quantity}</span>
                       </div>
                     </div>
                   ))}
+                  <div className="pt-2 font-weight-bold text-center"><b>Total purchased: {item.value}</b></div>
                 </div>)
               )}
             </div>

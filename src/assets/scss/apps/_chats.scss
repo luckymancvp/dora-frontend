@@ -967,6 +967,13 @@ $chat-meta-sap: $ni-dot !default;
             transform: none;
         }
     }
+
+    .message-title {
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+        min-height: 20px;
+    }
 }
 
 

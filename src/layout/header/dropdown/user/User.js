@@ -8,7 +8,7 @@ import { LinkList, LinkItem } from "../../../../components/links/Links";
 import { useTheme, useThemeUpdate } from "../../../provider/Theme";
 import { saveTokenData } from "../../../../redux/slices/Authentications";
 
-const User = () => {
+const User = ({ currentUser }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -32,10 +32,10 @@ const User = () => {
         }}
       >
         <div className="user-toggle">
-          <UserAvatar icon="user-alt" className="sm" />
+          <UserAvatar className="sm" image={currentUser.picture} imageAlt={currentUser.name}/>
           <div className="user-info d-none d-md-block">
-            <div className="user-status">Administrator</div>
-            <div className="user-name dropdown-indicator">Abu Bin Ishityak</div>
+            <div className="user-status">{currentUser.name}</div>
+            <div className="user-name dropdown-indicator">{currentUser.email}</div>
           </div>
         </div>
       </DropdownToggle>

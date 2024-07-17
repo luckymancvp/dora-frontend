@@ -7,7 +7,6 @@ import { Input, Button, Spinner } from "reactstrap";
 import { ChatItem, ChatRoomItem, ContactItem } from "./ChatPartials";
 import { findUpper } from "../../../utils/Utils";
 import { chatData } from "./ChatData";
-import { ChatContext } from "./ChatContext";
 
 export const ChatAsideBody = ({
   onInputChange,
@@ -31,7 +30,6 @@ export const ChatAsideBody = ({
     const savedShopData = localStorage.getItem("shops");
     return savedShopData ? JSON.parse(savedShopData) : [];
   });
-  const defaultChat = filteredChatList.filter((item) => item.group !== true);
 
   const filterConversations = useMemo(() => conversations.filter(item => {
     if (shopData.length > 0) {
@@ -41,10 +39,12 @@ export const ChatAsideBody = ({
     return true;
   }), [conversations, shopData]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleLoadMoreConversations = useCallback(debounce((args = {}) => {
     fetchConversations({ ...filterTabs, search: conversationFilterText, ...args });
   }, 400), [currentPage, filterTabs, conversationFilterText]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSearchConversations = useCallback(debounce((text) => {
     if (!conversationFetching) {
       handleLoadMoreConversations({ page: 1, search: text });
@@ -55,6 +55,7 @@ export const ChatAsideBody = ({
     if (!conversationFetching) {
       handleLoadMoreConversations({ page: 1, ...filterTabs });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterTabs]);
 
   useEffect(() => {
@@ -67,11 +68,12 @@ export const ChatAsideBody = ({
         }
       }
     };
-    conversationRef.current?.addEventListener('scroll', handleScrollConversations);
+    const currentConversationRef = conversationRef.current;
+    currentConversationRef?.addEventListener('scroll', handleScrollConversations);
     return () => {
-      conversationRef.current?.removeEventListener('scroll', handleScrollConversations);
+      currentConversationRef?.removeEventListener('scroll', handleScrollConversations);
     };
-  }, [fetchConversations, conversationFetching, handleLoadMoreConversations, currentPage]);
+  }, [fetchConversations, conversationFetching, currentPage, handleLoadMoreConversations]);
 
   const addShop = (newShop) => {
     const isDuplicate = shopData.some(shop => shop.userId === newShop.userId);
@@ -105,6 +107,10 @@ export const ChatAsideBody = ({
       setShopFilter([]);
     }
   }, [shopFilterText, shops, shopData, shopState]);
+
+  const renderConversations = useMemo(() => filterConversations.map((item, idx) => (
+    <ChatRoomItem key={`filter-conversations-${idx}`} item={item} />
+  )), [filterConversations])
 
   return (
     <SimpleBar className="nk-chat-aside-body" scrollableNodeProps={{ ref: conversationRef }}>
@@ -149,9 +155,9 @@ export const ChatAsideBody = ({
           </li>
           {shopData.map((shop, idx) => {
             return (
-              <li key={idx}>
+              <li key={`shop-${idx}`}>
                 <span onClick={(ev) => ev.preventDefault()} title={shop.shopName}>
-                  <UserAvatar image={shop.avatarUrl} theme="blue" text={findUpper(shop.shopName)} />
+                  <UserAvatar image={shop.avatarUrl} theme="gray" text={findUpper(shop.shopName)} />
                 </span>
                 <span className="btn-rm" onClick={() => removeShop(shop.userId)}><Icon name="cross-sm"></Icon></span>
               </li>
@@ -186,12 +192,12 @@ export const ChatAsideBody = ({
                 ) : (
                   filteredShopList.map((shop, idx) => {
                     return (
-                      <li key={idx} onClick={() => addShop(shop)}>
+                      <li key={`filter-shop-${idx}`} onClick={() => addShop(shop)}>
                         <div className="user-card">
                           <a href="#card" onClick={(ev) => ev.preventDefault()}>
                             <UserAvatar
                               text={findUpper(shop.shopName)}
-                              theme="blue"
+                              theme="grey"
                               image={shop.avatarUrl}
                             ></UserAvatar>
                             <div className="user-name">{shop.shopName}</div>
@@ -209,12 +215,12 @@ export const ChatAsideBody = ({
               ) : (
                 shopFilter.map((shop, idx) => {
                   return (
-                    <li key={idx} onClick={() => addShop(shop)}>
+                    <li key={`shop-all-${idx}`} onClick={() => addShop(shop)}>
                       <div className="user-card">
                         <a href="#card" onClick={(ev) => ev.preventDefault()}>
                           <UserAvatar
                             text={findUpper(shop.shopName)}
-                            theme="blue"
+                            theme="grey"
                             image={shop.avatarUrl}
                           ></UserAvatar>
                           <div className="user-name">{shop.shopName}</div>
@@ -234,13 +240,14 @@ export const ChatAsideBody = ({
         </SimpleBar>
       )}
       <div className="nk-chat-list">
-        <h6 className="title overline-title-alt">Messages</h6>
+        <h6 className="title overline-title-alt message-title">
+          <div>Messages</div>
+          {conversationFetching && <Spinner size="sm" color="primary" />}
+        </h6>
         <ul className="chat-list">
-          {filterConversations.length !== 0 && filterConversations.map((item, idx) => (
-            <ChatRoomItem key={idx} item={item} />
-          ))}
+          {filterConversations.length !== 0 && renderConversations}
           {!conversationFetching && filterConversations.length === 0 && (<p className="m-3">No conversation</p>)}
-          {conversationFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)}
+          <div className="text-center py-3"></div>
         </ul>
       </div>
     </SimpleBar>

@@ -14,23 +14,19 @@ import { ChannelAsideBody, ChatAsideBody } from "./ChatAsideBody";
 import { debounce } from 'lodash';
 
 const Chat = ({
+  currentUser,
   fetchDataShops,
   shops,
   fetchConversations,
   conversationFetching,
   conversations,
-  messageFetching,
   conversation,
-  messages,
   handleSetEmptyConversationMessage,
   fetchDataMessage,
-  sendingMessages,
-  scrollBottom,
   conversationId
 }) => {
   const [mainTab, setMainTab] = useState("Chats");
   const [selectedId, setSelectedId] = useState();
-  const [filterTab, setFilterTab] = useState("messages");
   const [filterTabs, setFilterTabs] = useState(() => {
     const savedTabs = localStorage.getItem("filtertabs");
     return savedTabs ? JSON.parse(savedTabs) : { "messages": true };
@@ -41,9 +37,8 @@ const Chat = ({
   const [shopFilter, setShopFilter] = useState([]);
   const [shopFilterText, setShopFilterText] = useState("");
   const [mobileView, setMobileView] = useState(false);
-  const { chatState, fav } = useContext(ChatContext);
+  const { chatState } = useContext(ChatContext);
   const [chat, setChat] = chatState;
-  const [favData] = fav;
 
   useEffect(() => {
     fetchDataShops();
@@ -132,7 +127,7 @@ const Chat = ({
               <div className="nk-chat-aside-user">
                 <UncontrolledDropdown>
                   {/* <DropdownToggle tag="a" className="dropdown-toggle dropdown-indicator"> */}
-                  <UserAvatar image={User}></UserAvatar>
+                  <UserAvatar image={currentUser.picture} title={currentUser.name}></UserAvatar>
                   <div className="title">{mainTab}</div>
                   {/* </DropdownToggle> */}
                 </UncontrolledDropdown>
@@ -255,7 +250,6 @@ const Chat = ({
                 setMobileView={setMobileView}
                 selectedId={selectedId}
                 chatItemClick={chatItemClick}
-                filterTab={filterTab}
               />
             ) : (
               <AppContact setTab={setMainTab} setSelectedId={setSelectedId} />
@@ -269,10 +263,6 @@ const Chat = ({
               conversationId={conversationId}
               conversation={conversation}
               fetchDataMessage={fetchDataMessage}
-              messages={messages}
-              sendingMessages={sendingMessages}
-              messageFetching={messageFetching}
-              scrollBottom={scrollBottom}
             />
           ) : (
             <div className="nk-chat-body">

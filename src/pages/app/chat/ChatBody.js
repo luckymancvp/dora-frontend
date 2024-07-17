@@ -1,6 +1,6 @@
-import React, { useEffect, useCallback, useState, useContext, useRef } from "react";
+import React, { useEffect, useCallback, useState, useContext, useRef, useMemo } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import ChatSideBar from "./ChatSideBar";
@@ -16,10 +16,11 @@ import { ChatContext } from "./ChatContext";
 import { MeChat, YouChat, SendingChat } from "./ChatPartials";
 
 const ChatBody = ({
-  id, mobileView, setSelectedId, conversationId, sendingMessages,
-  conversation, messages, messageFetching, scrollBottom
+  id, mobileView, setSelectedId, conversationId,
+  conversation
 }) => {
   const dispatch = useDispatch();
+  const { messages, sendingMessages, isSendingMessage, scrollBottom } = useSelector(state => state.messages);
   const { deleteConvo, propAction, chatState } = useContext(ChatContext);
   const [chat, setChat] = chatState;
   const [Uchat, setUchat] = useState({});
@@ -45,9 +46,16 @@ const ChatBody = ({
   const attachments = watch("attachments");
 
   useEffect(() => {
-    reset();
     clearFileInput();
-  }, [conversationId, reset]);
+  }, [conversationId]);
+
+  const clearFileInput = useCallback(() => {
+    if(uploadImgRef.current) {
+      uploadImgRef.current.value = null;
+    }
+    reset();
+    setFiles([]);
+  }, [uploadImgRef, reset])
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -59,11 +67,14 @@ const ChatBody = ({
   };
 
   useEffect(() => {
+    setChatOptions(false);
+  }, [conversationId]);
+
+  useEffect(() => {
     if (scrollBottom) {
       setTimeout(() => {
         scrollToBottom();
         focusTextarea();
-        setChatOptions(false);
       }, 300);
     }
   }, [Uchat, conversationId, scrollBottom, messages, sendingMessages]);
@@ -92,10 +103,6 @@ const ChatBody = ({
     };
   }, []);
 
-  const onChatOptions = () => {
-    setChatOptions(!chatOptions);
-  };
-
   const toggleMenu = () => {
     setsidebar(!sidebar);
   };
@@ -109,10 +116,18 @@ const ChatBody = ({
       });
     }
 
+    // Reset input & files
+    clearFileInput();
+    scrollToBottom();
+
     dispatch(createMessage({ conversationId, formData })).then(response => {
       const data = response.payload?.message;
       if (data?.conversationId) {
-        scrollToBottom(); // TODO
+        scrollToBottom();
+        setTimeout(() => {
+          scrollToBottom();
+        }, 500);
+
         const checkStatus = () => {
           dispatch(fetchStatusMessage({ id: data.id })).then(({ payload }) => {
             if (payload.status === "NEW") {
@@ -139,22 +154,13 @@ const ChatBody = ({
         }, 5000);
       }
     });
-  }, [dispatch]);
-
-  const clearFileInput = useCallback(() => {
-    if(uploadImgRef.current) {
-      uploadImgRef.current.value = null;
-    }
-  }, [uploadImgRef])
+  }, [dispatch, clearFileInput]);
 
   const saveMessage = useCallback((formValues) => {
     if (formValues.message.trim() || attachments.length > 0) {
       handleSendMessage(formValues, conversation.etsy?.conversationId);
-      reset();
-      clearFileInput()
-      setFiles([]);
     }
-  }, [conversation, handleSendMessage, reset, attachments, clearFileInput]);
+  }, [conversation, handleSendMessage, attachments]);
 
   // const onRemoveMessage = (idx, id) => {
   //   let allChat = chat;
@@ -244,9 +250,26 @@ const ChatBody = ({
     }
   };
 
+  const renderMessages = useMemo(() => messages.map((item, idx) => {
+    if (item?.etsy?.senderId === userData?.userId) {
+      return <MeChat key={`message-${item.id}-${idx}`} item={item} sender={userData} ></MeChat>;
+    } else if (item?.etsy?.senderId === otherUser?.userId) {
+      return <YouChat key={`message-${item.id}-${idx}`} item={item} sender={otherUser}></YouChat>;
+    } else {
+      return <SendingChat key={`message-${item.id}-${idx}`} item={item} sender={userData} />
+    }
+  }), [messages, userData, otherUser]);
+
+  const renderSendingMessages = useMemo(() => sendingMessages.map((item, idx) => {
+    if (String(item.conversationId) === String(conversationId)) {
+      return <SendingChat key={`sending-message-${item.id}-${idx}`} item={item} sender={userData} />
+    }
+    return <></>;
+  }), [sendingMessages, userData, conversationId]);
+
   return (
     <React.Fragment>
-      <div className={chatBodyClass} key={conversationId}>
+      <div className={chatBodyClass} key={`conversation-${conversationId}`}>
         <div className="nk-chat-head">
           <ul className="nk-chat-head-info">
             <li className="nk-chat-body-close">
@@ -261,13 +284,13 @@ const ChatBody = ({
               <div className="user-card">
                 <div className="chat-media user-avatar user-avatar-multiple">
                   <UserAvatar
-                    theme="blue"
+                    theme="grey"
                     text={findUpper(userData.shopName)}
                     image={userData.avatarUrl}
                     className="chat-media"
                   />
                   <UserAvatar
-                    theme="purple"
+                    theme="grey"
                     text={findUpper(otherUser.displayName)}
                     image={otherUser.avatarUrl}
                     size="md"
@@ -359,29 +382,9 @@ const ChatBody = ({
           </ul>
         </div>
         <SimpleBar className="nk-chat-panel" scrollableNodeProps={{ ref: messagesEndRef }}>
-          {messages.map((item, idx) => {
-            if (item?.etsy?.senderId === userData?.userId) {
-              return <MeChat key={`message-${item.id}`} item={item} sender={userData} ></MeChat>;
-            } else if (item?.etsy?.senderId === otherUser?.userId) {
-              return <YouChat key={`message-${item.id}`} item={item} sender={otherUser}></YouChat>;
-            } else {
-              return <SendingChat key={`message-${item.id}`} item={item} sender={userData} />
-            }
-          })}
-
-          {sendingMessages.map((item, idx) => {
-            if (String(item.conversationId) === String(conversationId)) {
-              if (item?.etsy?.senderId === userData?.userId) {
-                return <MeChat key={`message-${item.id}`} item={item} sender={userData} ></MeChat>;
-              } else if (item?.etsy?.senderId === otherUser?.userId) {
-                return <YouChat key={`message-${item.id}`} item={item} sender={otherUser}></YouChat>;
-              } else {
-                return <SendingChat key={`message-${item.id}`} item={item} sender={userData} />
-              }
-            } else {
-              return false;
-            }
-          })}
+          {renderMessages}
+          {renderSendingMessages}
+          {isSendingMessage && (<div className="text-end py-3 px-2"><Spinner size="sm" color="primary" /></div>)}
           {/* {messageFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)} */}
         </SimpleBar>
         <FormProvider {...methods}>
@@ -398,7 +401,7 @@ const ChatBody = ({
               <Button
                 size="sm"
                 className={`btn-icon btn-trigger text-primary toggle-opt ${chatOptions ? "active" : ""}`}
-                onClick={() => onChatOptions()}
+                onClick={() => setChatOptions(!chatOptions)}
               >
                 <Icon name="plus-circle-fill"></Icon>
               </Button>

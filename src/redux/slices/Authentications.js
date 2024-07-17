@@ -1,9 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { isBlank } from "../../utils/Utils";
+import AuthService from "../services/AuthService";
+
+export const getProfile = createAsyncThunk(
+  'auth/PROFILE',
+  async () => {
+    const result = await AuthService.getProfile();
+    return result.data;
+  },
+);
 
 const initialState = {
+  currentUser: null,
   isLoggedIn: !isBlank(localStorage.getItem("token")),
-  submitting: false,
+  isFetching: false
 };
 
 const authSlice = createSlice({
@@ -21,7 +31,20 @@ const authSlice = createSlice({
       }
     },
   },
-  extraReducers: {},
+  extraReducers: {
+    [getProfile.pending]: state => {
+      state.isFetching = true;
+      state.currentUser = null;
+    },
+    [getProfile.fulfilled]: (state, _action) => {
+      state.isFetching = false;
+      state.currentUser = _action.payload;
+    },
+    [getProfile.rejected]: state => {
+      state.isFetching = false;
+      state.currentUser = null;
+    },
+  },
 });
 
 export default authSlice.reducer;

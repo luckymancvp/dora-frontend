@@ -82,3 +82,15 @@ body{
         flex-direction: column;
     }
 }
+
+.loading-all-screen {
+    position: fixed;
+    display: flex;
+    z-index: 99999999;
+    min-width: 100vw;
+    min-height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: rgb(245 246 250 / 50%) !important;
+    height: 100vh !important;
+}

@@ -44,6 +44,12 @@ client.interceptors.response.use(
       data: { errors },
     } = response;
 
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = LOGIN_PATH;
+      return Promise.reject(error);
+    }
+
     if (ignoreApiAlertMsg) {
       return Promise.reject(error);
     }
@@ -72,9 +78,6 @@ client.interceptors.response.use(
 
     if (response.status === 413) {
       toast.error("Request entity too large");
-    } else if (response.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = LOGIN_PATH;
     } else {
       toast.error(message || "Error happened");
     }

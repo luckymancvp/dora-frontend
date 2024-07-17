@@ -8,13 +8,13 @@ import { fetchShops } from "../../../redux/slices/Shops";
 import { fetchConversations, setCurrentPage } from "../../../redux/slices/Conversations";
 import { fetchMessages, setEmptyMessages, setEmptyConversationMessage, setScrollBottom } from "../../../redux/slices/Messages";
 
-const ChatContainer = () => {
+const ChatContainer = ({ currentUser }) => {
   const dispatch = useDispatch();
   const { conversationId } = useParams();
   const {
     shops: { shops, fetching: shopFetching },
     conversations: { conversations, fetching: conversationFetching, defaultItemsPerPage },
-    messages: { messages, sendingMessages, conversation, fetching: messageFetching, scrollBottom }
+    messages: { conversation }
   } = useSelector(state => state);
 
   const fetchDataShops = useCallback(() => {
@@ -59,7 +59,7 @@ const ChatContainer = () => {
   useEffect(() => {
     if (conversationId) {
       const intervalId = setInterval(() => {
-        fetchDataMessage({ conversationId, toScrollBottom: true });
+        fetchDataMessage({ conversationId, toScrollBottom: false });
       }, 5000);
 
       // Cleanup interval on unmount
@@ -70,6 +70,7 @@ const ChatContainer = () => {
   return (
     <ChatContextProvider>
       <Chat
+        currentUser={currentUser}
         fetchDataShops={fetchDataShops}
         shopFetching={shopFetching}
         shops={shops}
@@ -78,12 +79,8 @@ const ChatContainer = () => {
         conversations={conversations}
         fetchDataMessage={fetchDataMessage}
         conversation={conversation}
-        messageFetching={messageFetching}
-        messages={messages}
         handleSetEmptyConversationMessage={handleSetEmptyConversationMessage}
         conversationId={conversationId}
-        scrollBottom={scrollBottom}
-        sendingMessages={sendingMessages}
       />
     </ChatContextProvider>
   );

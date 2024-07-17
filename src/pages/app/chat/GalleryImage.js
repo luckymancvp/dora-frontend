@@ -10,9 +10,9 @@ const ImageContainer = ({ img = "", width = 150, height = "auto", className = "i
   const checkRoleRenderClass = (role) => {
     switch (role) {
       case 'isMe':
-        return "is-me bg-blue"
+        return "is-me"
       case 'isYou':
-        return "is-you bg-white"
+        return "is-you"
       case 'default':
         return ""
       default:

@@ -18,7 +18,7 @@ export const MeChat = ({ item, sender }) => {
             {item.etsy?.images.length > 0 && (
               <div className="chat-img">
                 {item.etsy?.images?.map((image, idx) => (
-                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`chat-img-${idx}`} role={"isMe"}/>
+                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`me-chat-img-${idx}`} role={"isMe"}/>
                 ))}
               </div>
             )}
@@ -29,7 +29,7 @@ export const MeChat = ({ item, sender }) => {
         </ul>
       </div>
       <div className="chat-avatar">
-        <UserAvatar image={sender.avatarUrl} theme="blue" text={findUpper(sender.displayName)} />
+        <UserAvatar image={sender.avatarUrl} theme="grey" text={findUpper(sender.displayName)} />
       </div>
     </div>
   );
@@ -39,7 +39,7 @@ export const YouChat = ({ item, sender }) => {
   return (
     <div className="chat is-you">
       <div className="chat-avatar">
-        <UserAvatar image={sender.avatarUrl} theme="blue" text={findUpper(sender.displayName)} />
+        <UserAvatar image={sender.avatarUrl} theme="grey" text={findUpper(sender.displayName)} />
       </div>
       <div className="chat-content">
         <div className="chat-bubbles">
@@ -48,7 +48,7 @@ export const YouChat = ({ item, sender }) => {
             {item.etsy?.images.length > 0 && (
               <div className="chat-img">
                 {item.etsy?.images?.map((image, idx) => (
-                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`chat-img-${idx}`} role={"isYou"}/>
+                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`you-chat-img-${idx}`} role={"isYou"}/>
                 ))}
               </div>
             )}
@@ -115,7 +115,7 @@ export const SendingChat = ({ item, sender }) => {
         </ul>
       </div>
       <div className="chat-avatar">
-        <UserAvatar image={sender.avatarUrl} theme="blue" text={findUpper(sender.displayName)} />
+        <UserAvatar image={sender.avatarUrl} theme="grey" text={findUpper(sender.displayName)} />
       </div>
     </div>
   );
@@ -286,20 +286,24 @@ export const ChatRoomItem = ({ item }) => {
     const lastMessage = messages[messages.length - 1];
     message = lastMessage?.message ? sanitizeHTML(lastMessage.message) : "Send attachment";
     createDate = formatTimestamp(lastMessage.createDate);
+  } else {
+    message = item.etsy?.excerpt;
+    createDate = item.etsy?.timestamp;
   }
 
   return (
-    <li className={`chat-item ${item.etsy.isUnread ? "is-unread" : ""}`}>
+    // {`chat-item ${item.etsy.isUnread ? "is-unread" : ""}`}
+    <li className="chat-item" key={item.id}>
       <Link to={`/messages/${item.etsy.conversationId}`} className="chat-link">
         <div className="chat-media user-avatar user-avatar-multiple">
           <UserAvatar
-            theme="blue"
+            theme="grey"
             text={findUpper(userData?.shopName)}
             image={userData?.avatarUrl}
             className="chat-media"
           />
           <UserAvatar
-            theme="purple"
+            theme="grey"
             text={findUpper(otherUser?.displayName)}
             image={otherUser?.avatarUrl}
             size="md"

@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import { useSelector } from 'react-redux';
 import Toggle from "../sidebar/Toggle";
 import Logo from "../logo/Logo";
 import News from "../news/News";
@@ -9,7 +10,7 @@ import Notification from "./dropdown/notification/Notification";
 import { useTheme, useThemeUpdate } from '../provider/Theme';
 
 const Header = ({ fixed, className, ...props }) => {
-
+  const { currentUser } = useSelector(state => state.auth);
   const theme = useTheme();
   const themeUpdate = useThemeUpdate();
 
@@ -40,7 +41,7 @@ const Header = ({ fixed, className, ...props }) => {
           <div className="nk-header-tools">
             <ul className="nk-quick-nav">
               <li className="user-dropdown">
-                <User/>
+                <User currentUser={currentUser} />
               </li>
               <li className="notification-dropdown me-n1">
                 <Notification />
