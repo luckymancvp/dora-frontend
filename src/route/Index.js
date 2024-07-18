@@ -51,10 +51,10 @@ import Homepage from "../pages/Homepage";
 // import UtilText from "../pages/components/UtilText";
 
 // import Blank from "../pages/others/Blank";
-// import Faq from "../pages/others/Faq";
-// import Regularv1 from "../pages/others/Regular-1";
-// import Regularv2 from "../pages/others/Regular-2";
-// import Terms from "../pages/others/Terms";
+import Faq from "../pages/others/Faq";
+import Regularv1 from "../pages/others/Regular-1";
+import Regularv2 from "../pages/others/Regular-2";
+import Terms from "../pages/others/Terms";
 // import BasicTable from "../pages/components/table/BasicTable";
 // import SpecialTablePage from "../pages/components/table/SpecialTable";
 // import ChartPage from "../pages/components/charts/Charts";
@@ -133,6 +133,12 @@ const Router = () => {
 
   return (
       <Routes>
+                  <Route path="pages">
+            <Route path="terms-policy" element={<Terms />}></Route>
+            <Route path="faq" element={<Faq />}></Route>
+            <Route path="regular-v1" element={<Regularv1 />}></Route>
+            <Route path="regular-v2" element={<Regularv2 />}></Route>
+          </Route>
         {/* <Route path={`${process.env.PUBLIC_URL}`} element={<Layout />}>
           <Route index element={<Homepage />}></Route>
           <Route path="crypto" element={<Crypto />}></Route>
