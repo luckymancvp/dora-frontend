@@ -9,13 +9,9 @@ import { findUpper } from "../../../utils/Utils";
 import { chatData } from "./ChatData";
 
 export const ChatAsideBody = ({
-  onInputChange,
   shopState,
   setShopState,
-  setSelectedId,
-  selectedId,
   filterTabs,
-  filteredChatList,
   shops,
   conversations,
   fetchConversations,
@@ -31,32 +27,23 @@ export const ChatAsideBody = ({
     return savedShopData ? JSON.parse(savedShopData) : [];
   });
 
-  const filterConversations = useMemo(() => conversations.filter(item => {
-    if (shopData.length > 0) {
-      const userData = item.userData || item.etsy.userData;
-      return shopData.some(shop => shop.userId === userData?.userId);
-    }
-    return true;
-  }), [conversations, shopData]);
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleLoadMoreConversations = useCallback(debounce((args = {}) => {
-    fetchConversations({ ...filterTabs, search: conversationFilterText, ...args });
-  }, 400), [currentPage, filterTabs, conversationFilterText]);
+    const shopIds = shopData.map(shop => shop.userId).join(",");
+    fetchConversations({ ...filterTabs, search: conversationFilterText, shop_ids: shopIds, ...args });
+  }, 500), [currentPage, filterTabs, conversationFilterText, shopData]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSearchConversations = useCallback(debounce((text) => {
-    if (!conversationFetching) {
-      handleLoadMoreConversations({ page: 1, search: text });
-    }
-  }, 300), [filterTabs, conversationFetching]);
+    handleLoadMoreConversations({ page: 1, search: text });
+  }, 500), [filterTabs, conversationFetching]);
 
   useEffect(() => {
     if (!conversationFetching) {
-      handleLoadMoreConversations({ page: 1, ...filterTabs });
+      handleLoadMoreConversations({ page: 1 });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterTabs]);
+  }, [filterTabs, shopData]);
 
   useEffect(() => {
     const handleScrollConversations = () => {
@@ -108,9 +95,9 @@ export const ChatAsideBody = ({
     }
   }, [shopFilterText, shops, shopData, shopState]);
 
-  const renderConversations = useMemo(() => filterConversations.map((item, idx) => (
+  const renderConversations = useMemo(() => conversations.map((item, idx) => (
     <ChatRoomItem key={`filter-conversations-${idx}`} item={item} />
-  )), [filterConversations])
+  )), [conversations])
 
   return (
     <SimpleBar className="nk-chat-aside-body" scrollableNodeProps={{ ref: conversationRef }}>
@@ -185,7 +172,7 @@ export const ChatAsideBody = ({
             </div>
           </div>
           <div className="nk-chat-aside-panel nk-chat-contact">
-            <ul className="contacts-list">
+            <ul className="contacts-list chat-members">
               {shopFilter.length === 0 ? (
                 shopFilterText ? (
                   <div className="ms-3">No shop found</div>
@@ -245,9 +232,9 @@ export const ChatAsideBody = ({
           {conversationFetching && <Spinner size="sm" color="primary" />}
         </h6>
         <ul className="chat-list">
-          {filterConversations.length !== 0 && renderConversations}
-          {!conversationFetching && filterConversations.length === 0 && (<p className="m-3">No conversation</p>)}
-          <div className="text-center py-3"></div>
+          {conversations.length !== 0 && renderConversations}
+          {!conversationFetching && conversations.length === 0 && (<p className="m-3">No conversation</p>)}
+          {conversationFetching && conversations.length > 10 && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)}
         </ul>
       </div>
     </SimpleBar>

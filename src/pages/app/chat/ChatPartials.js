@@ -333,3 +333,22 @@ export const ChatRoomItem = ({ item }) => {
     </li>
   );
 };
+
+
+export const RecommnendChats = ({ handleClick }) => {
+  const recommends = [
+    { id: 1, message: "Yes thank you. Can you give us 5* review ? This means a lot to our store."},
+    { id: 2, message: "Thank you for letting us know. We will proceed with the size you have ordered."},
+    { id: 3, message: "We will be here to assist you, so no worry."}
+  ]
+
+  return recommends.map(recommend => (
+    <li key={`${recommend.id}`} onClick={() => handleClick(recommend.message)} className="py-1">
+      <div className="custom-control custom-radio custom-control-pro no-control checked">
+        <label className="custom-control-label">
+          {recommend.message}
+        </label>
+      </div>
+    </li>
+  ))
+}

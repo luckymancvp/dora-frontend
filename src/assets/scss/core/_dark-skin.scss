@@ -1534,5 +1534,23 @@ body.dark-mode {
         background: $dark-card-bg !important;
         color: $white !important;
       }
+
+    // chat upload
+    .chat-upload-option {
+        background-color: $dark-card-bg !important;
+    }
+
+    .nk-chat-body .chat-files-container {
+        background-color: $dark-card-bg !important;
+    }
+
+    .nk-chat-body .chat-file-icon-remove::before {
+        background-color: rgba($base-light,.8);
+    }
+
+    .nk-chat-body .chat-file-icon-remove,
+    .nk-chat-body .chat-files-icon-close {
+        color: $white;
+    }
 }
 

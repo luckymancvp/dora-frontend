@@ -12,11 +12,13 @@ const MenuHeading = ({ heading }) => {
   );
 };
 
-const MenuItem = ({ icon, link, text, sub, newTab, sidebarToggle, mobileView, badge, ...props }) => {
+const MenuItem = ({ icon, link, text, sub, newTab, sidebarToggle, mobileView, badge, themeUpdate, ...props }) => {
   let currentUrl;
   const toggleActionSidebar = (e) => {
     if (!sub && !newTab && mobileView) {
       sidebarToggle(e);
+    } else if (window.innerWidth < 860) {
+      themeUpdate.sidebarVisibility(e);
     }
   };
 
@@ -199,7 +201,7 @@ const MenuSub = ({ icon, link, text, sub, sidebarToggle, mobileView, ...props })
   );
 };
 
-const Menu = ({ sidebarToggle, mobileView }) => {
+const Menu = ({ sidebarToggle, mobileView, themeUpdate }) => {
   return (
     <ul className="nk-menu">
       {menu.map((item) =>
@@ -215,6 +217,7 @@ const Menu = ({ sidebarToggle, mobileView }) => {
             badge={item.badge}
             sidebarToggle={sidebarToggle}
             mobileView={mobileView}
+            themeUpdate={themeUpdate}
           />
         )
       )}

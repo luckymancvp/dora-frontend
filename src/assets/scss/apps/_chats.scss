@@ -967,7 +967,22 @@ $chat-meta-sap: $ni-dot !default;
             transform: none;
         }
     }
-
+    &-box {
+        height: 100%;
+        position: relative;
+        overflow: auto;
+    }
+    &-options {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        @include media-breakpoint-up(sm){ 
+            bottom: 20px;
+            left: 28px;
+            right: 28px;
+        }
+    }
     .message-title {
         display: flex;
         align-items: center;

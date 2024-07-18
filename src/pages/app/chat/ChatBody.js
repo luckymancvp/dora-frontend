@@ -12,7 +12,7 @@ import { UserAvatar, Icon, Button } from "../../../components/Component";
 import { TextareaForm } from "../../../components/forms/TextareaForm";
 import { findUpper } from "../../../utils/Utils";
 
-import { MeChat, YouChat, SendingChat } from "./ChatPartials";
+import { MeChat, YouChat, SendingChat, RecommnendChats } from "./ChatPartials";
 
 const ChatBody = ({
   id, mobileView, setSelectedId, conversationId,
@@ -23,6 +23,18 @@ const ChatBody = ({
   const [sidebar, setsidebar] = useState(false);
   const [chatOptions, setChatOptions] = useState(false);
   const [files, setFiles] = useState([]);
+  const [recommnendState, setRecommnendState] = useState(() => {
+    const state = localStorage.getItem("recommnend_state");
+    return state === null ? false : state === "true";
+  });
+  
+  const toggleRecommendState = () => {
+    setRecommnendState(prevState => {
+      const newState = !prevState;
+      localStorage.setItem("recommnend_state", newState);
+      return newState;
+    });
+  };
 
   // Conversation selected
   const userData = conversation?.userData || conversation.etsy?.userData;
@@ -359,12 +371,32 @@ const ChatBody = ({
             </li>
           </ul>
         </div>
-        <SimpleBar className="nk-chat-panel" scrollableNodeProps={{ ref: messagesEndRef }}>
-          {renderMessages}
-          {renderSendingMessages}
-          {isSendingMessage && (<div className="text-end py-3 px-2"><Spinner size="sm" color="primary" /></div>)}
-          {/* {messageFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)} */}
-        </SimpleBar>
+        <div className="nk-chat-box">
+          <SimpleBar className="nk-chat-panel" scrollableNodeProps={{ ref: messagesEndRef }}>
+            {renderMessages}
+            {renderSendingMessages}
+            {isSendingMessage && (<div className="text-end py-3 px-2"><Spinner size="sm" color="primary" /></div>)}
+            {/* {messageFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)} */}
+          </SimpleBar>
+          <div className="nk-chat-options">
+            <a
+              href="#options"
+              className="p-0 btn btn-round btn-icon btn-light"
+              onClick={(ev) => {
+                ev.preventDefault();
+                toggleRecommendState();
+              }}
+              style={{ width: "30px", height: "30px" }}
+            >
+              <span className="indicator-icon">
+                <Icon name={`chevron-${recommnendState ? "up" : "down"}`}></Icon>
+              </span>
+            </a>
+            <ul className={`collapse ${recommnendState ? "" : "show"}`}>
+              <RecommnendChats handleClick={message => handleSendMessage({ message }, conversationId)}/>
+            </ul>
+          </div>
+        </div>
         <FormProvider {...methods}>
           <ChatFiles
             name="attachments"
@@ -420,6 +452,11 @@ const ChatBody = ({
               <li>
                 <Button color="primary" onClick={handleSubmit(saveMessage)} className="btn-round btn-icon">
                   <Icon name="send-alt"></Icon>
+                </Button>
+              </li>
+              <li>
+                <Button color="primary" className="btn-round btn-icon">
+                  <Icon name="target"></Icon>
                 </Button>
               </li>
             </ul>

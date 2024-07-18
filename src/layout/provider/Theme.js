@@ -21,7 +21,7 @@ const ThemeProvider = ({...props}) => {
     sidebarVisibility: false,
     sidebarMobile: false,
     header: "white", //other value can be passed "light,dark,theme"
-    skin: "light", //other value can be passed "dark"
+    skin: localStorage.getItem("default_theme") ?? "light", //other value can be passed "dark"
   }
     const [theme, setTheme] = useState(defaultTheme);
 
@@ -45,6 +45,7 @@ const ThemeProvider = ({...props}) => {
         setTheme({...theme, header : value})
       },
       skin : function(value){
+        localStorage.setItem("default_theme", value);
         setTheme({...theme, skin : value})
       },
       reset : function(e){
