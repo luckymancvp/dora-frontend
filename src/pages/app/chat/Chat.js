@@ -142,8 +142,8 @@ const Chat = ({
                         </DropdownToggle>
                         <DropdownMenu end>
                           <ul className="link-list-opt no-bdr">
-                            <li>
-                              <DropdownItem
+                            {/* <li> */}
+                              {/* <DropdownItem
                                 tag="a"
                                 href="#dropdown"
                                 onClick={(ev) => {
@@ -151,14 +151,14 @@ const Chat = ({
                                 }}
                               >
                                 <span>Settings</span>
-                              </DropdownItem>
-                            </li>
-                            <li className="divider"></li>
+                              </DropdownItem> */}
+                            {/* </li> */}
+                            {/* <li className="divider"></li> */}
                             <li
                               onClick={() => onFilterTabClick("messages")}
                               className={filterTabs.messages ? "active" : ""}
                             >
-                              <DropdownItem
+                              {/* <DropdownItem
                                 tag="a"
                                 href="#dropdown"
                                 onClick={(ev) => {
@@ -166,7 +166,7 @@ const Chat = ({
                                 }}
                               >
                                 <span>Messages</span>
-                              </DropdownItem>
+                              </DropdownItem> */}
                             </li>
                             <li
                               onClick={() => onFilterTabClick("only_is_order_help_request")}
@@ -193,7 +193,7 @@ const Chat = ({
                                   ev.preventDefault();
                                 }}
                               >
-                                <span>Not Replied</span>
+                                <span>Not replied</span>
                               </DropdownItem>
                             </li>
                             <li
