@@ -320,7 +320,7 @@ export const ChatRoomItem = ({ item }) => {
               <p dangerouslySetInnerHTML={{ __html: message }}></p>
             </div>
             <div className="status delivered">
-              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : "check-circle"}`} />
+              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : ""}`} />
               <Icon
                 name={`${item.etsy?.isOrderHelpRequest === true ? "help-request ni-alert-circle" : ""}`}
                 style={{ color: "#f20" }}
