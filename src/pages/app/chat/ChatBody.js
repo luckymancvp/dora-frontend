@@ -203,8 +203,11 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
     const padding =
       parseFloat(window.getComputedStyle(el).paddingTop) + parseFloat(window.getComputedStyle(el).paddingBottom);
 
-    el.style.height = "auto";
-    el.style.height = el.scrollHeight - padding * 2 + "px";
+    el.style.height = "36px";
+
+    const newHeight = el.scrollHeight - padding * 2;
+
+    el.style.height = (newHeight + 16) + "px";
   };
 
   const resetTextareaSize = () => {
