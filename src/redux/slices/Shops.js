@@ -21,8 +21,8 @@ const ShopSlice = createSlice({
     [fetchShops.pending]: state => {
       state.fetching = true;
     },
-    [fetchShops.fulfilled]: (state, _action) => {
-      state.shops = _action.payload || [];
+    [fetchShops.fulfilled]: (state, action) => {
+      state.shops = action.payload || [];
       state.fetching = false;
     },
     [fetchShops.rejected]: state => {

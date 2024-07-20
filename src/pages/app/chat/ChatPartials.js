@@ -5,7 +5,7 @@ import { Icon, UserAvatar } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
 import { formatDateString } from "../../../utils/DateTimeFormat";
 import { ChatContext } from "./ChatContext";
-import { formatTimestamp } from '../../../utils/DateTimeFormat';
+import { formatTimestamp } from "../../../utils/DateTimeFormat";
 import ImageContainer from "./GalleryImage";
 
 export const MeChat = ({ item, sender }) => {
@@ -14,11 +14,13 @@ export const MeChat = ({ item, sender }) => {
       <div className="chat-content">
         <div className="chat-bubbles">
           <div className="chat-bubble">
-            {item.etsy.message && (<div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>)}
+            {item.etsy.message && (
+              <div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>
+            )}
             {item.etsy?.images.length > 0 && (
               <div className="chat-img">
                 {item.etsy?.images?.map((image, idx) => (
-                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`me-chat-img-${idx}`} role={"isMe"}/>
+                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`me-chat-img-${idx}`} role={"isMe"} />
                 ))}
               </div>
             )}
@@ -44,11 +46,13 @@ export const YouChat = ({ item, sender }) => {
       <div className="chat-content">
         <div className="chat-bubbles">
           <div className="chat-bubble">
-          {item.etsy.message && (<div className="chat-msg" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>)}
+            {item.etsy.message && (
+              <div className="chat-msg" dangerouslySetInnerHTML={{ __html: item.etsy.message }}></div>
+            )}
             {item.etsy?.images.length > 0 && (
               <div className="chat-img">
                 {item.etsy?.images?.map((image, idx) => (
-                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`you-chat-img-${idx}`} role={"isYou"}/>
+                  <ImageContainer img={image.imageData?.sources[0]?.url} key={`you-chat-img-${idx}`} role={"isYou"} />
                 ))}
               </div>
             )}
@@ -71,21 +75,21 @@ export const SendingChat = ({ item, sender }) => {
     const existingTimestamp = new Date(item.firstTime);
     const currentTimestamp = new Date().toISOString();
     const now = new Date(currentTimestamp);
-    timeDifference = (now - existingTimestamp);
+    timeDifference = now - existingTimestamp;
   }
 
   switch (item.status) {
     case "NEW":
-      status = "Sending"
+      status = "Sending";
       break;
     case "SENDING":
-      status = "Sending"
+      status = "Sending";
       break;
     case "DONE":
       status = formatDateString(item?.createdAt); // TODO
       break;
     case "FAILED":
-      status = "Error"
+      status = "Error";
       break;
     default:
       break;
@@ -100,11 +104,13 @@ export const SendingChat = ({ item, sender }) => {
       <div className="chat-content">
         <div className="chat-bubbles">
           <div className="chat-bubble">
-            {item.message && (<div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.message }}></div>)}
+            {item.message && (
+              <div className="chat-msg bg-blue" dangerouslySetInnerHTML={{ __html: item.message }}></div>
+            )}
             {item.attachments?.length > 0 && (
               <div className="chat-img">
                 {item.attachments.map((image, idx) => (
-                  <ImageContainer img={image} key={`chat-img-${idx}`} role={"isMe"}/>
+                  <ImageContainer img={image} key={`chat-img-${idx}`} role={"isMe"} />
                 ))}
               </div>
             )}
@@ -182,8 +188,9 @@ export const ChatItem = ({ item, chatItemClick, setSelectedId, selectedId }) => 
             </div>
             <div className="status delivered">
               <Icon
-                name={`${item.delivered === true ? "check-circle-fill" : item.delivered === "sent" ? "check-circle" : ""
-                  }`}
+                name={`${
+                  item.delivered === true ? "check-circle-fill" : item.delivered === "sent" ? "check-circle" : ""
+                }`}
               ></Icon>
             </div>
           </div>
@@ -276,13 +283,16 @@ export const ChatRoomItem = ({ item }) => {
   const userData = item.userData || item.etsy.userData;
   const messages = item.etsy?.detail?.messages;
   const sanitizeHTML = (html) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body.textContent || "";
   };
   let message = "";
   let createDate = null;
 
-  if (messages && messages.length > 0) {
+  if (typeof messages === "object" && messages !== null) { 
+    message = messages.message ? sanitizeHTML(messages.message) : "Send attachment";
+    createDate = formatTimestamp(messages.createDate);
+  } else if (messages && messages.length > 0) {
     const lastMessage = messages[messages.length - 1];
     message = lastMessage?.message ? sanitizeHTML(lastMessage.message) : "Send attachment";
     createDate = formatTimestamp(lastMessage.createDate);
@@ -320,7 +330,6 @@ export const ChatRoomItem = ({ item }) => {
               <p dangerouslySetInnerHTML={{ __html: message }}></p>
             </div>
             <div className="status delivered">
-              {/* <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : "check-circle"}`} /> khong cần icon check-circle  */}
               <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : ""}`} />
               <Icon
                 name={`${item.etsy?.isOrderHelpRequest === true ? "help-request ni-alert-circle" : ""}`}
@@ -335,30 +344,14 @@ export const ChatRoomItem = ({ item }) => {
   );
 };
 
-
-export const RecommnendChats = ({ handleClick, aiSolutions, loadingAI }) => {
-  if (loadingAI) {
-    console.log('Loading recommendations...');
-    return <div>Loading recommendations...</div>;
-  }
-
-  if (!Array.isArray(aiSolutions) || aiSolutions.length === 0) {
-    return <div>No recommendations available.</div>;
-  }
-
-  return (
-    <ul>
-      {aiSolutions.map((solution, index) => (
-        <li key={index} onClick={() => handleClick(solution)} className="py-1">
-          <div className="custom-control custom-radio custom-control-pro no-control checked">
-            <label className="custom-control-label">
-              {solution}
-            </label>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
+export const RecommnendChats = ({ solutionMessages, handleClick }) => {
+  return solutionMessages?.map((msg, index) => (
+    <li key={`solution-${index}`} className="py-1">
+      <div className="custom-control custom-radio custom-control-pro no-control checked">
+        <label className="custom-control-label" onClick={() => handleClick(msg)}>
+          {msg}
+        </label>
+      </div>
+    </li>
+  ));
 };
-
-

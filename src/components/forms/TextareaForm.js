@@ -28,8 +28,7 @@ export const TextareaForm = forwardRef(({
             placeholder={textMessages}
             className={`${inputClassName} || 'form-control form-control-simple no-resize'}`}
             style={{
-              minHeight: '38px',
-              maxHeight: '200px',
+              minHeight: '36px',
             }}
             {...field}
             {...rest}

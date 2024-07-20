@@ -1,19 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import fetchConversationsRequest from "../services/ConversationsService";
 
-export const fetchConversations = createAsyncThunk(
-  "conversations/FETCH_CONVERSATIONS",
-  async (data = {}) => {
-    const result = await fetchConversationsRequest(data);
-    return result?.data;
-  },
-);
+export const fetchConversations = createAsyncThunk("conversations/FETCH_CONVERSATIONS", async (data = {}) => {
+  const result = await fetchConversationsRequest(data);
+  return result?.data;
+});
 
 const initialState = {
   conversations: [],
   fetching: false,
   currentPage: 1,
-  defaultItemsPerPage: 20
+  defaultItemsPerPage: 20,
 };
 
 const ConversationSlice = createSlice({
@@ -25,11 +22,11 @@ const ConversationSlice = createSlice({
     },
   },
   extraReducers: {
-    [fetchConversations.pending]: state => {
+    [fetchConversations.pending]: (state) => {
       state.fetching = true;
     },
-    [fetchConversations.fulfilled]: (state, _action) => {
-      const data = _action.payload;
+    [fetchConversations.fulfilled]: (state, action) => {
+      const data = action.payload;
 
       if (state.currentPage === 1) {
         state.conversations = [];
@@ -47,7 +44,7 @@ const ConversationSlice = createSlice({
       }
       state.fetching = false;
     },
-    [fetchConversations.rejected]: state => {
+    [fetchConversations.rejected]: (state) => {
       state.conversations = [];
       state.fetching = false;
     },

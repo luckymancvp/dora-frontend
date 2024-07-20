@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownToggle, UncontrolledDropdown, DropdownItem } from
 import { isBlank } from "../../../utils/Utils";
 import { chatData } from "./ChatData";
 import { ChatContext } from "./ChatContext";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChannelAsideBody, ChatAsideBody } from "./ChatAsideBody";
 import { debounce } from 'lodash';
 
@@ -22,16 +22,15 @@ const Chat = ({
   conversation,
   handleSetEmptyConversationMessage,
   fetchDataMessage,
+  handleFetchSolutions,
   conversationId,
-  aiSolutions,
-  aiMessageDefaut,
-  loadingAI,
+  solutionsMessages
 }) => {
   const [mainTab, setMainTab] = useState("Chats");
   const [selectedId, setSelectedId] = useState();
   const [filterTabs, setFilterTabs] = useState(() => {
-    const savedTabs = localStorage.getItem("filtertabs");
-    return savedTabs ? JSON.parse(savedTabs) : { "messages": true };
+    const savedTabs = localStorage.getItem("filter_tabs");
+    return savedTabs ? JSON.parse(savedTabs) : {};
   });
   const [filteredChatList, setFilteredChatList] = useState([]);
   const [filterText, setFilterText] = useState("");
@@ -91,15 +90,10 @@ const Chat = ({
   }, 300);
 
   const onFilterTabClick = (prop) => {
-    if (prop === "messages" && filterTabs.messages === false) {
-      setFilterTabs({ messages: true });
-    } else {
-      setFilterTabs(prevState => ({
-        ...prevState,
-        messages: false,
-        [prop]: prevState[prop] ? !prevState[prop] : true
-      }));
-    }
+    setFilterTabs(prevState => ({
+      ...prevState,
+      [prop]: prevState[prop] ? !prevState[prop] : true
+    }));
   };
 
   useEffect(() => {
@@ -145,32 +139,7 @@ const Chat = ({
                         </DropdownToggle>
                         <DropdownMenu end>
                           <ul className="link-list-opt no-bdr">
-                            {/* <li> */}
-                              {/* <DropdownItem
-                                tag="a"
-                                href="#dropdown"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                              >
-                                <span>Settings</span>
-                              </DropdownItem> */}
-                            {/* </li> */}
                             {/* <li className="divider"></li> */}
-                            <li
-                              onClick={() => onFilterTabClick("messages")}
-                              className={filterTabs.messages ? "active" : ""}
-                            >
-                              {/* <DropdownItem
-                                tag="a"
-                                href="#dropdown"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                              >
-                                <span>Messages</span>
-                              </DropdownItem> */}
-                            </li>
                             <li
                               onClick={() => onFilterTabClick("only_is_order_help_request")}
                               className={filterTabs.only_is_order_help_request ? "active" : ""}
@@ -196,7 +165,7 @@ const Chat = ({
                                   ev.preventDefault();
                                 }}
                               >
-                                <span>Not replied</span>
+                                <span>Not Replied</span>
                               </DropdownItem>
                             </li>
                             <li
@@ -258,18 +227,13 @@ const Chat = ({
               <AppContact setTab={setMainTab} setSelectedId={setSelectedId} />
             )}
           </div>
-         
           {conversationId && !isBlank(conversation) ? (
             <ChatBody
-              id={selectedId}
-              setSelectedId={setSelectedId}
               mobileView={mobileView}
               conversationId={conversationId}
               conversation={conversation}
-              fetchDataMessage={fetchDataMessage}
-              aiSolutions={aiSolutions}
-              aiMessageDefaut={aiMessageDefaut}
-              loadingAI={loadingAI}
+              solutions={solutionsMessages}
+              handleFetchSolutions={handleFetchSolutions}
             />
           ) : (
             <div className="nk-chat-body">
@@ -278,11 +242,11 @@ const Chat = ({
                   <Icon name="chat" className="icon-circle icon-circle-xxl bg-white"></Icon>
                 </div>
                 <div className="nk-chat-blank-btn">
-                  {/* <Link to={`${process.env.PUBLIC_URL}/messages`}>
+                  <Link to={`${process.env.PUBLIC_URL}/messages`}>
                     <Button color="primary" disabled={mainTab === "Contact"} onClick={() => setMainTab("Contact")}>
                       Start Chat
                     </Button>
-                  </Link> */}
+                  </Link>
                 </div>
               </div>
             </div>

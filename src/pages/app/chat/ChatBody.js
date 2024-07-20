@@ -7,33 +7,28 @@ import ChatSideBar from "./ChatSideBar";
 import ChatFiles from "./ChatFiles";
 import SimpleBar from "simplebar-react";
 import { createMessage, fetchStatusMessage } from "../../../redux/slices/Messages";
-import { fetchAIMessageWithInput } from "../../../redux/slices/AIMessages";
 import { Spinner } from "reactstrap";
 import { UserAvatar, Icon, Button } from "../../../components/Component";
 import { TextareaForm } from "../../../components/forms/TextareaForm";
 import { findUpper } from "../../../utils/Utils";
+
 import { MeChat, YouChat, SendingChat, RecommnendChats } from "./ChatPartials";
 
-const ChatBody = ({
-  id, mobileView, setSelectedId, conversationId,
-  conversation, aiSolutions, loadingAI, aiMessageDefaut, messageFetching
-}) => {
+const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleFetchSolutions }) => {
   const dispatch = useDispatch();
-  const { messages, sendingMessages, isSendingMessage, scrollBottom } = useSelector(state => state.messages);
+  const { messages, sendingMessages, isSendingMessage, isFetchingSolution, scrollBottom } = useSelector(
+    (state) => state.messages
+  );
   const [sidebar, setsidebar] = useState(false);
   const [chatOptions, setChatOptions] = useState(false);
   const [files, setFiles] = useState([]);
   const [recommnendState, setRecommnendState] = useState(() => {
-    const state = localStorage.getItem("recommnend_state");
-    return state === null ? false : state === "true";
+    return window.innerWidth < 860 ? true : false;
   });
-  
-  const toggleRecommendState = () => {
-    setRecommnendState(prevState => {
-      const newState = !prevState;
-      localStorage.setItem("recommnend_state", newState);
-      return newState;
-    });
+
+  const toggleRecommendState = (isOpen) => {
+    setRecommnendState(isOpen);
+    localStorage.setItem("recommnend_state", isOpen);
   };
 
   // Conversation selected
@@ -42,22 +37,25 @@ const ChatBody = ({
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const uploadImgRef = useRef(null);
-  // const [aiMessage, setAiMessage] = useState("");
-  const [editedMessage, setEditedMessage] = useState("");
+
   const methods = useForm({
     defaultValues: { message: "", attachments: [] },
   });
-  const {
-    handleSubmit, setValue, watch, clearErrors, reset
-  } = methods;
-  useEffect(() => {
-    if (aiMessageDefaut) {
-      setEditedMessage(aiMessageDefaut);
-      setValue('message', aiMessageDefaut);
-    }
-  }, [aiMessageDefaut, setValue]);
+
+  const { handleSubmit, setValue, watch, clearErrors, reset } = methods;
 
   const attachments = watch("attachments");
+  const messageValue = watch("message");
+
+  useEffect(() => {
+    setTimeout(() => {
+      resizeTextarea();
+    }, 100);
+  }, [messageValue, isFetchingSolution]);
+
+  useEffect(() => {
+    setValue("message", solutions.message);
+  }, [solutions.message, setValue]);
 
   useEffect(() => {
     clearFileInput();
@@ -70,7 +68,7 @@ const ChatBody = ({
     }
     reset();
     setFiles([]);
-  }, [uploadImgRef, reset])
+  }, [uploadImgRef, reset]);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -114,61 +112,66 @@ const ChatBody = ({
     setsidebar(!sidebar);
   };
 
-  const handleSendMessage = useCallback((formValues, conversationId) => {
-    const formData = new FormData();
-    formData.append("message", formValues.message);
-    if (formValues.attachments && formValues.attachments.length > 0) {
-      formValues.attachments.forEach(file => {
-        formData.append("attachments", file);
-      });
-    }
-
-    // Reset input & files
-    clearFileInput();
-    scrollToBottom();
-
-    dispatch(createMessage({ conversationId, formData })).then(response => {
-      const data = response.payload?.message;
-      if (data?.conversationId) {
-        scrollToBottom();
-        setTimeout(() => {
-          scrollToBottom();
-        }, 500);
-
-        const checkStatus = () => {
-          dispatch(fetchStatusMessage({ id: data.id })).then(({ payload }) => {
-            if (payload.status === "NEW") {
-              console.log("Status is still NEW");
-            } else {
-              clearInterval(intervalId);
-              if (payload.status !== "NEW") {
-                console.log("Message status updated:", payload.status);
-              }
-            }
-          });
-        };
-
-        const updateStatusToError = () => {
-          // dispatch(updateMessageStatus({ id: data.id, status: "Error" })); // TODO:
-          console.error("Error: Message status remained NEW after 5 seconds.");
-        };
-
-        // Call status check every second for 5 seconds
-        const intervalId = setInterval(checkStatus, 1000);
-        setTimeout(() => {
-          clearInterval(intervalId);
-          updateStatusToError(); // Update status to Error
-        }, 5000);
+  const handleSendMessage = useCallback(
+    (formValues, conversationId) => {
+      const formData = new FormData();
+      formData.append("message", formValues.message);
+      if (formValues.attachments && formValues.attachments.length > 0) {
+        formValues.attachments.forEach((file) => {
+          formData.append("attachments", file);
+        });
       }
-    });
-  }, [dispatch, clearFileInput]);
 
-  const saveMessage = useCallback((formValues) => {
-    if (formValues.message.trim() || attachments.length > 0) {
-      handleSendMessage(formValues, conversation.etsy?.conversationId);
-      setEditedMessage(""); // Xóa giá trị của editedMessage
-    }
-  }, [conversation, handleSendMessage, attachments]);
+      // Reset input & files
+      clearFileInput();
+      scrollToBottom();
+
+      dispatch(createMessage({ conversationId, formData })).then((response) => {
+        const data = response.payload?.message;
+        if (data?.conversationId) {
+          scrollToBottom();
+          setTimeout(() => {
+            scrollToBottom();
+          }, 500);
+
+          const checkStatus = () => {
+            dispatch(fetchStatusMessage({ id: data.id })).then(({ payload }) => {
+              if (payload.status === "NEW") {
+                console.log("Status is still NEW");
+              } else {
+                clearInterval(intervalId);
+                if (payload.status !== "NEW") {
+                  console.log("Message status updated:", payload.status);
+                }
+              }
+            });
+          };
+
+          const updateStatusToError = () => {
+            // dispatch(updateMessageStatus({ id: data.id, status: "Error" })); // TODO:
+            console.error("Error: Message status remained NEW after 5 seconds.");
+          };
+
+          // Call status check every second for 5 seconds
+          const intervalId = setInterval(checkStatus, 1000);
+          setTimeout(() => {
+            clearInterval(intervalId);
+            updateStatusToError(); // Update status to Error
+          }, 5000);
+        }
+      });
+    },
+    [dispatch, clearFileInput]
+  );
+
+  const saveMessage = useCallback(
+    (formValues) => {
+      if (formValues.message.trim() || attachments.length > 0) {
+        handleSendMessage(formValues, conversation.etsy?.conversationId);
+      }
+    },
+    [conversation, handleSendMessage, attachments]
+  );
 
   const chatBodyClass = classNames({
     "nk-chat-body": true,
@@ -177,27 +180,19 @@ const ChatBody = ({
   });
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       reset();
       resizeTextarea();
       resetTextareaSize();
-    } else if (e.key === 'Enter' && !e.shiftKey) {
+    } else if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(saveMessage)();
       reset();
       resizeTextarea();
       resetTextareaSize();
-      setEditedMessage(""); 
-    } else if (e.key === 'Enter' && e.shiftKey) {
+    } else if (e.key === "Enter" && e.shiftKey) {
       resizeTextarea();
     }
-  };
-
-  const handleTextareaChange = (e) => {
-    const newValue = e.target.value;
-    setEditedMessage(newValue); 
-    setValue('message', newValue); 
-    resizeTextarea();
   };
 
   const resizeTextarea = () => {
@@ -205,17 +200,18 @@ const ChatBody = ({
 
     if (!el) return;
 
-    const padding = parseFloat(window.getComputedStyle(el).paddingTop) + parseFloat(window.getComputedStyle(el).paddingBottom);
+    const padding =
+      parseFloat(window.getComputedStyle(el).paddingTop) + parseFloat(window.getComputedStyle(el).paddingBottom);
 
     el.style.height = "auto";
-    el.style.height = el.scrollHeight - padding * 2 + 'px';
-  }
+    el.style.height = el.scrollHeight - padding * 2 + "px";
+  };
 
   const resetTextareaSize = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }
+  };
 
   const focusTextarea = () => {
     if (textareaRef.current) {
@@ -230,20 +226,31 @@ const ChatBody = ({
     }
   };
 
-  const onFileChangeForm = useCallback(selectedFiles => {
-    focusTextarea();
-    setChatOptions(false);
-    clearErrors('attachments');
-    setValue('attachments', selectedFiles);
-  }, [clearErrors, setValue]);
+  const onFileChangeForm = useCallback(
+    (selectedFiles) => {
+      focusTextarea();
+      setChatOptions(false);
+      clearErrors("attachments");
+      setValue("attachments", selectedFiles);
+    },
+    [clearErrors, setValue]
+  );
 
+  const handleOnclickAI = useCallback(() => {
+    if (messageValue) {
+      handleFetchSolutions(conversationId, { input: messageValue });
+    } else {
+      handleFetchSolutions(conversationId);
+    }
+    toggleRecommendState();
+  }, [messageValue, handleFetchSolutions, conversationId]);
 
   const onPasteImage = (pasteEvent) => {
     const items = pasteEvent.clipboardData?.items;
 
     if (items) {
-      Array.from(items).forEach(item => {
-        if (item.type.includes('image')) {
+      Array.from(items).forEach((item) => {
+        if (item.type.includes("image")) {
           const blob = item.getAsFile();
           onFileChangeForm([blob]);
         }
@@ -251,40 +258,58 @@ const ChatBody = ({
     }
   };
 
-  const renderMessages = useMemo(() => messages.map((item, idx) => {
-    if (item?.etsy?.senderId === userData?.userId) {
-      return <MeChat key={`message-${item.id}-${idx}`} item={item} sender={userData} ></MeChat>;
-    } else if (item?.etsy?.senderId === otherUser?.userId) {
-      return <YouChat key={`message-${item.id}-${idx}`} item={item} sender={otherUser}></YouChat>;
-    } else {
-      return <SendingChat key={`message-${item.id}-${idx}`} item={item} sender={userData} />
-    }
-  }), [messages, userData, otherUser]);
+  const renderMessages = useMemo(
+    () =>
+      messages.map((item, idx) => {
+        if (item?.etsy?.senderId === userData?.userId) {
+          return <MeChat key={`message-${item.id}-${idx}`} item={item} sender={userData}></MeChat>;
+        } else if (item?.etsy?.senderId === otherUser?.userId) {
+          return <YouChat key={`message-${item.id}-${idx}`} item={item} sender={otherUser}></YouChat>;
+        } else {
+          return <SendingChat key={`message-${item.id}-${idx}`} item={item} sender={userData} />;
+        }
+      }),
+    [messages, userData, otherUser]
+  );
 
-  const renderSendingMessages = useMemo(() => sendingMessages.map((item, idx) => {
-    if (String(item.conversationId) === String(conversationId)) {
-      return <SendingChat key={`sending-message-${item.id}-${idx}`} item={item} sender={userData} />
-    }
-    return <></>;
-  }), [sendingMessages, userData, conversationId]);
+  const renderSendingMessages = useMemo(
+    () =>
+      sendingMessages.map((item, idx) => {
+        if (String(item.conversationId) === String(conversationId)) {
+          return <SendingChat key={`sending-message-${item.id}-${idx}`} item={item} sender={userData} />;
+        }
+        return <></>;
+      }),
+    [sendingMessages, userData, conversationId]
+  );
 
-  useEffect(() => {
-    RecommnendChats(false);
-  }, [conversationId]);
-
-  const handleSendAIMessage = (message, conversationId) => {
-    dispatch(fetchAIMessageWithInput({ conversationId, input: message })).then(response => {
-      const aiMessage = response.payload?.message;
-      if (aiMessage) {
-        setValue('message', aiMessage);
-        setEditedMessage(aiMessage);
-      }
-    });
-  };
-  useEffect(() => {
-    reset({ message: "", attachments: [] });
-    setEditedMessage("");
-  }, [conversationId, reset]);
+  const renderSolutions = useMemo(
+    () =>
+      solutions?.solutions?.length > 0 && (
+        <div className="nk-chat-options">
+          <a
+            href="#options"
+            className="p-0 btn btn-round btn-icon btn-light"
+            onClick={(ev) => {
+              ev.preventDefault();
+              toggleRecommendState(!recommnendState);
+            }}
+            style={{ width: "30px", height: "30px" }}
+          >
+            <span className="indicator-icon">
+              <Icon name={`chevron-${recommnendState ? "up" : "down"}`}></Icon>
+            </span>
+          </a>
+          <ul className={`collapse ${recommnendState ? "" : "show"}`}>
+            <RecommnendChats
+              solutionMessages={solutions.solutions}
+              handleClick={(message) => setValue("message", message)}
+            />
+          </ul>
+        </div>
+      ),
+    [recommnendState, setValue, solutions.solutions]
+  );
 
   return (
     <React.Fragment>
@@ -292,10 +317,7 @@ const ChatBody = ({
         <div className="nk-chat-head">
           <ul className="nk-chat-head-info">
             <li className="nk-chat-body-close">
-              <Link
-                to="/messages"
-                className="btn btn-icon btn-trigger nk-chat-hide ms-n1"
-              >
+              <Link to="/messages" className="btn btn-icon btn-trigger nk-chat-hide ms-n1">
                 <Icon name="arrow-left"></Icon>
               </Link>
             </li>
@@ -404,34 +426,20 @@ const ChatBody = ({
           <SimpleBar className="nk-chat-panel" scrollableNodeProps={{ ref: messagesEndRef }}>
             {renderMessages}
             {renderSendingMessages}
-            {isSendingMessage && (<div className="text-end py-3 px-2"><Spinner size="sm" color="primary" /></div>)}
+            {isSendingMessage && (
+              <div className="text-end py-3 px-2">
+                <Spinner size="sm" color="primary" />
+              </div>
+            )}
             {/* {messageFetching && (<div className="text-center py-3"><Spinner size="sm" color="primary" /></div>)} */}
           </SimpleBar>
-          <div className="nk-chat-options">
-            <a
-              href="#options"
-              className="p-0 btn btn-round btn-icon btn-light"
-              onClick={(ev) => {
-                ev.preventDefault();
-                toggleRecommendState();
-              }}
-              style={{ width: "30px", height: "30px" }}
-            >
-              <span className="indicator-icon">
-                <Icon name={`chevron-${recommnendState ? "up" : "down"}`}></Icon>
-              </span>
-            </a>
-            <ul className={`collapse ${recommnendState ? "" : "show"}`}>
-            { !loadingAI && (
-              <RecommnendChats
-                handleClick={(message) => handleSendAIMessage(message, conversationId)}
-                aiSolutions={aiSolutions}
-                loadingAI={loadingAI}
-                
-              />
-            )}
-          </ul>
-          </div>
+          {isFetchingSolution ? (
+            <div className="nk-chat-options">
+              <Spinner size="sm" color="primary" />
+            </div>
+          ) : (
+            renderSolutions
+          )}
         </div>
         <FormProvider {...methods}>
           <ChatFiles
@@ -454,10 +462,7 @@ const ChatBody = ({
               <div className={`chat-upload-option ${chatOptions ? "expanded" : ""}`}>
                 <ul className="">
                   <li>
-                    <a
-                      href="#img"
-                      onClick={handleClickImage}
-                    >
+                    <a href="#img" onClick={handleClickImage}>
                       <Icon name="img-fill"></Icon>
                     </a>
                   </li>
@@ -474,9 +479,7 @@ const ChatBody = ({
                   className="form-control form-control-simple no-resize"
                   placeholder="Type your message..."
                   onPaste={onPasteImage}
-                  onChange={handleTextareaChange}
                   onKeyDown={handleKeyDown}
-                  value={editedMessage}
                 />
               </div>
             </div>
@@ -492,7 +495,7 @@ const ChatBody = ({
                 </Button>
               </li>
               <li>
-                <Button color="primary" className="btn-round btn-icon">
+                <Button color="primary" onClick={handleOnclickAI} className="btn-round btn-icon">
                   <Icon name="target"></Icon>
                 </Button>
               </li>

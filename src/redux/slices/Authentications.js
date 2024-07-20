@@ -2,18 +2,15 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { isBlank } from "../../utils/Utils";
 import getProfileRequest from "../services/AuthService";
 
-export const getProfile = createAsyncThunk(
-  'auth/PROFILE',
-  async () => {
-    const result = await getProfileRequest();
-    return result.data;
-  },
-);
+export const getProfile = createAsyncThunk("auth/PROFILE", async () => {
+  const result = await getProfileRequest();
+  return result.data;
+});
 
 const initialState = {
   currentUser: null,
   isLoggedIn: !isBlank(localStorage.getItem("token")),
-  isFetching: false
+  isFetching: false,
 };
 
 const authSlice = createSlice({
@@ -32,7 +29,7 @@ const authSlice = createSlice({
     },
   },
   extraReducers: {
-    [getProfile.pending]: state => {
+    [getProfile.pending]: (state) => {
       state.isFetching = true;
       state.currentUser = null;
     },
@@ -40,7 +37,7 @@ const authSlice = createSlice({
       state.isFetching = false;
       state.currentUser = _action.payload;
     },
-    [getProfile.rejected]: state => {
+    [getProfile.rejected]: (state) => {
       state.isFetching = false;
       state.currentUser = null;
     },
