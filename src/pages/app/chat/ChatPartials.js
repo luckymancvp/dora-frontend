@@ -320,7 +320,7 @@ export const ChatRoomItem = ({ item }) => {
               <p dangerouslySetInnerHTML={{ __html: message }}></p>
             </div>
             <div className="status delivered">
-              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : ""}`} />
+              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : "check-circle"}`} />
               <Icon
                 name={`${item.etsy?.isOrderHelpRequest === true ? "help-request ni-alert-circle" : ""}`}
                 style={{ color: "#f20" }}
@@ -335,20 +335,29 @@ export const ChatRoomItem = ({ item }) => {
 };
 
 
-export const RecommnendChats = ({ handleClick }) => {
-  const recommends = [
-    { id: 1, message: "Yes thank you. Can you give us 5* review ? This means a lot to our store."},
-    { id: 2, message: "Thank you for letting us know. We will proceed with the size you have ordered."},
-    { id: 3, message: "We will be here to assist you, so no worry."}
-  ]
+export const RecommnendChats = ({ handleClick, aiSolutions, loadingAI }) => {
+  if (loadingAI) {
+    console.log('Loading recommendations...');
+    return <div>Loading recommendations...</div>;
+  }
 
-  return recommends.map(recommend => (
-    <li key={`${recommend.id}`} onClick={() => handleClick(recommend.message)} className="py-1">
-      <div className="custom-control custom-radio custom-control-pro no-control checked">
-        <label className="custom-control-label">
-          {recommend.message}
-        </label>
-      </div>
-    </li>
-  ))
-}
+  if (!Array.isArray(aiSolutions) || aiSolutions.length === 0) {
+    return <div>No recommendations available.</div>;
+  }
+
+  return (
+    <ul>
+      {aiSolutions.map((solution, index) => (
+        <li key={index} onClick={() => handleClick(solution)} className="py-1">
+          <div className="custom-control custom-radio custom-control-pro no-control checked">
+            <label className="custom-control-label">
+              {solution}
+            </label>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+

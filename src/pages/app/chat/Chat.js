@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownToggle, UncontrolledDropdown, DropdownItem } from
 import { isBlank } from "../../../utils/Utils";
 import { chatData } from "./ChatData";
 import { ChatContext } from "./ChatContext";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { ChannelAsideBody, ChatAsideBody } from "./ChatAsideBody";
 import { debounce } from 'lodash';
 
@@ -22,7 +22,10 @@ const Chat = ({
   conversation,
   handleSetEmptyConversationMessage,
   fetchDataMessage,
-  conversationId
+  conversationId,
+  aiSolutions,
+  aiMessageDefaut,
+  loadingAI,
 }) => {
   const [mainTab, setMainTab] = useState("Chats");
   const [selectedId, setSelectedId] = useState();
@@ -255,6 +258,7 @@ const Chat = ({
               <AppContact setTab={setMainTab} setSelectedId={setSelectedId} />
             )}
           </div>
+         
           {conversationId && !isBlank(conversation) ? (
             <ChatBody
               id={selectedId}
@@ -263,6 +267,9 @@ const Chat = ({
               conversationId={conversationId}
               conversation={conversation}
               fetchDataMessage={fetchDataMessage}
+              aiSolutions={aiSolutions}
+              aiMessageDefaut={aiMessageDefaut}
+              loadingAI={loadingAI}
             />
           ) : (
             <div className="nk-chat-body">

@@ -7,16 +7,16 @@ import ChatSideBar from "./ChatSideBar";
 import ChatFiles from "./ChatFiles";
 import SimpleBar from "simplebar-react";
 import { createMessage, fetchStatusMessage } from "../../../redux/slices/Messages";
+import { fetchAIMessageWithInput } from "../../../redux/slices/AIMessages";
 import { Spinner } from "reactstrap";
 import { UserAvatar, Icon, Button } from "../../../components/Component";
 import { TextareaForm } from "../../../components/forms/TextareaForm";
 import { findUpper } from "../../../utils/Utils";
-
 import { MeChat, YouChat, SendingChat, RecommnendChats } from "./ChatPartials";
 
 const ChatBody = ({
   id, mobileView, setSelectedId, conversationId,
-  conversation
+  conversation, aiSolutions, loadingAI, aiMessageDefaut, messageFetching
 }) => {
   const dispatch = useDispatch();
   const { messages, sendingMessages, isSendingMessage, scrollBottom } = useSelector(state => state.messages);
@@ -42,6 +42,15 @@ const ChatBody = ({
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const uploadImgRef = useRef(null);
+  // const [aiMessage, setAiMessage] = useState("");
+  const [editedMessage, setEditedMessage] = useState("");
+
+  useEffect(() => {
+    if (aiMessageDefaut) {
+      setEditedMessage(aiMessageDefaut);
+      setValue('message', aiMessageDefaut);
+    }
+  }, [aiMessageDefaut]);
 
   const methods = useForm({
     defaultValues: { message: "", attachments: [] },
@@ -160,6 +169,7 @@ const ChatBody = ({
   const saveMessage = useCallback((formValues) => {
     if (formValues.message.trim() || attachments.length > 0) {
       handleSendMessage(formValues, conversation.etsy?.conversationId);
+      setEditedMessage(""); // Xóa giá trị của editedMessage
     }
   }, [conversation, handleSendMessage, attachments]);
 
@@ -180,13 +190,17 @@ const ChatBody = ({
       reset();
       resizeTextarea();
       resetTextareaSize();
+      setEditedMessage(""); 
     } else if (e.key === 'Enter' && e.shiftKey) {
       resizeTextarea();
     }
   };
 
   const handleTextareaChange = (e) => {
-    resizeTextarea();
+    const newValue = e.target.value;
+  setEditedMessage(newValue); // Cập nhật state của editedMessage
+  setValue('message', newValue); // Cập nhật giá trị tin nhắn trong react-hook-form
+  resizeTextarea();
   };
 
   const resizeTextarea = () => {
@@ -256,6 +270,20 @@ const ChatBody = ({
     }
     return <></>;
   }), [sendingMessages, userData, conversationId]);
+
+  useEffect(() => {
+    RecommnendChats(false);
+  }, [conversationId]);
+
+  const handleSendAIMessage = (message, conversationId) => {
+    dispatch(fetchAIMessageWithInput({ conversationId, input: message })).then(response => {
+      const aiMessage = response.payload?.message;
+      if (aiMessage) {
+        setValue('message', aiMessage);
+        setEditedMessage(aiMessage);
+      }
+    });
+  };
 
   return (
     <React.Fragment>
@@ -393,8 +421,15 @@ const ChatBody = ({
               </span>
             </a>
             <ul className={`collapse ${recommnendState ? "" : "show"}`}>
-              <RecommnendChats handleClick={message => handleSendMessage({ message }, conversationId)}/>
-            </ul>
+            { !loadingAI && (
+              <RecommnendChats
+                handleClick={(message) => handleSendAIMessage(message, conversationId)}
+                aiSolutions={aiSolutions}
+                loadingAI={loadingAI}
+                
+              />
+            )}
+          </ul>
           </div>
         </div>
         <FormProvider {...methods}>
@@ -440,6 +475,7 @@ const ChatBody = ({
                   onPaste={onPasteImage}
                   onChange={handleTextareaChange}
                   onKeyDown={handleKeyDown}
+                  value={editedMessage}
                 />
               </div>
             </div>

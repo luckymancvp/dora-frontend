@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
 import { debounce } from 'lodash';
@@ -7,10 +7,13 @@ import { ChatContextProvider } from "./ChatContext";
 import { fetchShops } from "../../../redux/slices/Shops";
 import { fetchConversations, setCurrentPage } from "../../../redux/slices/Conversations";
 import { fetchMessages, setEmptyMessages, setEmptyConversationMessage, setScrollBottom } from "../../../redux/slices/Messages";
+import { fetchAIMessage } from "../../../redux/slices/AIMessages"; 
 
 const ChatContainer = ({ currentUser }) => {
   const dispatch = useDispatch();
   const { conversationId } = useParams();
+  const [aiSolutions, setAiSolutions] = useState([]);
+  const [aiMessageDefaut, setAiMessageDefault] = useState([]);
   const {
     shops: { shops, fetching: shopFetching },
     conversations: { conversations, fetching: conversationFetching, defaultItemsPerPage },
@@ -41,7 +44,6 @@ const ChatContainer = ({ currentUser }) => {
     if (clearMessage) {
       dispatch(setEmptyMessages());
     }
-
     dispatch(fetchMessages({ conversationId })).then(() => {
       handleChangeScroll(toScrollBottom);
     });
@@ -55,11 +57,23 @@ const ChatContainer = ({ currentUser }) => {
     dispatch(setEmptyConversationMessage(data));
   }, [dispatch]);
 
-  useEffect(() => {
-    if (conversationId) {
-      fetchDataMessage({ conversationId, clearMessage: true, toScrollBottom: true });
-    }
-  }, [conversationId, fetchDataMessage]);
+  const [loadingAI, setLoadingAI] = useState(false);
+
+useEffect(() => {
+  if (conversationId) {
+    setLoadingAI(true);
+    dispatch(fetchAIMessage({ conversationId: String(conversationId) })).unwrap().then((aiMessage) => {
+      console.log('AI Message:', aiMessage);
+      setAiSolutions(aiMessage.solutions);
+      setAiMessageDefault(aiMessage.message);
+      setLoadingAI(false);
+    }).catch((error) => {
+      console.error('Failed to fetch AI message:', error);
+      setLoadingAI(false);
+    });
+    console.log('conversationId:', conversationId);
+  }
+}, [conversationId, fetchDataMessage, dispatch]);
 
   useEffect(() => {
     if (conversationId) {
@@ -71,7 +85,7 @@ const ChatContainer = ({ currentUser }) => {
       return () => clearInterval(intervalId);
     }
   }, [conversationId, fetchDataMessage]);
-
+  
   return (
     <ChatContextProvider>
       <Chat
@@ -86,6 +100,9 @@ const ChatContainer = ({ currentUser }) => {
         conversation={conversation}
         handleSetEmptyConversationMessage={handleSetEmptyConversationMessage}
         conversationId={conversationId}
+        aiSolutions={aiSolutions}
+        aiMessageDefaut={aiMessageDefaut}
+        loadingAI={loadingAI}
       />
     </ChatContextProvider>
   );
