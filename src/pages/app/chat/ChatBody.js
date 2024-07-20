@@ -44,21 +44,22 @@ const ChatBody = ({
   const uploadImgRef = useRef(null);
   // const [aiMessage, setAiMessage] = useState("");
   const [editedMessage, setEditedMessage] = useState("");
-
+  const methods = useForm({
+    defaultValues: { message: "", attachments: [] },
+  });
+  const {
+    handleSubmit, setValue, watch, clearErrors, reset
+  } = methods;
   useEffect(() => {
     if (aiMessageDefaut) {
       setEditedMessage(aiMessageDefaut);
       setValue('message', aiMessageDefaut);
     }
-  }, [aiMessageDefaut]);
+  }, [aiMessageDefaut, setValue]);
 
-  const methods = useForm({
-    defaultValues: { message: "", attachments: [] },
-  });
+  
 
-  const {
-    handleSubmit, setValue, watch, clearErrors, reset
-  } = methods;
+  
 
   const attachments = watch("attachments");
 
