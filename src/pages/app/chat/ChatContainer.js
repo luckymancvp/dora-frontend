@@ -85,7 +85,6 @@ useEffect(() => {
       return () => clearInterval(intervalId);
     }
   }, [conversationId, fetchDataMessage]);
-  
   return (
     <ChatContextProvider>
       <Chat

@@ -57,10 +57,6 @@ const ChatBody = ({
     }
   }, [aiMessageDefaut, setValue]);
 
-  
-
-  
-
   const attachments = watch("attachments");
 
   useEffect(() => {
@@ -199,9 +195,9 @@ const ChatBody = ({
 
   const handleTextareaChange = (e) => {
     const newValue = e.target.value;
-  setEditedMessage(newValue); // Cập nhật state của editedMessage
-  setValue('message', newValue); // Cập nhật giá trị tin nhắn trong react-hook-form
-  resizeTextarea();
+    setEditedMessage(newValue); 
+    setValue('message', newValue); 
+    resizeTextarea();
   };
 
   const resizeTextarea = () => {
@@ -285,6 +281,10 @@ const ChatBody = ({
       }
     });
   };
+  useEffect(() => {
+    reset({ message: "", attachments: [] });
+    setEditedMessage("");
+  }, [conversationId, reset]);
 
   return (
     <React.Fragment>
