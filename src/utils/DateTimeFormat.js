@@ -51,13 +51,19 @@ const parseTimestamp = (timestamp, format = "") => {
       date.getMinutes(),
       2
     )}`;
+  } else if (format === "DD/MM/YY, HH:mm") {
+    const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
+    return `${new Intl.DateTimeFormat("en-GB", options).format(date)}, ${zeroPad(date.getHours(), 2)}:${zeroPad(
+      date.getMinutes(),
+      2
+    )}`;
   }
 
   return date;
 };
 
-const formatTimestamp = (timestamp) => {
-  const date = typeof timestamp === "number" ? new Date(timestamp * 1000) : timestamp;
+const formatTimestamp = (timestamp, showTime = false) => {
+  const date = typeof timestamp === "number" ? new Date(timestamp * 1000) : new Date(timestamp);
 
   const now = new Date();
   if (isSameDay(date, now)) {
@@ -66,9 +72,9 @@ const formatTimestamp = (timestamp) => {
   } else {
     const dayDiff = daysAgo(date);
     if (dayDiff <= 7) {
-      return `ago ${dayDiff} day${dayDiff > 1 ? "s" : ""}`;
+      return `${dayDiff} day${dayDiff > 1 ? "s" : ""} ago`;
     } else {
-      return parseTimestamp(timestamp, "DD/MM/YY");
+      return parseTimestamp(timestamp, showTime ? "DD/MM/YY, HH:mm" : "DD/MM/YY");
     }
   }
 };

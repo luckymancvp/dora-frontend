@@ -243,7 +243,7 @@ const Chat = ({
                 </div>
                 <div className="nk-chat-blank-btn">
                   <Link to={`${process.env.PUBLIC_URL}/messages`}>
-                    <Button color="primary" disabled={mainTab === "Contact"} onClick={() => setMainTab("Contact")}>
+                    <Button color="primary" disabled={mainTab === "Contact"}>
                       Start Chat
                     </Button>
                   </Link>

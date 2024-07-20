@@ -9,6 +9,7 @@ import { formatTimestamp } from "../../../utils/DateTimeFormat";
 import ImageContainer from "./GalleryImage";
 
 export const MeChat = ({ item, sender }) => {
+  const createDate = formatTimestamp(item.etsy.createDate, true);
   return (
     <div className="chat is-me">
       <div className="chat-content">
@@ -27,7 +28,7 @@ export const MeChat = ({ item, sender }) => {
           </div>
         </div>
         <ul className="chat-meta">
-          <li>{item.etsy.messageDateHmShort}</li>
+          <li>{createDate}</li>
         </ul>
       </div>
       <div className="chat-avatar">
@@ -38,6 +39,7 @@ export const MeChat = ({ item, sender }) => {
 };
 
 export const YouChat = ({ item, sender }) => {
+  const createDate = formatTimestamp(item.etsy.createDate, true);
   return (
     <div className="chat is-you">
       <div className="chat-avatar">
@@ -59,7 +61,7 @@ export const YouChat = ({ item, sender }) => {
           </div>
         </div>
         <ul className="chat-meta">
-          <li title={item.etsy?.messageDateFriendly}>{item.etsy.messageDateHmShort}</li>
+          <li>{createDate}</li>
         </ul>
       </div>
     </div>
@@ -347,7 +349,7 @@ export const ChatRoomItem = ({ item }) => {
 export const RecommnendChats = ({ solutionMessages, handleClick }) => {
   return solutionMessages?.map((msg, index) => (
     <li key={`solution-${index}`} className="py-1">
-      <div className="custom-control custom-radio custom-control-pro no-control checked">
+      <div className="custom-control custom-radio custom-control-pro no-control checked box-shadow-solution">
         <label className="custom-control-label" onClick={() => handleClick(msg)}>
           {msg}
         </label>

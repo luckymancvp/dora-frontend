@@ -469,6 +469,10 @@ cursor: $custom-control-cursor;
         }
       }
     }
+
+    &.box-shadow-solution {
+      box-shadow: rgba(0, 0, 0, 0.4) 0px 30px 90px;
+    }
 }
 
 // pro-ontrol
