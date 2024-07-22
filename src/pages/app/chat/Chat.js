@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownToggle, UncontrolledDropdown, DropdownItem } from
 import { isBlank } from "../../../utils/Utils";
 import { chatData } from "./ChatData";
 import { ChatContext } from "./ChatContext";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { ChannelAsideBody, ChatAsideBody } from "./ChatAsideBody";
 import { debounce } from 'lodash';
 
