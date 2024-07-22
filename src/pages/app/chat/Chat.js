@@ -241,13 +241,13 @@ const Chat = ({
                 <div className="nk-chat-blank-icon">
                   <Icon name="chat" className="icon-circle icon-circle-xxl bg-white"></Icon>
                 </div>
-                <div className="nk-chat-blank-btn">
+                {/* <div className="nk-chat-blank-btn">
                   <Link to={`${process.env.PUBLIC_URL}/messages`}>
                     <Button color="primary" disabled={mainTab === "Contact"}>
                       Start Chat
                     </Button>
                   </Link>
-                </div>
+                </div> */}
               </div>
             </div>
           )}
