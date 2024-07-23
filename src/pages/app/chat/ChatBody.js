@@ -306,12 +306,12 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
           <ul className={`collapse ${recommnendState ? "" : "show"}`}>
             <RecommnendChats
               solutionMessages={solutions.solutions}
-              handleClick={(message) => setValue("message", message)}
+              handleClick={(message) => handleFetchSolutions(conversationId, { input: message })}
             />
           </ul>
         </div>
       ),
-    [recommnendState, setValue, solutions.solutions]
+    [conversationId, handleFetchSolutions, recommnendState, solutions.solutions]
   );
 
   return (
