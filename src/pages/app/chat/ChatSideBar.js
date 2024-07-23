@@ -7,13 +7,12 @@ import { findUpper } from "../../../utils/Utils";
 import ImageContainer from "./GalleryImage";
 
 const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
-  // const { userData, addUserToChat, deleteUser, makeAdmin } = useContext(ChatContext);
-  // const [memberState, setMemberState] = useState(true);
-  // const [optionState, setOptionState] = useState(true);
-  // const [settingState, setSettingState] = useState(true);
-  // const [photoState, setPhotoState] = useState(true);
+
   const [receiptHistoryState, setReceiptHistoryState] = useState(false);
+  const [favoriteListingsState, setFavoriteListingsState] = useState(false);
   const receiptHistory = conversation.etsy?.buyerInfo?.receiptHistory || [];
+  const favoriteListings = conversation.etsy?.buyerInfo?.favoriteListings?.favoriteListings || [];
+  console.log("favoriteListings", favoriteListings);
 
   return (
     <SimpleBar className={`nk-chat-profile ${sidebar ? "visible" : ""}`}>
@@ -81,6 +80,33 @@ const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
               )}
             </div>
           </div>
+
+          <a
+            href="#options"
+            onClick={(ev) => {
+              ev.preventDefault();
+              setFavoriteListingsState(!favoriteListingsState);
+            }}
+            className={`chat-profile-head`}
+            id="chat-options"
+          >
+          <h6 className="title overline-title">Listing favourite</h6>
+            <span className="indicator-icon">
+              <Icon name={`chevron-${favoriteListingsState ? "up" : "down"}`}></Icon>
+            </span>
+          </a>
+          <div className={`chat-profile-body collapse ${favoriteListingsState ? "" : "show"}`} id="receipt-history">
+            <div className="chat-profile-body-inner">
+              {favoriteListings.map((item, idx) => (
+                <div className="d-flex flex-column mb-2" key={`history-${idx}`}>
+                  <div>Listing id <b>#{item.listingId}</b></div>
+                  <ImageContainer img={item.imageUrl} key={`image-chat-${idx}`} className="transaction-image" width={100} height={100}/>
+                  <span className="text-truncate" title={item.title}>{item.title}</span>
+                </div>)
+              )}
+            </div>
+          </div>
+
         </div>
         {/* <div className="chat-profile-group">
           <a
