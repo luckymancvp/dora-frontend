@@ -4,7 +4,7 @@ import { UserAvatar, Icon } from "../../../components/Component";
 import SimpleBar from "simplebar-react";
 import { findUpper } from "../../../utils/Utils";
 // import { ChatContext } from "./ChatContext";
-import ImageContainer from "./GalleryImage";
+// import ImageContainer from "./GalleryImage";
 
 const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
 
@@ -12,7 +12,16 @@ const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
   const [favoriteListingsState, setFavoriteListingsState] = useState(false);
   const receiptHistory = conversation.etsy?.buyerInfo?.receiptHistory || [];
   const favoriteListings = conversation.etsy?.buyerInfo?.favoriteListings?.favoriteListings || [];
-  console.log("favoriteListings", favoriteListings);
+  const [modalImageUrl, setModalImageUrl] = useState('');
+
+  const handleImageClick = (imgUrl) => {
+    const fullSizeImageUrl = imgUrl.replace('il_75x75', 'il_fullxfull');
+    setModalImageUrl(fullSizeImageUrl);
+  };
+
+  const closeModal = () => {
+    setModalImageUrl('');
+  };
 
   return (
     <SimpleBar className={`nk-chat-profile ${sidebar ? "visible" : ""}`}>
@@ -44,43 +53,52 @@ const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
         </UncontrolledDropdown> */}
       </div>
       <div className="chat-profile">
-        <div className="chat-profile-group">
-          <a
-            href="#options"
-            onClick={(ev) => {
-              ev.preventDefault();
-              setReceiptHistoryState(!receiptHistoryState);
-            }}
-            className={`chat-profile-head`}
-            id="chat-options"
-          >
-            <h6 className="title overline-title">Order history</h6>
-            <span className="indicator-icon">
-              <Icon name={`chevron-${receiptHistoryState ? "up" : "down"}`}></Icon>
-            </span>
-          </a>
-          <div className={`chat-profile-body collapse ${receiptHistoryState ? "" : "show"}`} id="receipt-history">
-            <div className="chat-profile-body-inner">
-              {receiptHistory.map((item, idx) => (
-                <div className="d-flex flex-column mb-2" key={`history-${idx}`}>
-                  <div>Order <b>#{item.receiptId}</b></div>
-                  <div>{item.isShipped ? "Shipped" : ""}</div>
-                  {item.transactions.map((transaction, idy) => (
-                    <div className="d-flex pt-2" key={`history-${idy}`}>
-                      <ImageContainer img={transaction.image} key={`image-chat-${idx}`} className="transaction-image" width={100} height={100}/>
-                      <div className="d-flex flex-column pt-0 p-2 overflow-hidden">
-                        <span className="text-truncate" title={transaction.title}>{transaction.title}</span>
-                        <span>{transaction.value}</span>
-                        <span>Quantity: {transaction.quantity}</span>
-                      </div>
-                    </div>
-                  ))}
-                  <div className="pt-2 font-weight-bold text-center"><b>Total purchased: {item.value}</b></div>
-                </div>)
-              )}
+      <div className="chat-profile-group">
+      <a
+        href="#options"
+        onClick={(ev) => {
+          ev.preventDefault();
+          setReceiptHistoryState(!receiptHistoryState);
+        }}
+        className={`chat-profile-head`}
+        id="chat-options"
+      >
+        <h6 className="title overline-title">Order history</h6>
+        <span className="indicator-icon">
+          <Icon name={`chevron-${receiptHistoryState ? 'up' : 'down'}`}></Icon>
+        </span>
+      </a>
+      <div className={`chat-profile-body collapse ${receiptHistoryState ? '' : 'show'}`} id="receipt-history">
+        <div className="chat-profile-body-inner">
+          {receiptHistory.map((item, idx) => (
+            <div className="d-flex flex-column mb-2" key={`history-${idx}`}>
+              <div>Order <b>#{item.receiptId}</b></div>
+              <div>{item.isShipped ? 'Shipped' : ''}</div>
+              {item.transactions.map((transaction, idy) => (
+                <div className="d-flex pt-2" key={`history-${idy}`}>
+                  <img
+                    src={transaction.image}
+                    alt="Transaction"
+                    className="transaction-image"
+                    width={100}
+                    height={100}
+                    onClick={() => handleImageClick(transaction.image)}
+                  />
+                  <div className="d-flex flex-column pt-0 p-2 overflow-hidden">
+                    <span className="text-truncate" title={transaction.title}>{transaction.title}</span>
+                    <span>{transaction.value}</span>
+                    <span>Quantity: {transaction.quantity}</span>
+                  </div>
+                </div>
+              ))}
+              <div className="pt-2 font-weight-bold text-center"><b>Total purchased: {item.value}</b></div>
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
 
+      {favoriteListings.length > 0 && (
+        <>
           <a
             href="#options"
             onClick={(ev) => {
@@ -90,24 +108,39 @@ const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
             className={`chat-profile-head`}
             id="chat-options"
           >
-          <h6 className="title overline-title">Listing favourite</h6>
+            <h6 className="title overline-title">Listing favourite</h6>
             <span className="indicator-icon">
-              <Icon name={`chevron-${favoriteListingsState ? "up" : "down"}`}></Icon>
+              <Icon name={`chevron-${favoriteListingsState ? 'up' : 'down'}`}></Icon>
             </span>
           </a>
-          <div className={`chat-profile-body collapse ${favoriteListingsState ? "" : "show"}`} id="receipt-history">
+          <div className={`chat-profile-body collapse ${favoriteListingsState ? '' : 'show'}`} id="receipt-history">
             <div className="chat-profile-body-inner">
               {favoriteListings.map((item, idx) => (
                 <div className="d-flex flex-column mb-2" key={`history-${idx}`}>
                   <div>Listing id <b>#{item.listingId}</b></div>
-                  <ImageContainer img={item.imageUrl} key={`image-chat-${idx}`} className="transaction-image" width={100} height={100}/>
+                  <img
+                    src={item.imageUrl}
+                    alt="Listing"
+                    className="transaction-image"
+                    width={100}
+                    height={100}
+                    onClick={() => handleImageClick(item.imageUrl)}
+                  />
                   <span className="text-truncate" title={item.title}>{item.title}</span>
-                </div>)
-              )}
+                </div>
+              ))}
             </div>
           </div>
+        </>
+      )}
+          {modalImageUrl && (
+        <div className="modal" onClick={closeModal} style={modalStyles}>
+          <img src={modalImageUrl} alt="Full Size" className="modal-content" style={modalImageStyles} />
+        </div>
+      )}
 
         </div>
+
         {/* <div className="chat-profile-group">
           <a
             href="#options"
@@ -520,4 +553,25 @@ const ChatSideBar = ({ sidebar, conversation, otherUser }) => {
     </SimpleBar>
   );
 };
+
+const modalStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  zIndex: 1000,
+};
+
+const modalImageStyles = {
+  width: 'auto',
+  height: 'auto',
+  maxWidth: '70%',
+  maxHeight: '70%',
+};
+
 export default ChatSideBar;
