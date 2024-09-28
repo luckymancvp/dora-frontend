@@ -1,0 +1,33 @@
+.orders {
+    width: 100%;
+    padding: 20px;
+    &-header {
+        width: 100%;
+        display: flex;
+        padding: 10px;
+        justify-content: space-between;
+        &-title {
+            color: #000000;
+            font-size: 20px;
+        }
+        &-action {
+            display: flex;
+            gap: 10px;
+        }
+    }
+    &-search {
+        padding: 15px 0px;
+        display: flex;
+        justify-content: space-between;
+        &-list {
+            display: flex;
+            gap: 10px;
+            &-item {
+                width: calc(100% / 4);
+            }
+        }
+        &-more-filter {
+            display: flex;
+        }
+    }
+}

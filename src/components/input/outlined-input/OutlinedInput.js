@@ -6,7 +6,7 @@ const OutlinedInput = ({ label, size, id, icon }) => {
   return (
     <div className={`form-control-wrap ${focus ? "focused" : ""}`}>
       {icon && (
-        <div className="form-icon form-icon-right xl">
+        <div className={`form-icon form-icon-right ${size}`}>
           <Icon name={icon}></Icon>
         </div>
       )}
