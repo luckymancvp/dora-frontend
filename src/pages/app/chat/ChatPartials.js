@@ -88,7 +88,7 @@ export const SendingChat = ({ item, sender }) => {
       status = "Sending";
       break;
     case "DONE":
-      status = formatDateString(item?.createdAt); // TODO
+      status = formatDateString(item?.createdAt ?? item?.created_at); // TODO
       break;
     case "FAILED":
       status = "Error";

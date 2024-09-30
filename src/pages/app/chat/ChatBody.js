@@ -6,13 +6,13 @@ import classNames from "classnames";
 import ChatSideBar from "./ChatSideBar";
 import ChatFiles from "./ChatFiles";
 import SimpleBar from "simplebar-react";
-import { createMessage, fetchStatusMessage } from "../../../redux/slices/Messages";
+import { createMessage, fetchStatusMessage, setMessgerRealTime } from "../../../redux/slices/Messages";
 import { Spinner } from "reactstrap";
 import { UserAvatar, Icon, Button } from "../../../components/Component";
 import { TextareaForm } from "../../../components/forms/TextareaForm";
 import { findUpper } from "../../../utils/Utils";
-
 import { MeChat, YouChat, SendingChat, RecommnendChats } from "./ChatPartials";
+import AblyMessageSubscriber from './AblyMessageSubscriber';
 
 const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleFetchSolutions }) => {
   const dispatch = useDispatch();
@@ -61,7 +61,7 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
     clearFileInput();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
-
+  
   const clearFileInput = useCallback(() => {
     if (uploadImgRef.current) {
       uploadImgRef.current.value = null;
@@ -314,8 +314,13 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
     [conversationId, handleFetchSolutions, recommnendState, solutions.solutions]
   );
 
+  const handleNewMessage = (message) => {
+    dispatch(setMessgerRealTime(message));
+  };
+  
   return (
     <React.Fragment>
+      <AblyMessageSubscriber onNewMessage={handleNewMessage} />
       <div className={chatBodyClass} key={`conversation-${conversationId}`}>
         <div className="nk-chat-head">
           <ul className="nk-chat-head-info">

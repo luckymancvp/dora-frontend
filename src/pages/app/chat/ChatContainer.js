@@ -75,16 +75,6 @@ const ChatContainer = ({ currentUser }) => {
     }
   }, [conversationId, fetchDataMessage, handleFetchSolutions]);
 
-  useEffect(() => {
-    if (conversationId) {
-      const intervalId = setInterval(() => {
-        fetchDataMessage({ conversationId, toScrollBottom: false });
-      }, 5000);
-
-      // Cleanup interval on unmount
-      return () => clearInterval(intervalId);
-    }
-  }, [conversationId, fetchDataMessage]);
 
   return (
     <ChatContextProvider>

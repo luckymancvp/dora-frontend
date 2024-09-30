@@ -55,6 +55,11 @@ const messagesSlice = createSlice({
     setScrollBottom: (state, action) => {
       state.scrollBottom = action.payload;
     },
+    setMessgerRealTime: (state, action) => {
+      if (action.payload.messages.length) {
+        state.messages = [...action.payload.messages, action.payload.jsonData.Message];
+      }
+    },
   },
   extraReducers: {
     [fetchMessages.pending]: (state) => {
@@ -123,4 +128,4 @@ const messagesSlice = createSlice({
 
 const { reducer } = messagesSlice;
 export default reducer;
-export const { setEmptyMessages, setEmptyConversationMessage, setScrollBottom } = messagesSlice.actions;
+export const { setEmptyMessages, setEmptyConversationMessage, setScrollBottom, setMessgerRealTime } = messagesSlice.actions;
