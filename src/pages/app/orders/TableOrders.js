@@ -2,7 +2,7 @@ import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import IndeterminateCheckBoxOutlinedIcon from "@mui/icons-material/IndeterminateCheckBoxOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import { Button, Select } from "@mui/material";
+import { Button, Select, Box, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Pagination from "@mui/material/Pagination";
@@ -10,9 +10,17 @@ import Paper from "@mui/material/Paper";
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useState } from "react";
 import { formatDateTimestamp } from "../../../utils/DateTimeFormat";
+import { orange } from "@mui/material/colors";
+import DetailImage from "./DetailImage";
 
 const TableOrders = () => {
   const [selectedRows, setSelectedRows] = useState([]);
+  const [detailImageOpen, setDetailImageOpen] = useState(false);
+
+  const toggleDetailImage = () => {
+    setDetailImageOpen(!detailImageOpen);
+  };
+
   const setColorStatus = {
     new: "#3dce3a",
     tracking: "#854fff",
@@ -149,7 +157,7 @@ const TableOrders = () => {
       field: "image",
       headerName: "Image",
       width: 100,
-      renderCell: (params) => <VisibilityOutlinedIcon sx={{ color: "#ce806e" }} />,
+      renderCell: () => <VisibilityOutlinedIcon sx={{ color: "#ce806e" }} onClick={toggleDetailImage} />,
     },
     { field: "receivedTime", headerName: "Received time", width: 170 },
     { field: "approvedTime", headerName: "Approved time", width: 170 },
@@ -322,9 +330,48 @@ const TableOrders = () => {
     return rows;
   };
 
+  const product = {
+    order: "#PWS6615789 (NYW-24917)",
+    type: "Acrylic Window Decor",
+    sku: "PW-WCD-12X12 INCHES-1923389",
+    image: "https://images.pexels.com/photos/28302550/pexels-photo-28302550.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+  };
+
   return (
     <>
-      <pre>{selectedRows.length}</pre>
+      {selectedRows.length > 0 && (
+        <Box
+          display="flex"
+          alignItems="center"
+          sx={{
+            margin: "0px 10px 10px",
+          }}
+        >
+          <Box
+            sx={{
+              width: 20,
+              height: 20,
+              border: "1px solid #c6c7cb",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: 1,
+              borderRadius: "5px",
+            }}
+          >
+            <Box
+              sx={{
+                width: 8,
+                height: 8,
+                backgroundColor: orange[500],
+              }}
+            />
+          </Box>
+          <Typography variant="body1" sx={{ fontWeight: 500, color: "#576484" }}>
+            {selectedRows.length} Items selected
+          </Typography>
+        </Box>
+      )}
       <Paper elevation={0} sx={{ width: "100%" }}>
         <DataGrid
           rows={getRows()}
@@ -403,6 +450,7 @@ const TableOrders = () => {
           }}
         />
       </div>
+      <DetailImage open={detailImageOpen} onClose={toggleDetailImage} product={product} />
     </>
   );
 };

@@ -9,9 +9,17 @@ import ContentAlt from "../../../layout/content/ContentAlt";
 import { groupedData } from "../../components/forms/SelectData";
 import TableOrders from "./TableOrders";
 import CustomView from "./CustomView";
+import ExpandMoreFilters from "./ExpandMoreFilters";
 
 const Orders = () => {
   const [openCustom, setOpenCustom] = useState(false);
+  const [openMoreFilter, setOpenMoreFilter] = useState(false);
+  const handleCloseCustom = () => {
+    setOpenCustom(false);
+  };
+  const handleCloseMoreFilter = () => {
+    setOpenMoreFilter(false);
+  };
   return (
     <ContentAlt>
       <div className="orders">
@@ -106,7 +114,12 @@ const Orders = () => {
             </div>
           </div>
           <div className="orders-search-more-filter">
-            <IconButton aria-label="delete">
+            <IconButton
+              aria-label="more-filter"
+              onClick={() => {
+                setOpenMoreFilter(true);
+              }}
+            >
               <FormatIndentIncreaseIcon />
             </IconButton>
           </div>
@@ -121,7 +134,6 @@ const Orders = () => {
               label="Custom-view"
               className="orders-sort-chip"
               onClick={() => {
-                debugger;
                 setOpenCustom(true);
               }}
             />
@@ -131,7 +143,8 @@ const Orders = () => {
           <TableOrders />
         </div>
       </div>
-      <CustomView openCustom={openCustom} />
+      <CustomView openCustom={openCustom} onClose={handleCloseCustom} />
+      <ExpandMoreFilters openMoreFilter={openMoreFilter} onClose={handleCloseMoreFilter} />
     </ContentAlt>
   );
 };
