@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
-import { DropdownToggle, DropdownMenu, UncontrolledDropdown, DropdownItem } from "reactstrap";
 import { Link } from "react-router-dom";
+import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from "reactstrap";
 import { Icon, UserAvatar } from "../../../components/Component";
+import { formatDateString, formatTimestamp } from "../../../utils/DateTimeFormat";
 import { findUpper } from "../../../utils/Utils";
-import { formatDateString } from "../../../utils/DateTimeFormat";
 import { ChatContext } from "./ChatContext";
-import { formatTimestamp } from "../../../utils/DateTimeFormat";
 import ImageContainer from "./GalleryImage";
 
 export const MeChat = ({ item, sender }) => {
@@ -97,7 +96,7 @@ export const SendingChat = ({ item, sender }) => {
       break;
   }
 
-  if (timeDifference > 5000) {
+  if (timeDifference > 5000 && item.status !== "DONE") {
     status = "Error";
   }
 
@@ -279,10 +278,11 @@ export const ContactItem = ({ item, setTab, setSelectedId }) => {
   );
 };
 
-export const ChatRoomItem = ({ item }) => {
-  const totalOrders = item.etsy?.buyerInfo?.pastOrderHistory?.totalOrders || 0;
-  const otherUser = item.etsy.otherUser || item.etsy?.detail?.otherUser;
-  const userData = item.userData || item.etsy.userData;
+export const ChatRoomItem = ({ item, chatItemConversationClick }) => {
+  const totalOrders =
+    item.etsy?.buyerInfo?.pastOrderHistory?.totalOrders || item.etsy?.buyerInfo?.past_order_history?.total_orders || 0;
+  const otherUser = item.etsy.otherUser || item.etsy?.detail?.otherUser || item.etsy?.detail?.other_user;
+  const userData = item.userData || item.etsy.userData || item.etsy.user_data;
   const messages = item.etsy?.detail?.messages;
   const sanitizeHTML = (html) => {
     const doc = new DOMParser().parseFromString(html, "text/html");
@@ -291,13 +291,13 @@ export const ChatRoomItem = ({ item }) => {
   let message = "";
   let createDate = null;
 
-  if (typeof messages === "object" && messages !== null) { 
+  if (typeof messages === "object" && messages !== null) {
     message = messages.message ? sanitizeHTML(messages.message) : "Send attachment";
-    createDate = formatTimestamp(messages.createDate);
+    createDate = formatTimestamp(messages.createDate ?? messages.create_date);
   } else if (messages && messages.length > 0) {
     const lastMessage = messages[messages.length - 1];
     message = lastMessage?.message ? sanitizeHTML(lastMessage.message) : "Send attachment";
-    createDate = formatTimestamp(lastMessage.createDate);
+    createDate = formatTimestamp(lastMessage.createDate ?? lastMessage.create_date);
   } else {
     message = item.etsy?.excerpt;
     createDate = item.etsy?.timestamp;
@@ -305,26 +305,35 @@ export const ChatRoomItem = ({ item }) => {
 
   return (
     // {`chat-item ${item.etsy.isUnread ? "is-unread" : ""}`}
-    <li className="chat-item" key={item.id}>
-      <Link to={`/messages/${item.etsy.conversationId}`} className="chat-link">
+    <li
+      className={`chat-item ${item.etsy.isUnread ? "is-unread" : ""}`}
+      key={item.id}
+      onClick={(ev) => {
+        ev.preventDefault();
+        chatItemConversationClick(item.id);
+      }}
+    >
+      <Link to={`/messages/${item.etsy.conversationId ?? item.etsy.conversation_id}`} className="chat-link">
         <div className="chat-media user-avatar user-avatar-multiple">
           <UserAvatar
             theme="grey"
-            text={findUpper(userData?.shopName)}
-            image={userData?.avatarUrl}
+            text={findUpper(userData?.shopName ?? userData?.shop_name)}
+            image={userData?.avatarUrl ?? userData?.avatar_url}
             className="chat-media"
           />
           <UserAvatar
             theme="grey"
-            text={findUpper(otherUser?.displayName)}
-            image={otherUser?.avatarUrl}
+            text={findUpper(otherUser?.displayName ?? otherUser?.display_name)}
+            image={otherUser?.avatarUrl ?? otherUser?.avatar_url}
             size="md"
             className="chat-media"
           />
         </div>
         <div className="chat-info">
-          <div className="chat-from">
-            <div className="name">{`${otherUser?.displayName} - ${userData?.shopName}`}</div>
+          <div className={`chat-from ${item.etsy.isUnread ? "is-unread" : ""}`}>
+            <div className="name">{`${otherUser?.displayName ?? otherUser?.display_name} - ${
+              userData?.shopName ?? userData?.shop_name
+            }`}</div>
             <span className="time">{createDate}</span>
           </div>
           <div className="chat-context">
@@ -332,9 +341,13 @@ export const ChatRoomItem = ({ item }) => {
               <p dangerouslySetInnerHTML={{ __html: message }}></p>
             </div>
             <div className="status delivered">
-              <Icon name={`${item.etsy?.hasReplied === true ? "check-circle-fill" : ""}`} />
+              <Icon name={`${item.etsy?.hasReplied ?? item.etsy?.has_replied === true ? "check-circle-fill" : ""}`} />
               <Icon
-                name={`${item.etsy?.isOrderHelpRequest === true ? "help-request ni-alert-circle" : ""}`}
+                name={`${
+                  item.etsy?.isOrderHelpRequest ?? item.etsy?.is_order_help_request === true
+                    ? "help-request ni-alert-circle"
+                    : ""
+                }`}
                 style={{ color: "#f20" }}
               ></Icon>
               <Icon name={`${totalOrders > 0 ? "cart-fill" : ""}`} />

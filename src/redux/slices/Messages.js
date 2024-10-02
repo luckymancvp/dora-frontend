@@ -1,11 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  fetchMessagesRequest,
-  createMessageRequest,
-  fetchStatusMessagesRequest,
-  fetchSolutionsRequest,
-} from "../services/MessagesService";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { isBlank } from "../../utils/Utils";
+import {
+  createMessageRequest,
+  fetchMessagesRequest,
+  fetchSolutionsRequest,
+  fetchStatusMessagesRequest,
+} from "../services/MessagesService";
 
 export const fetchMessages = createAsyncThunk("messages/FETCH_MESSAGES", async ({ conversationId }) => {
   const result = await fetchMessagesRequest(conversationId);
@@ -56,8 +56,25 @@ const messagesSlice = createSlice({
       state.scrollBottom = action.payload;
     },
     setMessgerRealTime: (state, action) => {
-      if (action.payload.messages.length) {
-        state.messages = [...action.payload.messages, action.payload.jsonData.Message];
+      let newData = {
+        ...action.payload.jsonData.Message,
+      };
+      if (state.messages.length) {
+        state.messages = [...state.messages, newData];
+      }
+    },
+    setSendingMessgerRealTime: (state, action) => {
+      if (state.sendingMessages.length) {
+        const index = state.sendingMessages.findIndex((msg) => msg.id === action.payload.jsonData.Message.id);
+        if (index !== -1) {
+          let dataSending = { ...state.sendingMessages[index], status: "DONE" };
+
+          state.sendingMessages = [
+            ...state.sendingMessages.slice(0, index),
+            dataSending,
+            ...state.sendingMessages.slice(index + 1),
+          ];
+        }
       }
     },
   },
@@ -109,7 +126,7 @@ const messagesSlice = createSlice({
     [fetchStatusMessage.fulfilled]: (state, action) => {
       const data = action.payload;
 
-      if (!isBlank(data) && data.conversationId) {
+      if (!isBlank(data) && data.conversation_id) {
         const findMessage = state.messages.find((msg) => msg.id === data.id);
         if (!findMessage) {
           const index = state.sendingMessages.findIndex((message) => message.id === data.id);
@@ -128,4 +145,10 @@ const messagesSlice = createSlice({
 
 const { reducer } = messagesSlice;
 export default reducer;
-export const { setEmptyMessages, setEmptyConversationMessage, setScrollBottom, setMessgerRealTime } = messagesSlice.actions;
+export const {
+  setEmptyMessages,
+  setEmptyConversationMessage,
+  setScrollBottom,
+  setMessgerRealTime,
+  setSendingMessgerRealTime,
+} = messagesSlice.actions;

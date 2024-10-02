@@ -20,6 +20,56 @@ const ConversationSlice = createSlice({
     setCurrentPage: (state, action) => {
       state.currentPage = action.payload;
     },
+    setConversationsRealTime: (state, action) => {
+      if (state.conversations.length) {
+        const existingConversationIndex = state.conversations.findIndex(
+          (conv) => conv.etsy.conversationId === action.payload.jsonData?.Message?.conversation_id
+        );
+
+        if (existingConversationIndex !== -1) {
+          const updatedConversation = {
+            ...state.conversations[existingConversationIndex],
+            etsy: {
+              ...state.conversations[existingConversationIndex].etsy,
+              isUnread: true,
+              detail: {
+                ...state.conversations[existingConversationIndex].etsy.detail,
+                messages: {
+                  ...action.payload.jsonData.Message.etsy,
+                },
+              },
+            },
+          };
+          state.conversations = [
+            ...state.conversations.slice(0, existingConversationIndex),
+            updatedConversation,
+            ...state.conversations.slice(existingConversationIndex + 1),
+          ];
+        } else {
+          const updatedConversation = {
+            ...action.payload.jsonData.Conversation,
+            etsy: {
+              ...action.payload.jsonData.Conversation.etsy,
+              isUnread: true,
+              detail: {
+                ...action.payload.jsonData.Conversation.etsy.detail,
+                messages: {
+                  ...action.payload.jsonData.Message.etsy,
+                },
+              },
+            },
+          };
+
+          const existingConversations = state.conversations.filter(
+            (conversation) => conversation.etsy.conversation_id !== updatedConversation.etsy.conversation_id
+          );
+          state.conversations = [updatedConversation, ...existingConversations];
+        }
+      }
+    },
+    setConversations: (state, action) => {
+      state.conversations = [...action.payload.newConversations];
+    },
   },
   extraReducers: {
     [fetchConversations.pending]: (state) => {
@@ -53,4 +103,4 @@ const ConversationSlice = createSlice({
 
 const { reducer } = ConversationSlice;
 export default reducer;
-export const { setCurrentPage } = ConversationSlice.actions;
+export const { setCurrentPage, setConversationsRealTime, setConversations } = ConversationSlice.actions;
