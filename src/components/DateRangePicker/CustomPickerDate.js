@@ -9,9 +9,9 @@ const CustomPickerDay = ({ range, day, selected, ...rest }) => {
       return "Mui-highlighted";
     }
     return undefined;
-  }, [range]);
+  }, [day, range.end, range.start]);
 
-  const pickerSelected = useMemo(() => (range.end ? !day.diff(range.end) : selected), [range, selected]);
+  const pickerSelected = useMemo(() => (range.end ? !day.diff(range.end) : selected), [day, range.end, selected]);
 
   useEffect(() => {
     if (range.end) {
