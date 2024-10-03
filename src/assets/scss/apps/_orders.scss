@@ -23,7 +23,12 @@
 		&-list {
 			display: flex;
 			gap: 10px;
+			justify-content: space-between;
+			width: 70%;
 			&-item {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
 				width: calc(100% / 4);
 			}
 		}

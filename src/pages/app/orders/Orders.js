@@ -3,22 +3,23 @@ import { Button, Chip, Select } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import React, { useState } from "react";
-import DatePicker from "react-datepicker";
 import { OutlinedInput, RSelect } from "../../../components/Component";
 import ContentAlt from "../../../layout/content/ContentAlt";
 import { groupedData } from "../../components/forms/SelectData";
 import TableOrders from "./TableOrders";
 import CustomView from "./CustomView";
 import ExpandMoreFilters from "./ExpandMoreFilters";
+import AddStatus from "./AddStatus";
+import AppDateRangePicker from "../../../components/DateRangePicker/DateRangePicker";
 
 const Orders = () => {
   const [openCustom, setOpenCustom] = useState(false);
   const [openMoreFilter, setOpenMoreFilter] = useState(false);
-  const handleCloseCustom = () => {
-    setOpenCustom(false);
-  };
-  const handleCloseMoreFilter = () => {
-    setOpenMoreFilter(false);
+  const [openAddStatus, setOpenAddStatus] = useState(false);
+
+  const handleChangeTime = (start, end) => {
+    // start_time = start;
+    // stop_time = end;
   };
   return (
     <ContentAlt>
@@ -32,6 +33,9 @@ const Orders = () => {
                 backgroundColor: "#ffffff",
                 color: "#576484",
                 textTransform: "none",
+              }}
+              onClick={() => {
+                setOpenAddStatus(true);
               }}
             >
               Add Status
@@ -96,9 +100,15 @@ const Orders = () => {
             <OutlinedInput id="outlined-icon" size="sm" icon="search" />
           </div>
           <div className="orders-search-list">
-            <div className="orders-search-list-item">
-              <label>Date</label>
-              <DatePicker selected={new Date()} className="form-control date-picker" />
+            <div className="orders-search-list-item" style={{ width: "28%" }}>
+              <label style={{ marginLeft: "-15px" }}>Date</label>
+              <AppDateRangePicker
+                id="time"
+                placeholder=""
+                startDate={new Date()}
+                endDate={new Date()}
+                onChange={handleChangeTime}
+              />
             </div>
             <div className="orders-search-list-item">
               <label>Supplier</label>
@@ -143,8 +153,9 @@ const Orders = () => {
           <TableOrders />
         </div>
       </div>
-      <CustomView openCustom={openCustom} onClose={handleCloseCustom} />
-      <ExpandMoreFilters openMoreFilter={openMoreFilter} onClose={handleCloseMoreFilter} />
+      <CustomView openCustom={openCustom} onClose={() => setOpenCustom(false)} />
+      <ExpandMoreFilters openMoreFilter={openMoreFilter} onClose={() => setOpenMoreFilter(false)} />
+      <AddStatus openAddStatus={openAddStatus} onClose={() => setOpenAddStatus(false)} />
     </ContentAlt>
   );
 };
