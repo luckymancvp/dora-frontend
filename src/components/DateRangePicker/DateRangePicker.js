@@ -20,7 +20,7 @@ const AppDateRangePicker = ({ id, label, required, startDate, endDate, isRow = f
     if (value.start) {
       text += formatDateString(value.start);
       if (value.end) {
-        text += " ~ " + formatDateString(value.end);
+        text += " ⇀ " + formatDateString(value.end);
       }
     }
     return text;
