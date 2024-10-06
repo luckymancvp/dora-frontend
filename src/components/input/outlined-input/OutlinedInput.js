@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Icon } from "../../Component";
 
-const OutlinedInput = ({ label, size, id, icon }) => {
+const OutlinedInput = ({ label, size, id, icon, onChange, value, error }) => {
   const [focus, setFocus] = useState(false);
   return (
     <div className={`form-control-wrap ${focus ? "focused" : ""}`}>
@@ -16,6 +16,9 @@ const OutlinedInput = ({ label, size, id, icon }) => {
         id={id}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
+        onChange={onChange}
+        value={value}
+        error={error}
       />
       <label className="form-label-outlined" htmlFor={id}>
         {label}

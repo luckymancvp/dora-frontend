@@ -4,18 +4,26 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import React, { useState } from "react";
 import { OutlinedInput, RSelect } from "../../../components/Component";
+import AppDateRangePicker from "../../../components/DateRangePicker/DateRangePicker";
 import ContentAlt from "../../../layout/content/ContentAlt";
 import { groupedData } from "../../components/forms/SelectData";
-import TableOrders from "./TableOrders";
+import AddStatus from "./AddStatus";
+import CreateOrders from "./CreateOrders";
 import CustomView from "./CustomView";
 import ExpandMoreFilters from "./ExpandMoreFilters";
-import AddStatus from "./AddStatus";
-import AppDateRangePicker from "../../../components/DateRangePicker/DateRangePicker";
+import TableOrders from "./TableOrders";
 
 const Orders = () => {
   const [openCustom, setOpenCustom] = useState(false);
   const [openMoreFilter, setOpenMoreFilter] = useState(false);
+  const [openCreateOder, setOpenCreateOrder] = useState(false);
   const [openAddStatus, setOpenAddStatus] = useState(false);
+  const handleCloseCustom = () => {
+    setOpenCustom(false);
+  };
+  const handleCloseMoreFilter = () => {
+    setOpenMoreFilter(!openMoreFilter);
+  };
 
   const handleChangeTime = (start, end) => {
     // start_time = start;
@@ -89,6 +97,9 @@ const Orders = () => {
                 textTransform: "none",
                 backgroundColor: "#854fff",
               }}
+              onClick={() => {
+                setOpenCreateOrder(true);
+              }}
             >
               Create Order
             </Button>
@@ -153,8 +164,9 @@ const Orders = () => {
           <TableOrders />
         </div>
       </div>
-      <CustomView openCustom={openCustom} onClose={() => setOpenCustom(false)} />
-      <ExpandMoreFilters openMoreFilter={openMoreFilter} onClose={() => setOpenMoreFilter(false)} />
+      <CustomView openCustom={openCustom} onClose={handleCloseCustom} />
+      <ExpandMoreFilters openMoreFilter={openMoreFilter} onClose={handleCloseMoreFilter} />
+      <CreateOrders openMoreFilter={openCreateOder} onClose={() => setOpenCreateOrder(false)} />
       <AddStatus openAddStatus={openAddStatus} onClose={() => setOpenAddStatus(false)} />
     </ContentAlt>
   );

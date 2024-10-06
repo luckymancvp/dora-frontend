@@ -47,7 +47,7 @@ const AppDateRangePicker = ({ id, label, required, startDate, endDate, isRow = f
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterMoment} locale="ja">
+    <LocalizationProvider dateAdapter={AdapterMoment} locale="vn">
       <Grid container className="DateRangePicker" direction={isRow ? "row" : "column"} spacing={isRow ? 3 : 2}>
         {label && (
           <Grid item xs={4} alignItems="center" justifyContent={isRow ? "flex-end" : "flex-start"}>

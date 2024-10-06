@@ -4,41 +4,48 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import CustomFiled from "../../../components/CustomFiled/CustomFiled";
 
-const ExpandMoreFilters = ({ openMoreFilter, onClose }) => {
-  const [setOrderType] = useState("");
-  const [setLocation] = useState("");
-  const [setCreationType] = useState("");
-
-  const [open, setOpen] = useState(openMoreFilter);
-  useEffect(() => {
-    setOpen(openMoreFilter);
-  }, [openMoreFilter]);
-
-  const { handleSubmit, control } = useForm({
+const CreateOrders = ({ openMoreFilter, onClose }) => {
+  const { handleSubmit, reset, control } = useForm({
     defaultValues: {
-      orderType: "",
-      location: "",
-      creationType: "",
+      orderId: "",
+      productType: "",
+      status: "",
+      supplier: "",
+      order: "",
+      tracking: "",
+      quantity: "",
+      price: "",
+      note: "",
+      image: "",
+      receivedTime: "",
+      approvedTime: "",
     },
   });
-
-  const filterColumns = [
-    { label: "Order type", key: "orderType", id: "filter-order-type", type: "Select", inputType: "select" },
-    {
-      label: "Location",
-      key: "location",
-      id: "filter-location",
-      type: "Select",
-      inputType: "text",
-      placeholder: "Search by name or code",
-    },
-    { label: "Creation type", key: "creationType", id: "filter-creation-type", type: "Select", inputType: "select" },
-  ];
 
   const orderOptions = [
     { value: "order1", label: "Order 1" },
     { value: "order2", label: "Order 2" },
   ];
+
+  const columns = [
+    { label: "Order ID", key: "orderId", id: "column-order-id", type: "TextField", inputType: "text" },
+    { label: "Product type", key: "productType", id: "column-product-type", type: "Select" },
+    { label: "Status", key: "status", id: "column-status", type: "Select" },
+    { label: "Supplier", key: "supplier", id: "column-supplier", type: "Select" },
+    { label: "Order", key: "order", id: "column-order", type: "TextField", inputType: "text" },
+    { label: "Tracking", key: "tracking", id: "column-tracking", type: "TextField", inputType: "text" },
+    { label: "Quantity", key: "quantity", id: "column-quantity", type: "TextField", inputType: "number" },
+    { label: "Price", key: "price", id: "column-price", type: "TextField", inputType: "number" },
+    { label: "Note", key: "note", id: "column-note", type: "TextField", inputType: "text" },
+    { label: "Image", key: "image", id: "column-image", type: "TextField", inputType: "text" },
+    { label: "Received time", key: "receivedTime", id: "column-received-time", type: "TextField", inputType: "text" },
+    { label: "Approved time", key: "approvedTime", id: "column-approved-time", type: "TextField", inputType: "text" },
+  ];
+
+  const [open, setOpen] = useState(openMoreFilter);
+  useEffect(() => {
+    setOpen(openMoreFilter);
+  }, [openMoreFilter]);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -66,7 +73,7 @@ const ExpandMoreFilters = ({ openMoreFilter, onClose }) => {
               borderColor: "black",
             }}
           />
-          <Box sx={{ width: 400, padding: "10px 20px" }}>
+          <Box sx={{ width: 400, padding: "10px 20px", marginBottom: "80px" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
               <Typography variant="h6">
                 <IconButton onClick={onClose}>
@@ -77,9 +84,7 @@ const ExpandMoreFilters = ({ openMoreFilter, onClose }) => {
               <Button
                 variant="outlined"
                 onClick={() => {
-                  setOrderType("");
-                  setLocation("");
-                  setCreationType("");
+                  reset();
                 }}
                 sx={{
                   backgroundColor: "#854fff",
@@ -92,7 +97,7 @@ const ExpandMoreFilters = ({ openMoreFilter, onClose }) => {
               </Button>
             </Box>
             <form onSubmit={handleSubmit(onSubmit)}>
-              {filterColumns.map((column) => (
+              {columns.map((column) => (
                 <CustomFiled
                   key={column.id}
                   name={column.key}
@@ -100,7 +105,6 @@ const ExpandMoreFilters = ({ openMoreFilter, onClose }) => {
                   inputType={column.type === "TextField" ? column.inputType : undefined}
                   rules={{ required: `${column.label} is required` }}
                   control={control}
-                  placeholder={column?.placeholder ?? ""}
                   variant={column.type}
                   options={column.type === "Select" ? orderOptions : undefined}
                 />
@@ -127,4 +131,4 @@ const ExpandMoreFilters = ({ openMoreFilter, onClose }) => {
   );
 };
 
-export default ExpandMoreFilters;
+export default CreateOrders;

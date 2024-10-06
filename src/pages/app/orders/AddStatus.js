@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import CustomFiled from "../../../components/CustomFiled/CustomFiled";
 
 export default function AddStatus({ openAddStatus, onClose }) {
   const [open, setOpen] = useState(openAddStatus);
@@ -13,21 +14,16 @@ export default function AddStatus({ openAddStatus, onClose }) {
     setOpen(openAddStatus);
   }, [openAddStatus]);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    color: "",
-    description: "",
+  const { handleSubmit, control } = useForm({
+    defaultValues: {
+      name: "",
+      color: "",
+      description: "",
+    },
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = () => {
-    console.log("Form Data:", formData);
+  const onSubmit = (data) => {
+    console.log("Form Data:", data);
     onClose();
   };
 
@@ -36,39 +32,31 @@ export default function AddStatus({ openAddStatus, onClose }) {
       <Dialog open={open} onClose={onClose}>
         <DialogTitle>Add Status</DialogTitle>
         <DialogContent>
-          <label>Name Status</label>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
-          />
-          <label>Color</label>
-          <TextField
-            id="color"
-            name="color"
-            value={formData.color}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
-          />
-          <label>Description</label>
-          <TextField
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            multiline
-            rows={4}
-            fullWidth
-            variant="outlined"
-          />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CustomFiled
+              name="name"
+              label="Name Status"
+              inputType="text"
+              rules={{ required: "Name Status is required" }}
+              control={control}
+            />
+            <CustomFiled
+              name="color"
+              label="Color"
+              inputType="text"
+              rules={{ required: "Color is required" }}
+              control={control}
+            />
+            <CustomFiled
+              name="description"
+              label="Description"
+              inputType="text"
+              rows={4}
+              multiline={true}
+              rules={{ required: "Description is required" }}
+              control={control}
+            />
+          </form>
         </DialogContent>
         <DialogActions
           sx={{
