@@ -125,8 +125,7 @@ const messagesSlice = createSlice({
     },
     [fetchStatusMessage.fulfilled]: (state, action) => {
       const data = action.payload;
-
-      if (!isBlank(data) && data.conversation_id) {
+      if (!isBlank(data) && data.conversationId) {
         const findMessage = state.messages.find((msg) => msg.id === data.id);
         if (!findMessage) {
           const index = state.sendingMessages.findIndex((message) => message.id === data.id);
