@@ -9,6 +9,8 @@
 
     a. **_npm install or yarn install_**
 
+    b. copy env file example **cp env/dev.env .env**
+
 3.  Start the application / Run the dev-server:
 
     a. **_npm start or yarn start_**

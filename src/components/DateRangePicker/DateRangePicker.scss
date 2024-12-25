@@ -1,0 +1,67 @@
+.DateRangePicker {
+    & .MuiGrid-item {
+        display: flex;
+        padding: 0px !important;
+        & .DateRangePickerCalendar {
+            width: 100%;
+            > .MuiFormControl-root {
+                flex: 1;
+                pointer-events: none;
+                .MuiInputBase-input {
+                    padding-right: 0 !important;
+                }
+                &.MuiFormControl-filled {
+                    .MuiInputBase-input {
+                        &::placeholder {
+                            color: #526484;
+                            opacity: 1;
+                        }
+                        &.MuiOutlinedInput-input {
+                            height: 0.2em;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.MuiDateCalendar-root {
+    & .MuiPickersCalendarHeader-root {
+        & .MuiPickersCalendarHeader-label {
+            font-size: 12px;
+        }
+        & .MuiIconButton-edgeEnd,
+        & .MuiIconButton-edgeStart {
+            font-size: 14px;
+        }
+    }
+
+    & .MuiDayCalendar-root {
+        & .MuiPickersDay-root {
+            color: #526484;
+            font-size: 14px;
+            &.Mui-highlighted {
+                background-color: #1a96f033;
+            }
+            &.Mui-selected {
+                background-color: #1a96f0;
+            }
+        }
+    }
+
+    & .MuiYearCalendar-root {
+        & .MuiPickersYear-yearButton {
+            font-size: 14px;
+            background-color: #1a96f0;
+            color: #526484;
+        }
+    }
+}
+
+.MuiGrid-root {
+    background-color: #fff;
+    width: 100%;
+    margin-top: 0px !important;
+    color: #526484;
+}

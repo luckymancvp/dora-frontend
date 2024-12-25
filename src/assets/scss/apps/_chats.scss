@@ -20,71 +20,73 @@ $chat-meta-sap: $ni-dot !default;
 // for Extend
 .add-opt {
     &:hover {
-        .sub-text, .icon {
+        .sub-text,
+        .icon {
             color: $accent-color;
         }
     }
 }
 .add-opt-icon {
-    .icon{
-        &-circle{
+    .icon {
+        &-circle {
             height: 32px;
             width: 32px;
             font-size: 1rem;
         }
-        + span, + div{
+        + span,
+        + div {
             margin-left: 0.75rem;
         }
     }
 }
 
 // Chat Listing
-.chat{
-    &-item{
+.chat {
+    &-item {
         position: relative;
         border-radius: $border-radius;
-        transition: background-color .3s;
-        &:hover{
+        transition: background-color 0.3s;
+        &:hover {
             background-color: $light-100;
             .chats-dropdown & {
                 background-color: $lighter;
             }
-            .chat-actions{
+            .chat-actions {
                 opacity: 1;
                 pointer-events: initial;
-                transition: opacity .5s;
+                transition: opacity 0.5s;
             }
         }
-        &.current{
+        &.current {
             background-color: $lighter;
-            &:hover{
+            &:hover {
                 background-color: $light-100;
             }
         }
     }
-    &-link{
+    &-link {
         display: flex;
         align-items: center;
         width: 100%;
-        padding: .75rem;
+        padding: 0.75rem;
         cursor: pointer;
     }
-    &-media{
+    &-media {
         height: 44px;
         width: 44px;
-        + .chat-info{
+        + .chat-info {
             margin-left: 1rem;
         }
     }
-    &-info{
+    &-info {
         width: calc(100% - 3.75rem);
     }
-    &-from{
+    &-from {
         display: flex;
         align-items: baseline;
         justify-content: space-between;
         gap: 5px;
-        .name{
+        .name {
             font-size: 0.8375rem;
             margin-bottom: 0;
             font-weight: $fw-medium;
@@ -92,22 +94,22 @@ $chat-meta-sap: $ni-dot !default;
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
-            .is-unread &{
+            .is-unread & {
                 font-weight: $fw-bold;
                 color: $base-color;
             }
         }
-        .time{
+        .time {
             font-size: $fx-sz-12;
             color: $base-light;
             text-wrap: nowrap;
         }
     }
-    &-context{
+    &-context {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        .text{
+        .text {
             width: calc(100% - 2.8rem);
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -115,7 +117,7 @@ $chat-meta-sap: $ni-dot !default;
             font-size: $fx-sz-13;
             color: $base-light;
             margin-right: 3px;
-            .is-unread &{
+            .is-unread & {
                 font-weight: $fw-medium;
                 color: $base-text;
             }
@@ -128,18 +130,18 @@ $chat-meta-sap: $ni-dot !default;
                 -webkit-box-orient: vertical;
             }
         }
-        .status{
+        .status {
             display: flex;
-            color: rgba($base-light,.8);
-            .is-unread &{
+            color: rgba($base-light, 0.8);
+            .is-unread & {
                 color: $accent-color;
             }
-            &.seen{
+            &.seen {
                 color: $accent-color;
             }
         }
     }
-    &-actions{
+    &-actions {
         background-color: $light-100;
         position: absolute;
         top: 0;
@@ -153,74 +155,74 @@ $chat-meta-sap: $ni-dot !default;
         justify-content: flex-end;
         width: 3rem;
     }
-    &-profile{
-        &-group{
+    &-profile {
+        &-group {
             border-top: 1px solid $border-light;
-            padding: .25rem 0;
+            padding: 0.25rem 0;
         }
-        &-head{
+        &-head {
             padding: 1.25rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            .title{
+            .title {
                 margin-bottom: 0;
             }
-            .indicator-icon{
+            .indicator-icon {
                 display: inline-flex;
             }
-            &.collapsed{
-                .indicator-icon{
+            &.collapsed {
+                .indicator-icon {
                     transform: rotate(-180deg);
                 }
             }
         }
-        &-body{
-            &-inner{
+        &-body {
+            &-inner {
                 padding: 0 1.5rem 1.5rem;
             }
         }
-        &-options{
+        &-options {
             margin: -0.25rem;
-            li{
-                padding: .25rem;
+            li {
+                padding: 0.25rem;
             }
         }
-        &-settings{
+        &-settings {
             margin: -0.5rem;
-            li{
-                padding: .5rem;
+            li {
+                padding: 0.5rem;
             }
-            .custom-control-sm .custom-control-label{
+            .custom-control-sm .custom-control-label {
                 padding-left: 0.25rem;
                 font-size: $fx-sz-13;
                 font-weight: $fw-medium;
                 color: $base-text;
             }
         }
-        &-media{
+        &-media {
             display: flex;
             margin: -0.25rem;
-            li{
+            li {
                 width: 33.33%;
                 padding: 0.25rem;
-                a{
+                a {
                     display: inline-block;
                 }
-                img{
+                img {
                     border-radius: $border-radius;
                 }
             }
         }
     }
-    &-option{
-        &-link{
+    &-option {
+        &-link {
             display: flex;
             align-items: center;
-            .lead-text{
+            .lead-text {
                 font-weight: $fw-medium;
                 font-size: $fx-sz-13;
-                transition: color .3s;
+                transition: color 0.3s;
                 color: $base-text;
             }
             @extend .add-opt-icon;
@@ -230,46 +232,46 @@ $chat-meta-sap: $ni-dot !default;
         }
     }
 
-    &-members{
-        margin: -0.375rem -.5rem;
-        li{
+    &-members {
+        margin: -0.375rem -0.5rem;
+        li {
             position: relative;
         }
-        &-link{
+        &-link {
             display: flex;
             align-items: center;
-            padding: 0.375rem .5rem;
+            padding: 0.375rem 0.5rem;
             @extend .add-opt-icon;
         }
-        .user{
-            &-card{
+        .user {
+            &-card {
                 position: relative;
-                padding: 0.375rem .5rem;
+                padding: 0.375rem 0.5rem;
                 border-radius: $border-radius-sm;
-                transition: background-color .3s;
-                > a{
+                transition: background-color 0.3s;
+                > a {
                     width: 100%;
                     display: flex;
                     align-items: center;
                 }
-                &:hover{
+                &:hover {
                     background-color: $light-100;
-                    .user-actions{
+                    .user-actions {
                         opacity: 1;
                         pointer-events: initial;
-                        transition: opacity .5s;
+                        transition: opacity 0.5s;
                     }
                 }
             }
-            &-role{
+            &-role {
                 margin-left: auto;
                 font-size: $fx-sz-12;
                 color: $base-light;
             }
-            &-actions{
+            &-actions {
                 position: absolute;
                 top: 0;
-                right: .25rem;
+                right: 0.25rem;
                 bottom: 0;
                 width: 3rem;
                 background-color: $light-100;
@@ -286,46 +288,46 @@ $chat-meta-sap: $ni-dot !default;
     display: flex;
     align-items: flex-end;
     margin: -4px;
-    > div{
+    > div {
         padding: 4px;
     }
-    + .chat{
+    + .chat {
         padding-top: 0.5rem;
     }
-    &-avatar{
+    &-avatar {
         margin-bottom: 1.4rem;
         &.no-meta {
             margin-bottom: 0;
         }
     }
-    &-bubble{
+    &-bubble {
         display: flex;
         align-items: center;
-        padding: .125rem 0;
-        &:hover{
-            .chat-msg-more{
+        padding: 0.125rem 0;
+        &:hover {
+            .chat-msg-more {
                 opacity: 1;
             }
         }
-        &s{
-            .attach-files{
-                margin-top: .75rem;
+        &s {
+            .attach-files {
+                margin-top: 0.75rem;
             }
         }
     }
     &-msg {
         background-color: $white;
         border-radius: $border-radius-xl;
-        padding: .5rem 1rem;
+        padding: 0.5rem 1rem;
         word-break: break-word;
         &-more {
             display: flex;
             align-items: center;
-            margin:0 0.75rem;
+            margin: 0 0.75rem;
             opacity: 0;
             flex-shrink: 0;
-            transition: all .3s;
-            > li{
+            transition: all 0.3s;
+            > li {
                 padding: 0.25rem;
             }
         }
@@ -338,16 +340,16 @@ $chat-meta-sap: $ni-dot !default;
             color: $white;
         }
     }
-    &-meta{
+    &-meta {
         display: flex;
         align-items: center;
-        margin: .25rem -.375rem 0;
-        li{
+        margin: 0.25rem -0.375rem 0;
+        li {
             position: relative;
-            padding: 0 .375rem;
+            padding: 0 0.375rem;
             font-size: $fx-sz-12;
             color: $base-light;
-            &:not(:first-child):before{
+            &:not(:first-child):before {
                 content: $chat-meta-sap;
                 font-family: $nk-dashlite-font;
                 position: absolute;
@@ -355,67 +357,68 @@ $chat-meta-sap: $ni-dot !default;
                 top: 50%;
                 font-size: 11px;
                 line-height: 10px;
-                transform: translate(-50%,-50%);
-                opacity: .8;
+                transform: translate(-50%, -50%);
+                opacity: 0.8;
             }
         }
     }
-    &-sap{
+    &-sap {
         overflow: hidden;
         text-align: center;
         padding: 1rem 0;
         &-meta {
             position: relative;
             display: inline-block;
-            padding: 0 .75rem;
+            padding: 0 0.75rem;
             color: $base-light;
             font-size: $fx-sz-12;
             line-height: 1.4;
-            &:before,&:after{
+            &:before,
+            &:after {
                 position: absolute;
                 height: 1px;
                 background: $border-color;
-                content: '';
+                content: "";
                 width: 100vw;
                 top: 50%;
             }
-            &:before{
+            &:before {
                 right: 100%;
             }
-            &:after{
+            &:after {
                 left: 100%;
             }
         }
     }
 
-
-    &.is-you{
-        .chat-bubble{
+    &.is-you {
+        .chat-bubble {
             flex-direction: column-reverse;
             justify-content: flex-start;
             align-items: start;
             gap: 5px;
-            &s{
+            &s {
                 .attach-files {
                     border-color: $white;
                     overflow: hidden;
                 }
-                .attach-files, .attach-foot{
+                .attach-files,
+                .attach-foot {
                     background-color: $white;
                 }
             }
-            &:last-child{
-                .chat-msg{
+            &:last-child {
+                .chat-msg {
                     border-bottom-left-radius: 0;
                 }
             }
-            &:not(:first-child){
-                .chat-msg{
+            &:not(:first-child) {
+                .chat-msg {
                     border-top-left-radius: $border-radius;
                 }
             }
-            &:not(:last-child){
-                .chat-msg{
+            &:not(:last-child) {
+                .chat-msg {
                     border-bottom-left-radius: $border-radius;
                 }
             }
@@ -427,41 +430,42 @@ $chat-meta-sap: $ni-dot !default;
             gap: 6px;
         }
     }
-    &.is-me{
+    &.is-me {
         justify-content: flex-end;
-        .chat-msg{
+        .chat-msg {
             background-color: $accent-color;
             color: $white;
         }
-        .chat-meta{
+        .chat-meta {
             justify-content: flex-end;
         }
-        .chat-bubble{
+        .chat-bubble {
             flex-direction: column-reverse;
             justify-content: flex-end;
             align-items: end;
             gap: 5px;
-            &s{
+            &s {
                 .attach-files {
                     border-color: $accent-300;
                     overflow: hidden;
                 }
-                .attach-files, .attach-foot{
+                .attach-files,
+                .attach-foot {
                     background-color: $white;
                 }
             }
-            &:last-child{
-                .chat-msg{
+            &:last-child {
+                .chat-msg {
                     border-bottom-right-radius: 0;
                 }
             }
-            &:not(:first-child){
-                .chat-msg{
+            &:not(:first-child) {
+                .chat-msg {
                     border-top-right-radius: $border-radius;
                 }
             }
-            &:not(:last-child){
-                .chat-msg{
+            &:not(:last-child) {
+                .chat-msg {
                     border-bottom-right-radius: $border-radius;
                 }
             }
@@ -477,22 +481,22 @@ $chat-meta-sap: $ni-dot !default;
             gap: 6px;
         }
     }
-    
+
     // Upload option
-    &-upload-option{
+    &-upload-option {
         display: none;
         position: absolute;
         left: 100%;
         padding: 0.5rem;
         background-color: $white;
-        &.expanded{
+        &.expanded {
             display: block;
         }
-        ul{
+        ul {
             display: flex;
             align-items: center;
         }
-        a{
+        a {
             color: $accent-color;
             font-size: 1.25rem;
             height: 36px;
@@ -500,25 +504,25 @@ $chat-meta-sap: $ni-dot !default;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            &:hover{
+            &:hover {
                 color: darken($accent-color, 8%);
             }
         }
     }
 }
 
-.fav-list{
+.fav-list {
     display: flex;
     margin: -0.375rem;
     overflow-x: auto;
-    li{
+    li {
         padding: 0.375rem;
         position: relative;
     }
     a:hover > .user-avatar:after {
         opacity: 1;
     }
-    .user-avatar{
+    .user-avatar {
         height: 44px;
         width: 44px;
         &:after {
@@ -532,7 +536,7 @@ $chat-meta-sap: $ni-dot !default;
             opacity: 0;
             border-radius: 50%;
             z-index: -1;
-            transition: opacity .3s;
+            transition: opacity 0.3s;
         }
     }
 
@@ -556,88 +560,87 @@ $chat-meta-sap: $ni-dot !default;
     }
 }
 
-@include media-breakpoint-up(md){
-    .fav-list{
+@include media-breakpoint-up(md) {
+    .fav-list {
         flex-wrap: wrap;
     }
 }
-@media (max-width:859px){
-    .fav-list{
+@media (max-width: 859px) {
+    .fav-list {
         margin: -0.375rem 0;
-        li{
-            &:first-child{
+        li {
+            &:first-child {
                 padding-left: 0;
             }
-            &:last-child{
+            &:last-child {
                 padding-right: 0;
             }
         }
     }
 }
 
-
 .channel-list {
     li {
-        margin:0.125rem -0.5rem;
+        margin: 0.125rem -0.5rem;
     }
     a {
-        padding: 0.375rem .5rem;
+        padding: 0.375rem 0.5rem;
         display: block;
-        transition: all .3s;
+        transition: all 0.3s;
         font-weight: $fw-medium;
         color: $base-text;
         border-radius: $border-radius-sm;
-        &:hover, &.active {
+        &:hover,
+        &.active {
             color: $accent-color;
             background: $accent-100;
         }
     }
-
 }
 
 .contacts {
     &-list {
-        margin: -0.375rem -.5rem;
+        margin: -0.375rem -0.5rem;
         & + .contacts-list {
             margin-top: 1.75rem;
         }
-        li{
+        li {
             position: relative;
             > .title {
                 padding-left: 1.25rem;
-                margin-bottom: .25rem;
+                margin-bottom: 0.25rem;
             }
         }
-        .user{
-            &-card{
+        .user {
+            &-card {
                 position: relative;
-                padding: 0.375rem .5rem;
+                padding: 0.375rem 0.5rem;
                 border-radius: $border-radius-sm;
-                transition: background-color .3s;
-                > a{
+                transition: background-color 0.3s;
+                > a {
                     width: 100%;
                     display: flex;
                     align-items: center;
                 }
-                &:hover{
+                &:hover {
                     background-color: $light-100;
-                    .user-actions{
+                    .user-actions {
                         opacity: 1;
                         pointer-events: initial;
-                        transition: opacity .4s;
+                        transition: opacity 0.4s;
                     }
                 }
             }
-            &-meta{
+            &-meta {
                 margin-left: auto;
                 font-size: $fx-sz-12;
                 color: $base-light;
             }
-            &-actions{
+            &-actions {
                 font-size: 12px;
                 position: absolute;
                 top: 0;
-                right: .25rem;
+                right: 0.25rem;
                 bottom: 0;
                 width: 4.5rem;
                 background-color: $light-100;
@@ -647,45 +650,43 @@ $chat-meta-sap: $ni-dot !default;
                 opacity: 0;
                 pointer-events: none;
                 > a {
-                    padding:0 .375rem;
+                    padding: 0 0.375rem;
                 }
             }
         }
     }
-    &-add-link{
-        padding: 0.375rem .5rem;
+    &-add-link {
+        padding: 0.375rem 0.5rem;
         display: flex;
         align-items: center;
-        .lead-text{
+        .lead-text {
             font-weight: $fw-medium;
             font-size: $fx-sz-13;
         }
         @extend .add-opt-icon;
     }
-
 }
 
-
 // Chat Layouts
-.nk-chat{
+.nk-chat {
     position: relative;
     display: flex;
     overflow: hidden;
     background: $white;
     min-height: calc(100vh - (#{$header-height} + 64px));
     max-height: calc(100vh - (#{$header-height} + 64px));
-    &-blank{
+    &-blank {
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
         height: 100%;
         background-color: $light;
-        &-icon{
+        &-icon {
             margin-bottom: 1.5rem;
         }
     }
-    &-aside{
+    &-aside {
         background: $white;
         width: 100%;
         overflow: hidden;
@@ -696,67 +697,67 @@ $chat-meta-sap: $ni-dot !default;
         flex-shrink: 0;
         border-top-left-radius: ($border-radius - 1);
         border-bottom-left-radius: ($border-radius - 1);
-        &-head{
+        &-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 1.125rem $chat-aside-gap-x 0.875rem;
         }
-        &-user{
-            .title{
+        &-user {
+            .title {
                 font-size: 1.375rem;
-                color:$base-color;
+                color: $base-color;
             }
-            .user-avatar{
+            .user-avatar {
                 height: 36px;
                 width: 36px;
-                + .title{
+                + .title {
                     margin-left: 1rem;
                 }
             }
-            .dropdown-toggle{
-                &:after{
+            .dropdown-toggle {
+                &:after {
                     font-size: 1.125rem;
                     color: $base-light;
                     margin-left: 1rem;
                 }
             }
         }
-        &-tools{
+        &-tools {
             display: flex;
             align-items: center;
         }
-        &-body{
+        &-body {
             max-height: 100%;
             height: 100%;
             overflow: auto;
         }
-        &-search{
+        &-search {
             padding: 0 $chat-aside-gap-x;
             margin-bottom: 1.75rem;
             margin-top: 0.25rem;
-            .form-control{
+            .form-control {
                 background-color: $lighter;
                 border-color: $lighter;
                 &::placeholder {
                     color: $base-light;
-                  }
+                }
             }
         }
     }
-    &-aside-panel{
+    &-aside-panel {
         padding: 0 $chat-aside-gap-x 1.75rem;
-        .title{
-            margin-bottom: .75rem;
+        .title {
+            margin-bottom: 0.75rem;
         }
     }
-    &-list{
-        padding: 0 ($chat-aside-gap-x - .75rem);
-        .title{
-            margin-left: .75rem;
+    &-list {
+        padding: 0 ($chat-aside-gap-x - 0.75rem);
+        .title {
+            margin-left: 0.75rem;
         }
     }
-    &-body{
+    &-body {
         background: $white;
         position: absolute;
         top: 0;
@@ -767,11 +768,11 @@ $chat-meta-sap: $ni-dot !default;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        transition: padding .3s ease-in-out;
+        transition: padding 0.3s ease-in-out;
         opacity: 0;
         pointer-events: none;
         z-index: 5;
-        &.show-chat{
+        &.show-chat {
             opacity: 1;
             pointer-events: auto;
         }
@@ -803,7 +804,7 @@ $chat-meta-sap: $ni-dot !default;
             &-container {
                 display: flex;
                 position: relative;
-                margin: 0 4px
+                margin: 0 4px;
             }
             &-icon-remove {
                 position: absolute;
@@ -845,7 +846,7 @@ $chat-meta-sap: $ni-dot !default;
             }
         }
     }
-    &-head{
+    &-head {
         position: relative;
         display: flex;
         align-items: center;
@@ -853,13 +854,13 @@ $chat-meta-sap: $ni-dot !default;
         padding: 1rem 1.75rem;
         border-bottom: 1px solid $border-light;
         background-color: $white;
-        &-info{
+        &-info {
             width: 60%;
-            .user-avatar + .user-info{
+            .user-avatar + .user-info {
                 margin-left: 0.75rem;
             }
-            .user-info{
-                .lead-text{
+            .user-info {
+                .lead-text {
                     display: block;
                     text-overflow: ellipsis;
                     overflow: hidden;
@@ -867,20 +868,21 @@ $chat-meta-sap: $ni-dot !default;
                 }
             }
         }
-        &-info,&-tools{
+        &-info,
+        &-tools {
             display: flex;
             align-items: center;
             margin: -0.125rem;
-            > li{
-                padding: .125rem;
-            } 
-            .btn-icon{
-                .icon{
+            > li {
+                padding: 0.125rem;
+            }
+            .btn-icon {
+                .icon {
                     font-size: 1.25rem;
                 }
             }
         }
-        &-search{
+        &-search {
             position: absolute;
             top: calc(100% + 1rem);
             left: 0;
@@ -890,58 +892,59 @@ $chat-meta-sap: $ni-dot !default;
             opacity: 0;
             pointer-events: none;
             transform: translateY(-10px);
-            transition: all .5s;
-            &.show-search{
+            transition: all 0.5s;
+            &.show-search {
                 opacity: 1;
                 pointer-events: auto;
                 transform: none;
             }
         }
     }
-    &-panel{
-        background-color: rgba($light, .7);
+    &-panel {
+        background-color: rgba($light, 0.7);
         height: 100%;
         max-height: 100%;
         overflow: auto;
         padding: 1.25rem;
     }
-    &-editor{
+    &-editor {
         display: flex;
         align-items: center;
         padding: 1rem 1.25rem;
         background-color: $white;
-        &-form{
-            padding: 0 .5rem;
+        &-form {
+            padding: 0 0.5rem;
             flex-grow: 1;
-            .form-control{
+            .form-control {
                 max-height: 300px;
                 overflow-y: auto;
                 line-height: 20px;
                 padding-top: 0.5rem;
             }
         }
-        &-upload,&-tools{
+        &-upload,
+        &-tools {
             display: flex;
             align-items: center;
-            .btn-icon{
-                .icon{
+            .btn-icon {
+                .icon {
                     font-size: 1.5rem;
                 }
             }
         }
-        &-upload{
+        &-upload {
             position: relative;
             z-index: 2;
-            .toggle-opt{
-                transition: .3s;
-                &.active{
+            .toggle-opt {
+                transition: 0.3s;
+                &.active {
                     opacity: 0.7;
                     transform: rotate(-45deg);
                 }
             }
         }
     }
-    &-profile{
+    &-profile {
         position: absolute;
         top: 0;
         right: 0;
@@ -949,10 +952,10 @@ $chat-meta-sap: $ni-dot !default;
         width: $chat-profile-width;
         height: 100%;
         max-height: 100%;
-        transition: transform .3s  ease-in-out;
+        transition: transform 0.3s ease-in-out;
         background: $white;
         z-index: 100;
-        &-overlay{
+        &-overlay {
             position: absolute;
             top: 0;
             right: 0;
@@ -961,9 +964,9 @@ $chat-meta-sap: $ni-dot !default;
             background: $sidebar-overlay;
             z-index: 600;
             z-index: 90;
-            animation: overlay-fade-in .4s ease 1;
+            animation: overlay-fade-in 0.4s ease 1;
         }
-        &.visible{
+        &.visible {
             transform: none;
         }
     }
@@ -977,7 +980,7 @@ $chat-meta-sap: $ni-dot !default;
         bottom: 20px;
         left: 20px;
         right: 20px;
-        @include media-breakpoint-up(sm){ 
+        @include media-breakpoint-up(sm) {
             bottom: 20px;
             left: 28px;
             right: 28px;
@@ -991,84 +994,86 @@ $chat-meta-sap: $ni-dot !default;
     }
 }
 
-
-@include media-breakpoint-down(sm){
-    .nk-chat{
-        &-head{
+@include media-breakpoint-down(sm) {
+    .nk-chat {
+        &-head {
             padding: 0.75rem 1.25rem;
-            &-user{
-                max-width:calc(100% - 34px);
-                .user-avatar{
+            &-user {
+                max-width: calc(100% - 34px);
+                .user-avatar {
                     height: 36px;
                     width: 36px;
                 }
-                .user-info{
-                    width: calc(100% - 36px - .75rem);
+                .user-info {
+                    width: calc(100% - 36px - 0.75rem);
                 }
             }
         }
     }
 }
 
-
-@include media-breakpoint-up(sm){
-    .nk-chat{
-        &-head{
-            &-info,&-tools{
+@include media-breakpoint-up(sm) {
+    .nk-chat {
+        &-head {
+            &-info,
+            &-tools {
                 margin: -0.375rem;
-                > li{
-                    padding: .375rem;
-                } 
+                > li {
+                    padding: 0.375rem;
+                }
             }
         }
     }
 }
-@media (min-width:576px) and (max-width:991px){
-    .nk-chat{
-        &-aside{
-            &-head, &-search{
+@media (min-width: 576px) and (max-width: 991px) {
+    .nk-chat {
+        &-aside {
+            &-head,
+            &-search {
                 padding-left: $chat-aside-gap-x-tab;
                 padding-right: $chat-aside-gap-x-tab;
             }
         }
-        &-aside-panel{
+        &-aside-panel {
             padding: 0 $chat-aside-gap-x-tab 1.75rem;
         }
-        &-list{
-            padding: 0 ($chat-aside-gap-x-tab - .75rem);
+        &-list {
+            padding: 0 ($chat-aside-gap-x-tab - 0.75rem);
         }
-        &-head, &-panel, &-editor{
+        &-head,
+        &-panel,
+        &-editor {
             padding-left: $chat-body-gap-x-tab;
             padding-right: $chat-body-gap-x-tab;
         }
-        &-head{
-            &-search{
+        &-head {
+            &-search {
                 padding: 0 $chat-body-gap-x-tab;
             }
         }
     }
 }
 
-@media (min-width:860px){
-    .nk-chat{
-        &-aside{
+@media (min-width: 860px) {
+    .nk-chat {
+        &-aside {
             width: $chat-aside-width;
             border-right: 1px solid $border-light;
         }
-        &-body{
+        &-body {
             position: static;
             opacity: 1;
             pointer-events: auto;
-            &-close{
+            &-close {
                 display: none;
             }
         }
     }
 }
-@media (max-width:859px){
-    .nk-chat{
-        &-body{
-            &.show-chat{
+@media (max-width: 859px) {
+    .nk-chat {
+        &-body {
+            &.show-chat {
                 position: fixed;
                 z-index: 2999;
             }
@@ -1080,43 +1085,46 @@ $chat-meta-sap: $ni-dot !default;
     }
 }
 
-@media (min-width:860px) and (max-width:991px){
-    .nk-chat{
-        &-aside{
+@media (min-width: 860px) and (max-width: 991px) {
+    .nk-chat {
+        &-aside {
             width: $chat-aside-width + 25px;
             border-right: 1px solid $border-light;
         }
     }
 }
-@include media-breakpoint-up(lg){
-    .nk-chat{
-        &-aside-panel, &-aside-head, &-aside-search {
+@include media-breakpoint-up(lg) {
+    .nk-chat {
+        &-aside-panel,
+        &-aside-head,
+        &-aside-search {
             padding-left: $chat-aside-gap-x-desk;
             padding-right: $chat-aside-gap-x-desk;
         }
         &-list {
-            padding:0 ($chat-aside-gap-x - .25rem);
+            padding: 0 ($chat-aside-gap-x - 0.25rem);
         }
-        &-aside{
+        &-aside {
             width: $chat-aside-width-lg;
         }
-        &-panel{
+        &-panel {
             padding: 1.25rem 1.75rem;
         }
     }
     .chat {
         &-profile {
-            &-head, &-body-inner{
+            &-head,
+            &-body-inner {
                 padding-right: 1.75rem;
                 padding-left: 1.75rem;
             }
         }
     }
 }
-@include media-breakpoint-up(xl){
-    .nk-chat{
-        &-body{
-            &.profile-shown{
+@include media-breakpoint-up(xl) {
+    .nk-chat {
+        &-body {
+            &.profile-shown {
                 padding-right: $chat-profile-width;
             }
         }
@@ -1125,25 +1133,25 @@ $chat-meta-sap: $ni-dot !default;
         }
     }
 }
-@include media-breakpoint-up(xxl){
-    .nk-chat{
-        &-aside{
+@include media-breakpoint-up(xxl) {
+    .nk-chat {
+        &-aside {
             width: $chat-aside-width-xl;
         }
-        &-body{
-            &.profile-shown{
+        &-body {
+            &.profile-shown {
                 padding-right: $chat-profile-width-xl;
             }
         }
-        &-profile{
+        &-profile {
             width: $chat-profile-width-xl;
         }
     }
 }
 
-@include media-breakpoint-down(xxl){
-    .profile-shown{
-        .nk-chat-profile-toggle{
+@include media-breakpoint-down(xxl) {
+    .profile-shown {
+        .nk-chat-profile-toggle {
             right: 262px;
             .has-apps-sidebar & {
                 right: -18px;
@@ -1152,15 +1160,15 @@ $chat-meta-sap: $ni-dot !default;
     }
 }
 
-@media (max-width:359px){
-    .nk-chat{
-        &-profile{
+@media (max-width: 359px) {
+    .nk-chat {
+        &-profile {
             width: $chat-profile-width-sm;
         }
     }
 }
 
-@media (max-width:1199px){
+@media (max-width: 1199px) {
     .chat-content .image-chat {
         .item-image {
             width: 100px;

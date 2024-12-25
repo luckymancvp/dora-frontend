@@ -126,6 +126,11 @@ const menu = [
     // },
     // ],
   },
+  {
+    icon: "cart",
+    text: "Orders",
+    link: "/orders",
+  },
   // {
   //   icon: "card-view",
   //   text: "Products",
