@@ -14,6 +14,7 @@ before_script:
 build:
   stage: build
   script:
+    - cp env/"$CI_COMMIT_REF_NAME".env .env
     - npm run build
   artifacts:
     paths:
