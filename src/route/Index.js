@@ -88,6 +88,7 @@ import Terms from "../pages/others/Terms";
 
 // import AppMessages from "../pages/app/messages/Messages";
 import Chat from "../pages/app/chat/ChatContainer";
+import Orders from "../pages/app/orders/Orders";
 // import Calender from "../pages/app/calender/Calender";
 // import FileManager from "../pages/app/file-manager/FileManager";
 // import FileManagerFiles from "../pages/app/file-manager/FileManagerFiles";
@@ -298,6 +299,7 @@ const Router = () => {
           <Route index element={<PrivateRoute Component={Homepage}/>}></Route>
           <Route path="messages" element={<PrivateRoute Component={Chat}/>}></Route>
           <Route path="messages/:conversationId" element={<PrivateRoute Component={Chat}/>}></Route>
+          <Route path="orders" element={<PrivateRoute Component={Orders}/>}></Route>
         </Route>
       </Routes>
   );

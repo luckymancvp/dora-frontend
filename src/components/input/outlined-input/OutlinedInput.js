@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Icon } from "../../Component";
 
-const OutlinedInput = ({ label, size, id, icon }) => {
+const OutlinedInput = ({ label, size, id, icon, onChange, value, error }) => {
   const [focus, setFocus] = useState(false);
   return (
     <div className={`form-control-wrap ${focus ? "focused" : ""}`}>
       {icon && (
-        <div className="form-icon form-icon-right xl">
+        <div className={`form-icon form-icon-right ${size}`}>
           <Icon name={icon}></Icon>
         </div>
       )}
@@ -16,6 +16,9 @@ const OutlinedInput = ({ label, size, id, icon }) => {
         id={id}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
+        onChange={onChange}
+        value={value}
+        error={error}
       />
       <label className="form-label-outlined" htmlFor={id}>
         {label}

@@ -1,18 +1,18 @@
+import { debounce } from "lodash";
 import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { debounce } from "lodash";
-import Chat from "./Chat";
-import { ChatContextProvider } from "./ChatContext";
-import { fetchShops } from "../../../redux/slices/Shops";
-import { fetchConversations, setCurrentPage } from "../../../redux/slices/Conversations";
+import { fetchConversations, setConversationsRealTime, setCurrentPage } from "../../../redux/slices/Conversations";
 import {
   fetchMessages,
   fetchSolutions,
-  setEmptyMessages,
   setEmptyConversationMessage,
+  setEmptyMessages,
   setScrollBottom,
 } from "../../../redux/slices/Messages";
+import { fetchShops } from "../../../redux/slices/Shops";
+import Chat from "./Chat";
+import { ChatContextProvider } from "./ChatContext";
 
 const ChatContainer = ({ currentUser }) => {
   const dispatch = useDispatch();
@@ -27,22 +27,39 @@ const ChatContainer = ({ currentUser }) => {
     dispatch(fetchShops());
   }, [dispatch]);
 
-  const fetchDataConversations = useCallback((args = {}) => {
-    dispatch(setCurrentPage(args.page || 1));
-    dispatch(
-      fetchConversations({
-        params: {
-          page: 1,
-          items_per_page: defaultItemsPerPage,
-          ...args,
-        },
-      })
-    );
-  }, [dispatch, defaultItemsPerPage]);
+  const fetchDataConversations = useCallback(
+    (args = {}) => {
+      dispatch(setCurrentPage(args.page || 1));
+      dispatch(
+        fetchConversations({
+          params: {
+            page: 1,
+            items_per_page: defaultItemsPerPage,
+            ...args,
+          },
+        })
+      );
+    },
+    [dispatch, defaultItemsPerPage]
+  );
 
-  const handleChangeScroll = useCallback((value) => {
+  const handleConversationsRealTime = useCallback(
+    (args = {}) => {
+      dispatch(
+        setConversationsRealTime({
+          ...args,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleChangeScroll = useCallback(
+    (value) => {
       dispatch(setScrollBottom(value));
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFetchDataMessage = useCallback(
@@ -54,19 +71,30 @@ const ChatContainer = ({ currentUser }) => {
       dispatch(fetchMessages({ conversationId })).then(() => {
         handleChangeScroll(toScrollBottom);
       });
-  }, 400), []);
+    }, 400),
+    []
+  );
 
-  const fetchDataMessage = useCallback((params) => {
+  const fetchDataMessage = useCallback(
+    (params) => {
       debouncedFetchDataMessage(params);
-  }, [debouncedFetchDataMessage]);
+    },
+    [debouncedFetchDataMessage]
+  );
 
-  const handleSetEmptyConversationMessage = useCallback((data) => {
-    dispatch(setEmptyConversationMessage(data));
-  }, [dispatch]);
+  const handleSetEmptyConversationMessage = useCallback(
+    (data) => {
+      dispatch(setEmptyConversationMessage(data));
+    },
+    [dispatch]
+  );
 
-  const handleFetchSolutions = useCallback((conversationId, params = {}) => {
-    dispatch(fetchSolutions({ conversationId, params }));
-  }, [dispatch]);
+  const handleFetchSolutions = useCallback(
+    (conversationId, params = {}) => {
+      dispatch(fetchSolutions({ conversationId, params }));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (conversationId) {
@@ -77,12 +105,7 @@ const ChatContainer = ({ currentUser }) => {
 
   useEffect(() => {
     if (conversationId) {
-      const intervalId = setInterval(() => {
-        fetchDataMessage({ conversationId, toScrollBottom: false });
-      }, 5000);
-
-      // Cleanup interval on unmount
-      return () => clearInterval(intervalId);
+      fetchDataMessage({ conversationId, toScrollBottom: false });
     }
   }, [conversationId, fetchDataMessage]);
 
@@ -102,6 +125,7 @@ const ChatContainer = ({ currentUser }) => {
         conversationId={conversationId}
         handleFetchSolutions={handleFetchSolutions}
         solutionsMessages={solutionsMessages}
+        handleConversationsRealTime={handleConversationsRealTime}
       />
     </ChatContextProvider>
   );

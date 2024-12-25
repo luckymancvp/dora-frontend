@@ -1,18 +1,18 @@
-import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { Realtime } from "ably";
+import classNames from "classnames";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import classNames from "classnames";
-import ChatSideBar from "./ChatSideBar";
-import ChatFiles from "./ChatFiles";
-import SimpleBar from "simplebar-react";
-import { createMessage, fetchStatusMessage } from "../../../redux/slices/Messages";
 import { Spinner } from "reactstrap";
-import { UserAvatar, Icon, Button } from "../../../components/Component";
+import SimpleBar from "simplebar-react";
+import { Button, Icon, UserAvatar } from "../../../components/Component";
 import { TextareaForm } from "../../../components/forms/TextareaForm";
+import { createMessage, fetchMessages, fetchStatusMessage } from "../../../redux/slices/Messages";
 import { findUpper } from "../../../utils/Utils";
-
-import { MeChat, YouChat, SendingChat, RecommnendChats } from "./ChatPartials";
+import ChatFiles from "./ChatFiles";
+import ChatSideBar from "./ChatSideBar";
+import { MeChat, RecommnendChats, SendingChat, YouChat } from "./ChatPartials";
 
 const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleFetchSolutions }) => {
   const dispatch = useDispatch();
@@ -22,6 +22,8 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
   const [sidebar, setsidebar] = useState(false);
   const [chatOptions, setChatOptions] = useState(false);
   const [files, setFiles] = useState([]);
+  const [ably] = useState(() => new Realtime({ key: process.env.REACT_APP_ABLY_API_KEY }));
+  const [channel] = useState(ably.channels.get("all"));
   const [recommnendState, setRecommnendState] = useState(() => {
     return window.innerWidth < 860 ? true : false;
   });
@@ -59,6 +61,7 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
 
   useEffect(() => {
     clearFileInput();
+    scrollToBottom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 
@@ -128,6 +131,8 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
 
       dispatch(createMessage({ conversationId, formData })).then((response) => {
         const data = response.payload?.message;
+        channel.publish("new-message-event", { message: response.payload?.message });
+        dispatch(fetchMessages({ conversationId }));
         if (data?.conversationId) {
           scrollToBottom();
           setTimeout(() => {
@@ -149,7 +154,7 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
 
           const updateStatusToError = () => {
             // dispatch(updateMessageStatus({ id: data.id, status: "Error" })); // TODO:
-            console.error("Error: Message status remained NEW after 5 seconds.");
+            console.log("Error: Message status remained NEW after 5 seconds.");
           };
 
           // Call status check every second for 5 seconds
@@ -161,7 +166,7 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
         }
       });
     },
-    [dispatch, clearFileInput]
+    [clearFileInput, dispatch, channel]
   );
 
   const saveMessage = useCallback(
@@ -313,7 +318,6 @@ const ChatBody = ({ mobileView, conversationId, conversation, solutions, handleF
       ),
     [conversationId, handleFetchSolutions, recommnendState, solutions.solutions]
   );
-
   return (
     <React.Fragment>
       <div className={chatBodyClass} key={`conversation-${conversationId}`}>

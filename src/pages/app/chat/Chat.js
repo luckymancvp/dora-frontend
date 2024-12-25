@@ -1,16 +1,20 @@
-import React, { useEffect, useState, useContext } from "react";
-import Head from "../../../layout/head/Head";
-import ContentAlt from "../../../layout/content/ContentAlt";
-import AppContact from "./contact/Contact";
-import ChatBody from "./ChatBody";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from "reactstrap";
 import { Button, Icon, UserAvatar } from "../../../components/Component";
-import { DropdownMenu, DropdownToggle, UncontrolledDropdown, DropdownItem } from "reactstrap";
+import ContentAlt from "../../../layout/content/ContentAlt";
+import Head from "../../../layout/head/Head";
 import { isBlank } from "../../../utils/Utils";
-import { chatData } from "./ChatData";
+import ChatBody from "./ChatBody";
 import { ChatContext } from "./ChatContext";
+import { chatData } from "./ChatData";
+import AppContact from "./contact/Contact";
 // import { Link } from "react-router-dom";
+import { Realtime } from "ably";
+import { debounce } from "lodash";
+import { useDispatch, useSelector } from "react-redux";
+import { setConversations } from "../../../redux/slices/Conversations";
+import { setMessgerRealTime, setSendingMessgerRealTime } from "../../../redux/slices/Messages";
 import { ChannelAsideBody, ChatAsideBody } from "./ChatAsideBody";
-import { debounce } from 'lodash';
 
 const Chat = ({
   currentUser,
@@ -24,8 +28,13 @@ const Chat = ({
   fetchDataMessage,
   handleFetchSolutions,
   conversationId,
-  solutionsMessages
+  solutionsMessages,
+  handleConversationsRealTime,
 }) => {
+  const dispatch = useDispatch();
+  const [ably] = useState(() => new Realtime({ key: process.env.REACT_APP_ABLY_API_KEY }));
+  const [channel, setChannel] = useState(ably.channels.get("all"));
+  const { sendingMessages } = useSelector((state) => state.messages);
   const [mainTab, setMainTab] = useState("Chats");
   const [selectedId, setSelectedId] = useState();
   const [filterTabs, setFilterTabs] = useState(() => {
@@ -43,7 +52,7 @@ const Chat = ({
 
   useEffect(() => {
     fetchDataShops();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -90,9 +99,9 @@ const Chat = ({
   }, 300);
 
   const onFilterTabClick = (prop) => {
-    setFilterTabs(prevState => ({
+    setFilterTabs((prevState) => ({
       ...prevState,
-      [prop]: prevState[prop] ? !prevState[prop] : true
+      [prop]: prevState[prop] ? !prevState[prop] : true,
     }));
   };
 
@@ -114,8 +123,67 @@ const Chat = ({
     }
   };
 
+  const chatItemConversationClick = (id) => {
+    let data = conversations;
+    const index = data.findIndex((item) => item.id === id);
+    const dataSet = data.find((item) => item.id === id);
+    if (dataSet.etsy.isUnread === true) {
+      const updatedEtsy = { ...data[index].etsy, isUnread: false };
+      const newConversations = [...data];
+      newConversations[index] = { ...newConversations[index], etsy: updatedEtsy };
+      dispatch(setConversations({ newConversations }));
+    }
+  };
+
+  const AblyMessageSubscriber = ({ onNewMessage }) => {
+    const handleMessage = useCallback(
+      (message) => {
+        const uint8Array = new Uint8Array(message.data);
+        const textDecoder = new TextDecoder("utf-8");
+        const jsonString = textDecoder.decode(uint8Array);
+        const jsonData = JSON.parse(jsonString);
+        onNewMessage(jsonData);
+      },
+      [onNewMessage]
+    );
+
+    const subscribeToChannel = useCallback(() => {
+      const newChannel = ably.channels.get("all");
+      newChannel.subscribe("new-message-event", handleMessage);
+      setChannel(newChannel);
+    }, [handleMessage]);
+
+    const unsubscribeFromChannel = useCallback(() => {
+      if (channel) {
+        channel.unsubscribe("new-message-event", handleMessage);
+      }
+    }, [handleMessage]);
+
+    useEffect(() => {
+      subscribeToChannel();
+      return unsubscribeFromChannel;
+    }, [subscribeToChannel, unsubscribeFromChannel]);
+
+    return null;
+  };
+
+  const handleNewMessage = (message) => {
+    let jsonData = message;
+    if (conversationId && conversationId === jsonData?.Message?.conversation_id) {
+      let index = sendingMessages.find((mess) => mess.id === jsonData?.Message?.id);
+      if (sendingMessages.length === 0 || !index) {
+        dispatch(setMessgerRealTime({ jsonData }));
+      } else {
+        dispatch(setSendingMessgerRealTime({ jsonData }));
+      }
+    } else {
+      handleConversationsRealTime({ jsonData });
+    }
+  };
+
   return (
     <>
+      <AblyMessageSubscriber onNewMessage={handleNewMessage} />
       <Head title="Chat / Messenger"></Head>
       <ContentAlt>
         <div className="nk-chat">
@@ -213,6 +281,7 @@ const Chat = ({
                 conversations={conversations}
                 fetchConversations={fetchConversations}
                 conversationFetching={conversationFetching}
+                chatItemConversationClick={chatItemConversationClick}
               />
             ) : mainTab === "Channel" ? (
               <ChannelAsideBody
