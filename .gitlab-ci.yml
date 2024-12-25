@@ -1,7 +1,6 @@
 image: node:14
 
 stages:
-  - build
   - deploy
 
 cache:
@@ -11,20 +10,13 @@ cache:
 before_script:
   - npm install
 
-build:
-  stage: build
-  script:
-    - cp env/"$CI_COMMIT_REF_NAME".env .env
-    - npm run build
-  artifacts:
-    paths:
-      - build
-
 deploy_dev:
   stage: deploy
   only:
     - dev
   script:
+    - cp env/"$CI_COMMIT_REF_NAME".env .env
+    - npm run build
     - apt-get update -y
     - apt-get install -y python3 python3-pip
     - pip3 install awscli
